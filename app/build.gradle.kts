@@ -41,12 +41,18 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.constraint's:constraint's:2.1.3")
-    testImplementation("junit:junit:")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    implementation(Dependency.Kotlin.KOTLIN)
+    implementation(Dependency.Android.CORE_KTX)
+    implementation(Dependency.Android.ANDROIDX_APPCOMPAT)
+    implementation(Dependency.Android.ANDROID_MATERIAL)
+    implementation(Dependency.Android.CONSTRAINT_LAYOUT)
+    implementation(Dependency.Compose.COMPOSE_ACTIVITY)
+    implementation(Dependency.Compose.COMPOSE_MATERIAL)
+    implementation(Dependency.Compose.COMPOSE_ANIMATION)
+    implementation(Dependency.Compose.COMPOSE_UI_TOOL)
+    implementation(Dependency.Compose.COMPOSE_VIEWMODEL)
+    implementation(Dependency.Compose.COMPOSE_UI_TEST)
+    implementation(Dependency.Test.JUNIT)
+    androidTestImplementation(Dependency.Test.ANDROIDX_JUNIT)
+    androidTestImplementation(Dependency.Test.ANDROIDX_ESPRESSO)
 }
