@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -52,6 +54,8 @@ dependencies {
     implementation(Dependency.Compose.COMPOSE_ANIMATION)
     implementation(Dependency.Compose.COMPOSE_UI_TOOL)
     implementation(Dependency.Compose.COMPOSE_VIEWMODEL)
+    kapt(Dependency.Hilt.HILT_COMPILER)
+    implementation(Dependency.Hilt.HILT_ANDROID)
     implementation(Dependency.Test.JUNIT)
     androidTestImplementation(Dependency.Test.ANDROIDX_JUNIT)
     androidTestImplementation(Dependency.Test.ANDROIDX_ESPRESSO)

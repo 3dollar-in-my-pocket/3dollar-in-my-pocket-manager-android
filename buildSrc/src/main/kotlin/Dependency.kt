@@ -1,6 +1,8 @@
 object Dependency {
     object Kotlin {
         const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
+        const val GRADLE = "com.android.tools.build:gradle:${Versions.GRADLE}"
+        const val KOTLIN_GRADLE = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     }
 
     object Android {
@@ -19,8 +21,14 @@ object Dependency {
         const val COMPOSE_VIEWMODEL = "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.COMPOSE_LIFECYCLE_VIEWMODEL}"
     }
 
+    object Hilt {
+        const val HILT_PLUGIN = "com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}"
+        const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
+        const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
+    }
+
     object Test {
-        const val JUNIT = "junit:junit:"
+        const val JUNIT = "junit:junit:${Versions.JUNIT}"
         const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_JUNIT}"
         const val ANDROIDX_ESPRESSO = "androidx.test.espresso:espresso-core:${Versions.ANDROIDX_ESPRESSO}"
     }
