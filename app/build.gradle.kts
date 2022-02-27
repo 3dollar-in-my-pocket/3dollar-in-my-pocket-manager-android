@@ -1,3 +1,5 @@
+import Dependency.common
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -43,20 +45,5 @@ android {
 }
 
 dependencies {
-    implementation(Dependency.Kotlin.KOTLIN)
-    implementation(Dependency.Android.CORE_KTX)
-    implementation(Dependency.Android.ANDROIDX_APPCOMPAT)
-    implementation(Dependency.Android.ANDROID_MATERIAL)
-    implementation(Dependency.Android.CONSTRAINT_LAYOUT)
-    implementation(Dependency.Compose.COMPOSE_ACTIVITY)
-    implementation(Dependency.Compose.COMPOSE_FOUNDATION)
-    implementation(Dependency.Compose.COMPOSE_MATERIAL)
-    implementation(Dependency.Compose.COMPOSE_ANIMATION)
-    implementation(Dependency.Compose.COMPOSE_UI_TOOL)
-    implementation(Dependency.Compose.COMPOSE_VIEWMODEL)
-    kapt(Dependency.Hilt.HILT_COMPILER)
-    implementation(Dependency.Hilt.HILT_ANDROID)
-    implementation(Dependency.Test.JUNIT)
-    androidTestImplementation(Dependency.Test.ANDROIDX_JUNIT)
-    androidTestImplementation(Dependency.Test.ANDROIDX_ESPRESSO)
+    common()
 }

@@ -1,3 +1,5 @@
+import org.gradle.api.artifacts.dsl.DependencyHandler
+
 object Dependency {
     object Kotlin {
         const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
@@ -31,5 +33,44 @@ object Dependency {
         const val JUNIT = "junit:junit:${Versions.JUNIT}"
         const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_JUNIT}"
         const val ANDROIDX_ESPRESSO = "androidx.test.espresso:espresso-core:${Versions.ANDROIDX_ESPRESSO}"
+    }
+
+    fun DependencyHandler.common() {
+        implementation(Kotlin.KOTLIN)
+        implementation(Android.CORE_KTX)
+        implementation(Android.ANDROIDX_APPCOMPAT)
+        implementation(Android.ANDROID_MATERIAL)
+        implementation(Android.CONSTRAINT_LAYOUT)
+        implementation(Compose.COMPOSE_ACTIVITY)
+        implementation(Compose.COMPOSE_FOUNDATION)
+        implementation(Compose.COMPOSE_MATERIAL)
+        implementation(Compose.COMPOSE_ANIMATION)
+        implementation(Compose.COMPOSE_UI_TOOL)
+        implementation(Compose.COMPOSE_VIEWMODEL)
+        kapt(Hilt.HILT_COMPILER)
+        implementation(Hilt.HILT_ANDROID)
+        implementation(Test.JUNIT)
+        androidTestImplementation(Test.ANDROIDX_JUNIT)
+        androidTestImplementation(Test.ANDROIDX_ESPRESSO)
+    }
+
+    fun DependencyHandler.implementation(dependency: Any) {
+        add("implementation", dependency)
+    }
+
+    fun DependencyHandler.kapt(dependency: String) {
+        add("kapt", dependency)
+    }
+
+    fun DependencyHandler.testImplementation(dependency: String) {
+        add("testImplementation", dependency)
+    }
+
+    fun DependencyHandler.androidTestImplementation(dependency: String) {
+        add("androidTestImplementation", dependency)
+    }
+
+    fun DependencyHandler.api(dependency: String) {
+        add("api", dependency)
     }
 }
