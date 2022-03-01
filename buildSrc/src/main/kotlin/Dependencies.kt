@@ -15,6 +15,15 @@ object Dependencies {
         const val CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
     }
 
+    object Firebase {
+        const val GOOGLE_SERVICE = "com.google.gms:google-services:${Versions.GOOGLE_SERVICE}"
+        const val FIREBASE_BOM = "com.google.firebase:firebase-bom:${Versions.FIREBASE_BOM}"
+        const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics"
+        const val FIREBASE_ANALYTICS_KTX = "com.google.firebase:firebase-analytics-ktx"
+        const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}"
+        const val FIREBASE_CRASHLYTICS_KTX = "com.google.firebase:firebase-crashlytics-ktx"
+    }
+
     object Compose {
         const val COMPOSE_ACTIVITY = "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
         const val COMPOSE_FOUNDATION = "androidx.compose.foundation:foundation:${Versions.COMPOSE_MATERIAL}"
@@ -38,6 +47,10 @@ object Dependencies {
 
     fun DependencyHandler.common() {
         coreLibraryDesugaring(Android.DESUGAR_LIBS)
+        implementation(platform(Firebase.FIREBASE_BOM))
+        implementation(Firebase.FIREBASE_ANALYTICS)
+        implementation(Firebase.FIREBASE_ANALYTICS_KTX)
+        implementation(Firebase.FIREBASE_CRASHLYTICS_KTX)
         implementation(Kotlin.KOTLIN)
         implementation(Android.CORE_KTX)
         implementation(Android.ANDROIDX_APPCOMPAT)
