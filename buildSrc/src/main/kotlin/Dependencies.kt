@@ -10,6 +10,7 @@ object Dependencies {
     object Android {
         const val DESUGAR_LIBS = "com.android.tools:desugar_jdk_libs:${Versions.DESUGAR_LIBS}"
         const val CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
+        const val DATASTORE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
         const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.ANDROIDX_APPCOMPAT}"
         const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
         const val CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
@@ -40,6 +41,16 @@ object Dependencies {
         const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
     }
 
+    object Network {
+        const val RETROFIT = "com.squareup.retrofit2:retrofit:${Versions.RETROFIT}"
+        const val OKHTTP = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
+        const val OKHTTP_LOGGER = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP}"
+        const val MOSHI = "com.squareup.moshi:moshi:${Versions.MOSHI}"
+        const val MOSHI_KOTLIN = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
+        const val MOSHI_CONVERTER = "com.squareup.retrofit2:converter-moshi:${Versions.MOSHI_CONVERTER}"
+        const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
+    }
+
     object Test {
         const val JUNIT = "junit:junit:${Versions.JUNIT}"
         const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_JUNIT}"
@@ -54,6 +65,7 @@ object Dependencies {
         implementation(Firebase.FIREBASE_CRASHLYTICS_KTX)
         implementation(Kotlin.KOTLIN)
         implementation(Android.CORE_KTX)
+        implementation(Android.DATASTORE)
         implementation(Android.ANDROIDX_APPCOMPAT)
         implementation(Android.ANDROID_MATERIAL)
         implementation(Android.CONSTRAINT_LAYOUT)
@@ -68,6 +80,13 @@ object Dependencies {
         implementation(Test.JUNIT)
         androidTestImplementation(Test.ANDROIDX_JUNIT)
         androidTestImplementation(Test.ANDROIDX_ESPRESSO)
+        implementation(Network.RETROFIT)
+        implementation(Network.OKHTTP)
+        implementation(Network.OKHTTP_LOGGER)
+        implementation(Network.MOSHI)
+        implementation(Network.MOSHI_KOTLIN)
+        implementation(Network.MOSHI_CONVERTER)
+        kapt(Network.MOSHI_CODEGEN)
     }
 
     fun DependencyHandler.implementation(dependency: Any) {

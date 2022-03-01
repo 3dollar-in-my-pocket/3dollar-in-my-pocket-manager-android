@@ -2,6 +2,7 @@ object Versions {
     const val KOTLIN = "1.6.10"
     const val GRADLE = "7.0.4"
     const val DESUGAR_LIBS = "1.1.5"
+    const val DATASTORE = "1.0.0"
 
     const val HILT = "2.28-alpha"
     const val CORE_KTX = "1.7.0"
@@ -21,4 +22,9 @@ object Versions {
     const val FIREBASE_CRASHLYTICS = "2.8.1"
     const val FIREBASE_BOM = "29.1.0"
     const val FIREBASE_DISTRIBUTION = "3.0.0"
+
+    const val RETROFIT = "2.9.0"
+    const val MOSHI = "1.12.0"
+    const val MOSHI_CONVERTER = "2.4.0"
+    const val OKHTTP = "4.9.1"
 }
