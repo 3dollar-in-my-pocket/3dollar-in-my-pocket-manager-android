@@ -8,7 +8,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1 # This is optional on linux and macOS
+      - uses: actions/setup-node@v2 # This is optional on linux and macOS
+        with:
+          node-version: '14'
       - uses: pocket-apps/action-setup-firebase@v2
         with:
           firebase-token: ${{secrets.FIREBASE_TOKEN}}
