@@ -5,8 +5,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1 # This is optional on linux and macOS
+      - uses: pocket-apps/action-setup-firebase@v2
+        with:
+          firebase-token: ${{secrets.FIREBASE_TOKEN}}
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
@@ -35,12 +40,7 @@ jobs:
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
-          groups: android
-          file: app/build/outputs/apk/debug/app-debug.apk
+        run: firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --token ${{secrets.FIREBASE_TOKEN}} --app ${{secrets.FIREBASE_APP_ID}} --groups "android" --release-notes-file "./release_note.txt"
 
       - name: Deploy APK to Slack
         run: curl https://slack.com/api/files.upload -F token=${{secrets.SLACK_TOKEN}} -F channels=release -F file=@app/build/outputs/apk/debug/app-debug.apk
@@ -50,8 +50,7 @@ jobs:
         with:
           status: ${{ job.status }}
           mention: 'U01F9CKNE8K'
-          text: "APK deploy Success (version : ${{ steps.version.outputs.VERSION_NAME }})"
-          releaseNote: ${{ steps.release_note.outputs.RELEASE_NOTE }}
+          text: "APK deploy Success!:smile:\nversion : ${{ steps.version.outputs.VERSION_NAME }}\nrelease note : ${{ steps.release_note.outputs.RELEASE_NOTE }}"
           fields: repo, commit, ref, took
           channel: release
         env:
