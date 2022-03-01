@@ -16,4 +16,9 @@ object Versions {
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"
     const val ANDROIDX_ESPRESSO = "3.4.0"
+
+    const val GOOGLE_SERVICE = "4.3.10"
+    const val FIREBASE_CRASHLYTICS = "2.8.1"
+    const val FIREBASE_BOM = "29.1.0"
+    const val FIREBASE_DISTRIBUTION = "3.0.0"
 }

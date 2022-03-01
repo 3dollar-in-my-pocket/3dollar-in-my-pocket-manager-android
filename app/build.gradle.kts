@@ -5,6 +5,9 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    id("com.google.firebase.appdistribution")
 }
 
 android {
@@ -15,10 +18,9 @@ android {
         minSdk = 23
         targetSdk = 31
         versionCode = 1
-        versionName = "0.0.0"
+        versionName = "0.0.0-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        base.archivesBaseName = "3dollar_${versionName}"
     }
     buildFeatures {
         compose = true
