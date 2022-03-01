@@ -20,7 +20,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build debug
-        run: ./gradlew assembleDevDebug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -30,6 +30,9 @@ jobs:
           groups: android
           file: app/build/outputs/apk/debug/app-debug.apk
 
+      - name: Deploy APK to Slack
+        run: curl https://slack.com/api/files.upload -F token=${{secrets.SLACK_TOKEN}} -F channels=release -F file=@app/build/outputs/apk/debug/app-debug.apk
+
       - name: Action-slack
         uses: 8398a7/action-slack@v3.8.0
         with:
@@ -37,5 +40,6 @@ jobs:
           mention: 'U01F9CKNE8K'
           text: "APK deploy Success (version : ${{ steps.version.outputs.VERSION_NAME }})"
           fields: repo, commit, ref, took
+          channel: release
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
