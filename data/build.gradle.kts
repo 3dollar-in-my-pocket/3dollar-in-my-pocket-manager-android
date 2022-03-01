@@ -1,7 +1,7 @@
 import Dependencies.common
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("kotlin-android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
@@ -11,14 +11,8 @@ android {
     compileSdk = 31
 
     defaultConfig {
-        applicationId = "app.threedollars.manager"
         minSdk = 23
         targetSdk = 31
-        versionCode = 1
-        versionName = "0.0.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        base.archivesBaseName = "3dollar_${versionName}"
     }
     buildFeatures {
         compose = true
@@ -46,6 +40,4 @@ android {
 
 dependencies {
     common()
-    implementation(project(":common"))
-    implementation(project(":data"))
 }
