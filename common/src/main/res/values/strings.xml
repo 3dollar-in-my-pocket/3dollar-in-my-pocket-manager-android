@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">common</string>
+    <string name="app_name">3천원 사장님앱</string>
+    <string name="kakao_login">카카오 계정으로 로그인</string>
+    <string name="naver_login">네이버 계정으로 로그인</string>
+    <string name="join">회원가입</string>
+    <string name="logout">로그아웃</string>
+    <string name="join_intro_message">사장님, 가게 정보를\n입력해주세요!</string>
+    <string name="manager_name">사장님 성함</string>
+    <string name="manager_name_hint">사장님 성함을 입력해주세요.</string>
+    <string name="store_name">가게이름</string>
+    <string name="store_name_hint">가게이름을 입력해 주세요.</string>
+    <string name="store_name_max">최대 20자</string>
+    <string name="store_number">사업자 등록 번호</string>
+    <string name="store_number_hint">사업자 등록 번호를 입력해 주세요.</string>
+    <string name="input_without_dash">\"-\"를 제외한 숫자만 입력</string>
+    <string name="phone_number">전화번호</string>
+    <string name="phone_number_hint">전화번호를 입력해 주세요.</string>
+    <string name="select_category">카테고리 선택</string>
+    <string name="max_three">최대 3개</string>
+    <string name="store_photo">가게 인증 사진</string>
+    <string name="store_photo_desc">사진은 사장님 인증 용도로 사용됩니다.</string>
+    <string name="upload_image">이미지 업로드</string>
 </resources>
