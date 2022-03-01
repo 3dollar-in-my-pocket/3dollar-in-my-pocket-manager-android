@@ -16,13 +16,17 @@ jobs:
         run: echo "::set-output name=VERSION_NAME::$(grep -i "versionName " app/build.gradle.kts | awk '{print $3}')"
         id: version
 
+      - name: Read release note
+        id: release_note
+        run: echo "::set-output name=RELEASE_NOTE::$(cat ./release_note.txt)"
+
       - name: Create google-service.json
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
         id: google-service
 
       - name: Create local.properties
         run: echo '${{ secrets.LOCAL_PROPERTIRES }}' > ./local.properties
-        id: properties
+        id: propertie
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -47,6 +51,7 @@ jobs:
           status: ${{ job.status }}
           mention: 'U01F9CKNE8K'
           text: "APK deploy Success (version : ${{ steps.version.outputs.VERSION_NAME }})"
+          releaseNote: ${{ steps.release_note.outputs.RELEASE_NOTE }}
           fields: repo, commit, ref, took
           channel: release
         env:
