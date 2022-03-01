@@ -16,6 +16,14 @@ jobs:
         run: echo "::set-output name=VERSION_NAME::$(grep -i "versionName " app/build.gradle.kts | awk '{print $3}')"
         id: version
 
+      - name: Create google-service.json
+        run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
+        id: google-service
+
+      - name: Create local.properties
+        run: echo '${{ secrets.LOCAL_PROPERTIRES }}' > ./local.properties
+        id: properties
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
