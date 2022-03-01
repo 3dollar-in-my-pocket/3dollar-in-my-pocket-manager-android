@@ -20,7 +20,7 @@ jobs:
           java-version: 11
 
       - name: Retrieve version
-        run: echo "::set-output name=VERSION_NAME::$(grep -i "versionName " app/build.gradle.kts | awk '{print $3}')"
+        run: echo "::set-output name=VERSION_NAME::$(grep -i "versionName " app/build.gradle.kts | awk '{print $3}')" | tr -d '"'
         id: version
 
       - name: Read release note
@@ -45,15 +45,19 @@ jobs:
         run: firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk --token ${{secrets.FIREBASE_TOKEN}} --app ${{secrets.FIREBASE_APP_ID}} --groups "android" --release-notes-file "./release_note.txt"
 
       - name: Deploy APK to Slack
-        run: curl https://slack.com/api/files.upload -F token=${{secrets.SLACK_TOKEN}} -F channels=release -F file=@app/build/outputs/apk/debug/app-debug.apk
+        uses: MeilCli/slack-upload-file@v1
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channels: 'C01EUAT55CJ'
+          file_path: 'app/build/outputs/apk/debug/app-debug.apk'
+          file_name: 'app-debug.apk'
+          file_type: 'apk'
 
       - name: Action-slack
         uses: 8398a7/action-slack@v3.8.0
         with:
           status: ${{ job.status }}
-          mention: 'U01F9CKNE8K'
-          text: "APK deploy Success!:smile:\nversion : ${{ steps.version.outputs.VERSION_NAME }}\nrelease note : ${{ steps.release_note.outputs.RELEASE_NOTE }}"
-          fields: repo, commit, ref, took
-          channel: release
+          text: "Firebase Distribution에 새로운 APK가 올라왔습니다! :smile:\nversion : ${{ steps.version.outputs.VERSION_NAME }}\nrelease note : ${{ steps.release_note.outputs.RELEASE_NOTE }}"
+          fields: ref, took
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
