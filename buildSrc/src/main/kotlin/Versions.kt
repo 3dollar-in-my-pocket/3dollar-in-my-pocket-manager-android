@@ -20,4 +20,5 @@ object Versions {
     const val GOOGLE_SERVICE = "4.3.10"
     const val FIREBASE_CRASHLYTICS = "2.8.1"
     const val FIREBASE_BOM = "29.1.0"
+    const val FIREBASE_DISTRIBUTION = "3.0.0"
 }

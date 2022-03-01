@@ -22,6 +22,7 @@ object Dependencies {
         const val FIREBASE_ANALYTICS_KTX = "com.google.firebase:firebase-analytics-ktx"
         const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}"
         const val FIREBASE_CRASHLYTICS_KTX = "com.google.firebase:firebase-crashlytics-ktx"
+        const val FIREBASE_DISTRIBUTION = "com.google.firebase:firebase-appdistribution-gradle:${Versions.FIREBASE_DISTRIBUTION}"
     }
 
     object Compose {

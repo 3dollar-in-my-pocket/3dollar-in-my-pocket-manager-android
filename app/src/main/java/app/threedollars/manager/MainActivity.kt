@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             Surface(color = MaterialTheme.colors.background) {
                 Greeting("가슴속3천원 사장님앱!")
