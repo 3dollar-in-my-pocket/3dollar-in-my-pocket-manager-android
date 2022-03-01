@@ -21,7 +21,6 @@ android {
         versionName = "0.0.0-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        base.archivesBaseName = "3dollar_${versionName}"
     }
     buildFeatures {
         compose = true
