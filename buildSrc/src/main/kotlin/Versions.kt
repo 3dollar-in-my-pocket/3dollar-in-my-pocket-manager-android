@@ -1,6 +1,7 @@
 object Versions {
-    const val KOTLIN = "1.5.31"
+    const val KOTLIN = "1.6.10"
     const val GRADLE = "7.0.4"
+    const val DESUGAR_LIBS = "1.1.5"
 
     const val HILT = "2.28-alpha"
     const val CORE_KTX = "1.7.0"

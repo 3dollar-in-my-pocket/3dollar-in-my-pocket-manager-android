@@ -1,6 +1,6 @@
 import org.gradle.api.artifacts.dsl.DependencyHandler
 
-object Dependency {
+object Dependencies {
     object Kotlin {
         const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
         const val GRADLE = "com.android.tools.build:gradle:${Versions.GRADLE}"
@@ -8,6 +8,7 @@ object Dependency {
     }
 
     object Android {
+        const val DESUGAR_LIBS = "com.android.tools:desugar_jdk_libs:${Versions.DESUGAR_LIBS}"
         const val CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
         const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.ANDROIDX_APPCOMPAT}"
         const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
@@ -36,6 +37,7 @@ object Dependency {
     }
 
     fun DependencyHandler.common() {
+        coreLibraryDesugaring(Android.DESUGAR_LIBS)
         implementation(Kotlin.KOTLIN)
         implementation(Android.CORE_KTX)
         implementation(Android.ANDROIDX_APPCOMPAT)
@@ -72,5 +74,9 @@ object Dependency {
 
     fun DependencyHandler.api(dependency: String) {
         add("api", dependency)
+    }
+
+    fun DependencyHandler.coreLibraryDesugaring(dependency: String) {
+        add("coreLibraryDesugaring", dependency)
     }
 }
