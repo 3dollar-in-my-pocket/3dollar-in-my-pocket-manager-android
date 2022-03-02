@@ -4,7 +4,7 @@ object Versions {
     const val DESUGAR_LIBS = "1.1.5"
     const val DATASTORE = "1.0.0"
 
-    const val HILT = "2.28-alpha"
+    const val HILT = "2.41"
     const val CORE_KTX = "1.7.0"
     const val ANDROIDX_APPCOMPAT = "1.4.1"
     const val ANDROID_MATERIAL = "1.5.0"
@@ -24,7 +24,7 @@ object Versions {
     const val FIREBASE_DISTRIBUTION = "3.0.0"
 
     const val RETROFIT = "2.9.0"
-    const val MOSHI = "1.12.0"
+    const val MOSHI = "1.13.0"
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
 }
