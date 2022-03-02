@@ -1,6 +1,7 @@
 package app.threedollars.data.user.response
 
 
+import app.threedollars.data.BaseResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -20,4 +21,4 @@ data class BossAccountInfoResponse(
     val socialType: String? = null,
     @Json(name = "updatedAt")
     val updatedAt: String? = null
-)
+) : BaseResponse<BossAccountInfoResponse>()
