@@ -3,9 +3,14 @@ package app.threedollars.common
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
 open class BaseViewModel : ViewModel() {
+
+    val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+
+    }
 
     private val _isLoading: MutableEventFlow<Boolean> = MutableEventFlow()
     val isLoading: EventFlow<Boolean> = _isLoading

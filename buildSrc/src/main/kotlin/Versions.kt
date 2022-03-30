@@ -3,6 +3,7 @@ object Versions {
     const val GRADLE = "7.0.4"
     const val DESUGAR_LIBS = "1.1.5"
     const val DATASTORE = "1.0.0"
+    const val KAKAO_LOGIN = "2.3.0"
 
     const val HILT = "2.41"
     const val CORE_KTX = "1.7.0"

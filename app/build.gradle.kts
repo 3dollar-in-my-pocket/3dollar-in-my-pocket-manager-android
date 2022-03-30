@@ -1,4 +1,5 @@
 import Dependencies.common
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id("com.android.application")
@@ -11,6 +12,7 @@ plugins {
 }
 
 android {
+
     compileSdk = 31
 
     defaultConfig {
@@ -33,6 +35,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
+            manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_release"] as String
         }
         getByName("debug") {
             isMinifyEnabled = false
@@ -46,6 +50,8 @@ android {
                 releaseNotesFile = "./release_note.txt"
                 testers = "android"
             }
+            buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
+            manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_dev"] as String
         }
     }
     compileOptions {

@@ -7,6 +7,10 @@ object Dependencies {
         const val KOTLIN_GRADLE = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     }
 
+    object Login {
+        const val KAKAO_LOGIN = "com.kakao.sdk:v2-user:${Versions.KAKAO_LOGIN}"
+    }
+
     object Android {
         const val DESUGAR_LIBS = "com.android.tools:desugar_jdk_libs:${Versions.DESUGAR_LIBS}"
         const val CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
@@ -89,6 +93,7 @@ object Dependencies {
         implementation(Network.MOSHI_KOTLIN)
         implementation(Network.MOSHI_CONVERTER)
         kapt(Network.MOSHI_CODEGEN)
+        implementation(Login.KAKAO_LOGIN)
     }
 
     fun DependencyHandler.implementation(dependency: Any) {
