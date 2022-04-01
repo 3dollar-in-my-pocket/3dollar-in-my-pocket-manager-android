@@ -10,6 +10,7 @@ object Dependencies {
     object Android {
         const val DESUGAR_LIBS = "com.android.tools:desugar_jdk_libs:${Versions.DESUGAR_LIBS}"
         const val CORE_KTX = "androidx.core:core-ktx:${Versions.CORE_KTX}"
+        const val LIFECYCLE_KTX = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.LIFECYCLE_KTX}"
         const val DATASTORE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
         const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.ANDROIDX_APPCOMPAT}"
         const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
@@ -65,6 +66,7 @@ object Dependencies {
         implementation(Firebase.FIREBASE_CRASHLYTICS_KTX)
         implementation(Kotlin.KOTLIN)
         implementation(Android.CORE_KTX)
+        implementation(Android.LIFECYCLE_KTX)
         implementation(Android.DATASTORE)
         implementation(Android.ANDROIDX_APPCOMPAT)
         implementation(Android.ANDROID_MATERIAL)
