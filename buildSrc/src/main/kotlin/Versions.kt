@@ -29,4 +29,6 @@ object Versions {
     const val MOSHI = "1.13.0"
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
+
+    const val NAVER_MAP = "3.15.0"
 }
