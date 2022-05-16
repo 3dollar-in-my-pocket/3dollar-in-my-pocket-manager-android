@@ -47,6 +47,8 @@ object Dependencies {
             "androidx.compose.ui:ui-tooling-preview:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_VIEWMODEL =
             "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.COMPOSE_LIFECYCLE_VIEWMODEL}"
+        const val COMPOSE_NAVIGATION =
+            "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
     }
 
     object Hilt {
@@ -92,6 +94,7 @@ object Dependencies {
         implementation(Compose.COMPOSE_UI_TOOL)
         implementation(Compose.COMPOSE_UI_TOOL_PREVIEW)
         implementation(Compose.COMPOSE_VIEWMODEL)
+        implementation(Compose.COMPOSE_NAVIGATION)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
         implementation(Test.JUNIT)

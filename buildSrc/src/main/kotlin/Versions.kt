@@ -16,6 +16,7 @@ object Versions {
     const val COMPOSE_ACTIVITY = "1.3.1"
     const val COMPOSE_MATERIAL = "1.2.0-alpha04"
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "1.0.0-alpha07"
+    const val COMPOSE_NAVIGATION = "2.4.2"
 
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"
