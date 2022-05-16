@@ -28,7 +28,7 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
         }
     }
 
-    private fun observeData() {
+    open fun observeData() {
         viewLifecycleOwner.repeatOnCreated {
             launch {
                 viewModel.toastMsg.collect {

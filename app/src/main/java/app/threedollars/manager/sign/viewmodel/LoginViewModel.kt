@@ -1,4 +1,4 @@
-package app.threedollars.manager.sign.view
+package app.threedollars.manager.sign.viewmodel
 
 import app.threedollars.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

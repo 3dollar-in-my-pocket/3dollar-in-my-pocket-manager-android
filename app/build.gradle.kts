@@ -41,7 +41,7 @@ android {
         getByName("debug") {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
-            resValue("string", "app_name", "@string/app_name_debug")
+            // resValue("string", "app_name", "@string/app_name_debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
