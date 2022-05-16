@@ -24,6 +24,7 @@ fun HomeScreen() {
     val mapView = remember {
         MapView(context).apply {
             getMapAsync { naverMap ->
+                naverMap.uiSettings.isZoomControlEnabled = false
             }
         }
     }
