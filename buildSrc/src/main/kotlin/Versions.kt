@@ -7,6 +7,7 @@ object Versions {
 
     const val HILT = "2.41"
     const val CORE_KTX = "1.7.0"
+    const val FRAGMENT_KTX = "1.3.0"
     const val LIFECYCLE_KTX = "2.4.1"
     const val ANDROIDX_APPCOMPAT = "1.4.1"
     const val ANDROID_MATERIAL = "1.5.0"
