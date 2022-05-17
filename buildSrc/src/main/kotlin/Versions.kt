@@ -3,9 +3,12 @@ object Versions {
     const val GRADLE = "7.0.4"
     const val DESUGAR_LIBS = "1.1.5"
     const val DATASTORE = "1.0.0"
+    const val KAKAO_LOGIN = "2.3.0"
 
     const val HILT = "2.41"
     const val CORE_KTX = "1.7.0"
+    const val FRAGMENT_KTX = "1.3.0"
+    const val LIFECYCLE_KTX = "2.4.1"
     const val ANDROIDX_APPCOMPAT = "1.4.1"
     const val ANDROID_MATERIAL = "1.5.0"
     const val CONSTRAINT_LAYOUT = "2.1.3"
@@ -13,6 +16,7 @@ object Versions {
     const val COMPOSE_ACTIVITY = "1.3.1"
     const val COMPOSE_MATERIAL = "1.2.0-alpha04"
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "1.0.0-alpha07"
+    const val COMPOSE_NAVIGATION = "2.4.2"
 
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"
@@ -27,4 +31,6 @@ object Versions {
     const val MOSHI = "1.13.0"
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
+
+    const val NAVER_MAP = "3.15.0"
 }

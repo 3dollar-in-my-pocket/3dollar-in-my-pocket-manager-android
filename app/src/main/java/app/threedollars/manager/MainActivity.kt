@@ -3,15 +3,16 @@ package app.threedollars.manager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import app.threedollars.manager.screen.*
+import androidx.compose.ui.tooling.preview.Preview
+import app.threedollars.manager.sign.ui.LoginButtons
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,33 +21,46 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            LoginButtons()
+//            MainScreenView()
+//            SocialLoginScreen()
         }
     }
 }
 
+@Preview
 @Composable
-fun LoginButtons() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+fun MainScreenView() {
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = { BottomNavigation(navController = navController) }
     ) {
-        Row(Modifier.padding(bottom = 30.dp)) {
-            Text(
-                text = "우리 앱의 대표 그래픽",
-                style = TextStyle(color = Color.Black)
-            )
+        NavigationGraph(navController = navController)
+    }
+}
+
+@Composable
+fun SocialLoginScreen() {
+    Column {
+        LoginButtons()
+    }
+}
+
+@Composable
+fun NavigationGraph(navController: NavHostController) {
+    NavHost(navController, startDestination = BottomNavItem.Home.screenRoute) {
+        composable(BottomNavItem.Home.screenRoute) {
+            HomeScreen()
         }
-        Row() {
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "카카오 계정으로 로그인")
-            }
+        composable(BottomNavItem.Category.screenRoute) {
+            CategoryScreen()
         }
-        Row() {
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "네이버 계정으로 로그인")
-            }
+        composable(BottomNavItem.AddStore.screenRoute) {
+            AddStoreScreen()
+        }
+        composable(BottomNavItem.MyPage.screenRoute) {
+            MyPageScreen()
         }
     }
 }
+
+

@@ -1,4 +1,5 @@
 import Dependencies.common
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id("com.android.application")
@@ -11,6 +12,7 @@ plugins {
 }
 
 android {
+
     compileSdk = 31
 
     defaultConfig {
@@ -28,13 +30,19 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            applicationIdSuffix = ""
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
+            manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_release"] as String
+            manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
         getByName("debug") {
             isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            // resValue("string", "app_name", "@string/app_name_debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -43,6 +51,9 @@ android {
                 releaseNotesFile = "./release_note.txt"
                 testers = "android"
             }
+            buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
+            manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_dev"] as String
+            manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
     }
     compileOptions {
