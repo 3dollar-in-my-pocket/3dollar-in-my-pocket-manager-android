@@ -17,6 +17,7 @@ object Versions {
     const val COMPOSE_MATERIAL = "1.2.0-alpha04"
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "1.0.0-alpha07"
     const val COMPOSE_NAVIGATION = "2.4.2"
+    const val COMPOSE_CONSTRAINT_LAYOUT = "1.0.0"
 
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"
@@ -33,4 +34,5 @@ object Versions {
     const val OKHTTP = "4.9.1"
 
     const val NAVER_MAP = "3.15.0"
+    const val GOOGLE_LOCATION_SERVICES = "19.0.1"
 }

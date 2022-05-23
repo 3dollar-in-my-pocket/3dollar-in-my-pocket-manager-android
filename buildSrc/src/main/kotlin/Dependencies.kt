@@ -13,6 +13,8 @@ object Dependencies {
 
     object Naver {
         const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
+        const val GOOGLE_LOCATION_SERVICES =
+            "com.google.android.gms:play-services-location:${Versions.GOOGLE_LOCATION_SERVICES}"
     }
 
     object Android {
@@ -23,8 +25,10 @@ object Dependencies {
             "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.LIFECYCLE_KTX}"
         const val DATASTORE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
         const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.ANDROIDX_APPCOMPAT}"
-        const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
-        const val CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
+        const val ANDROID_MATERIAL =
+            "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
+        const val CONSTRAINT_LAYOUT =
+            "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
     }
 
     object Firebase {
@@ -32,16 +36,22 @@ object Dependencies {
         const val FIREBASE_BOM = "com.google.firebase:firebase-bom:${Versions.FIREBASE_BOM}"
         const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics"
         const val FIREBASE_ANALYTICS_KTX = "com.google.firebase:firebase-analytics-ktx"
-        const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}"
+        const val FIREBASE_CRASHLYTICS =
+            "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}"
         const val FIREBASE_CRASHLYTICS_KTX = "com.google.firebase:firebase-crashlytics-ktx"
-        const val FIREBASE_DISTRIBUTION = "com.google.firebase:firebase-appdistribution-gradle:${Versions.FIREBASE_DISTRIBUTION}"
+        const val FIREBASE_DISTRIBUTION =
+            "com.google.firebase:firebase-appdistribution-gradle:${Versions.FIREBASE_DISTRIBUTION}"
     }
 
     object Compose {
-        const val COMPOSE_ACTIVITY = "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
-        const val COMPOSE_FOUNDATION = "androidx.compose.foundation:foundation:${Versions.COMPOSE_MATERIAL}"
-        const val COMPOSE_MATERIAL = "androidx.compose.material:material:${Versions.COMPOSE_MATERIAL}"
-        const val COMPOSE_ANIMATION = "androidx.compose.animation:animation:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_ACTIVITY =
+            "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
+        const val COMPOSE_FOUNDATION =
+            "androidx.compose.foundation:foundation:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_MATERIAL =
+            "androidx.compose.material:material:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_ANIMATION =
+            "androidx.compose.animation:animation:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_UI_TOOL = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_UI_TOOL_PREVIEW =
             "androidx.compose.ui:ui-tooling-preview:${Versions.COMPOSE_MATERIAL}"
@@ -49,6 +59,8 @@ object Dependencies {
             "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.COMPOSE_LIFECYCLE_VIEWMODEL}"
         const val COMPOSE_NAVIGATION =
             "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
+        const val COMPOSE_CONSTRAINT_LAYOUT =
+            "androidx.constraintlayout:constraintlayout-compose:${Versions.COMPOSE_CONSTRAINT_LAYOUT}"
     }
 
     object Hilt {
@@ -63,14 +75,16 @@ object Dependencies {
         const val OKHTTP_LOGGER = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP}"
         const val MOSHI = "com.squareup.moshi:moshi:${Versions.MOSHI}"
         const val MOSHI_KOTLIN = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
-        const val MOSHI_CONVERTER = "com.squareup.retrofit2:converter-moshi:${Versions.MOSHI_CONVERTER}"
+        const val MOSHI_CONVERTER =
+            "com.squareup.retrofit2:converter-moshi:${Versions.MOSHI_CONVERTER}"
         const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
     }
 
     object Test {
         const val JUNIT = "junit:junit:${Versions.JUNIT}"
         const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_JUNIT}"
-        const val ANDROIDX_ESPRESSO = "androidx.test.espresso:espresso-core:${Versions.ANDROIDX_ESPRESSO}"
+        const val ANDROIDX_ESPRESSO =
+            "androidx.test.espresso:espresso-core:${Versions.ANDROIDX_ESPRESSO}"
     }
 
     fun DependencyHandler.common() {
@@ -95,6 +109,7 @@ object Dependencies {
         implementation(Compose.COMPOSE_UI_TOOL_PREVIEW)
         implementation(Compose.COMPOSE_VIEWMODEL)
         implementation(Compose.COMPOSE_NAVIGATION)
+        implementation(Compose.COMPOSE_CONSTRAINT_LAYOUT)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
         implementation(Test.JUNIT)
@@ -109,6 +124,7 @@ object Dependencies {
         kapt(Network.MOSHI_CODEGEN)
         implementation(Login.KAKAO_LOGIN)
         implementation(Naver.NAVER_MAP)
+        implementation(Naver.GOOGLE_LOCATION_SERVICES)
     }
 
     fun DependencyHandler.implementation(dependency: Any) {
