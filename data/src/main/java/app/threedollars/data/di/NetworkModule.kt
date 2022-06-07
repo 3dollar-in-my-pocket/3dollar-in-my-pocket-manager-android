@@ -1,6 +1,7 @@
 package app.threedollars.data.di
 
 import app.threedollars.data.BuildConfig
+import app.threedollars.data.store.StoreService
 import app.threedollars.data.user.UserService
 import dagger.Module
 import dagger.Provides
@@ -19,7 +20,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggerInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.BUILD_TYPE == "debug") HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        level =
+            if (BuildConfig.BUILD_TYPE == "debug") HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
     }
 
     @Provides
@@ -49,5 +51,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideUserService(retrofit: Retrofit): UserService = retrofit.create(UserService::class.java)
+    fun provideUserService(retrofit: Retrofit): UserService =
+        retrofit.create(UserService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStoreService(retrofit: Retrofit): StoreService =
+        retrofit.create(StoreService::class.java)
 }
