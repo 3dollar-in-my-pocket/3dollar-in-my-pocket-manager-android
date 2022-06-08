@@ -1,11 +1,13 @@
 package app.threedollars.data.store.response
 
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class Category(
-    @SerializedName("categoryId")
+    @Json(name = "categoryId")
     val categoryId: String?,
-    @SerializedName("name")
+    @Json(name = "name")
     val name: String?
 )

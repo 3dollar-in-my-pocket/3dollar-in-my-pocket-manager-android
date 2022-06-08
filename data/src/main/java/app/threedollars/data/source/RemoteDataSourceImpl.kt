@@ -1,0 +1,30 @@
+package app.threedollars.data.source
+
+import app.threedollars.data.BaseResponse
+import app.threedollars.data.store.StoreService
+import app.threedollars.data.store.request.StoresAroundRequest
+import app.threedollars.data.store.response.StoresAroundResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.Response
+import javax.inject.Inject
+
+class RemoteDataSourceImpl @Inject constructor(private val storeService: StoreService) :
+    RemoteDataSource {
+    override fun getStoresAround(
+        authorization: String,
+        storesAroundRequest: StoresAroundRequest
+    ): Flow<Response<BaseResponse<List<StoresAroundResponse>>>> = flow {
+        emit(
+            storeService.getStoresAround(
+                authorization = authorization,
+                categoryId = storesAroundRequest.categoryId,
+                distanceKm = storesAroundRequest.distanceKm,
+                mapLatitude = storesAroundRequest.mapLatitude,
+                mapLongitude = storesAroundRequest.mapLongitude,
+                orderType = storesAroundRequest.orderType,
+                size = storesAroundRequest.size
+            )
+        )
+    }
+}

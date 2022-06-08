@@ -24,10 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import app.threedollars.data.store.request.StoresAroundRequest
 import app.threedollars.manager.*
 import app.threedollars.manager.R
+import app.threedollars.manager.viewModels.HomeViewModel
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -144,7 +147,9 @@ fun CurrentLocationButton(modifier: Modifier) {
 
 // TODO: 테스트 필요 버그확률 높음
 @Composable
-fun AddressRoundTextView(modifier: Modifier) {
+fun AddressRoundTextView(
+    modifier: Modifier, viewModel: HomeViewModel = hiltViewModel()
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -160,6 +165,13 @@ fun AddressRoundTextView(modifier: Modifier) {
             locationResult?.addOnSuccessListener {
                 if (it != null) {
                     latLng.value = LatLng(it.latitude, it.longitude)
+                    viewModel.getStoresAround(
+                        "6f0832f8-2c60-4249-9e48-7c1a006749ef",
+                        storesAroundRequest = StoresAroundRequest(
+                            mapLongitude = it.longitude.toString(),
+                            mapLatitude = it.latitude.toString()
+                        )
+                    )
                 }
             }
         }

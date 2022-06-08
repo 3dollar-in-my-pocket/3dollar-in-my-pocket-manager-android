@@ -1,11 +1,13 @@
 package app.threedollars.data.store.response
 
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class OpenStatus(
-    @SerializedName("openStartDateTime")
-    val openStartDateTime: String?,
-    @SerializedName("status")
+    @Json(name = "openStartDateTime")
+    val openStartDateTime: Any?,
+    @Json(name = "status")
     val status: String?
 )

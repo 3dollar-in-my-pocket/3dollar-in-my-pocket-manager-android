@@ -9,7 +9,7 @@ data class StoresAroundRequest(
     @Json(name = "categoryId")
     val categoryId: String? = null,
     @Json(name = "distanceKm")
-    val distanceKm: Double? = null,
+    val distanceKm: Double? = 1.0,
     @Json(name = "mapLatitude")
     val mapLatitude: String,
     @Json(name = "mapLongitude")

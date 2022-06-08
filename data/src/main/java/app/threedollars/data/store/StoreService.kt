@@ -9,14 +9,14 @@ import retrofit2.http.Query
 
 interface StoreService {
 
-    @GET("/v1/boss/stores/around")
-    fun getStoresAround(
+    @GET("v1/boss/stores/around")
+    suspend fun getStoresAround(
         @Header("Authorization") authorization: String,
-        @Query("categoryId") categoryId: String? = null,
-        @Query("distanceKm") distanceKm: Double? = 1.0,
+        @Query("categoryId") categoryId: String?,
+        @Query("distanceKm") distanceKm: Double?,
         @Query("mapLatitude") mapLatitude: String,
         @Query("mapLongitude") mapLongitude: String,
-        @Query("orderType") orderType: String? = null,
-        @Query("size") size: Int? = null
-    ): Response<BaseResponse<StoresAroundResponse>>
+        @Query("orderType") orderType: String?,
+        @Query("size") size: Int?
+    ): Response<BaseResponse<List<StoresAroundResponse>>>
 }

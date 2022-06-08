@@ -45,6 +45,7 @@ object NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create())
+            .baseUrl("https://dev.threedollars.co.kr/boss/")
             .client(okHttpClient)
             .build()
     }
