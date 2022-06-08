@@ -1,8 +1,6 @@
 package app.threedollars.data.store.response
 
 
-import app.threedollars.data.BaseResponse
-import app.threedollars.data.user.response.BossAccountInfoResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -22,4 +20,4 @@ data class StoresAroundResponse(
     val socialType: String? = null,
     @Json(name = "updatedAt")
     val updatedAt: String? = null
-) : BaseResponse<StoresAroundResponse>()
+)

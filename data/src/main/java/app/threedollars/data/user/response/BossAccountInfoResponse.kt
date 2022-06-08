@@ -21,4 +21,4 @@ data class BossAccountInfoResponse(
     val socialType: String? = null,
     @Json(name = "updatedAt")
     val updatedAt: String? = null
-) : BaseResponse<BossAccountInfoResponse>()
+)
