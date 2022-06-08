@@ -6,6 +6,7 @@ object Versions {
     const val KAKAO_LOGIN = "2.3.0"
 
     const val HILT = "2.41"
+    const val HILT_COMPOSE = "1.0.0"
     const val CORE_KTX = "1.7.0"
     const val FRAGMENT_KTX = "1.3.0"
     const val LIFECYCLE_KTX = "2.4.1"

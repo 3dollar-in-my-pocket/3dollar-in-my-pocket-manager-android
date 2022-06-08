@@ -67,6 +67,7 @@ object Dependencies {
         const val HILT_PLUGIN = "com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}"
         const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
         const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
+        const val HILT_COMPOSE = "androidx.hilt:hilt-navigation-compose:${Versions.HILT_COMPOSE}"
     }
 
     object Network {
@@ -112,6 +113,7 @@ object Dependencies {
         implementation(Compose.COMPOSE_CONSTRAINT_LAYOUT)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
+        implementation(Hilt.HILT_COMPOSE)
         implementation(Test.JUNIT)
         androidTestImplementation(Test.ANDROIDX_JUNIT)
         androidTestImplementation(Test.ANDROIDX_ESPRESSO)
