@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,10 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +31,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import app.threedollars.common.ui.Black
+import app.threedollars.common.ui.Green400
+import app.threedollars.common.ui.Green500
+import app.threedollars.common.ui.PinkOpacity20
 import app.threedollars.data.store.request.StoresAroundRequest
 import app.threedollars.manager.*
 import app.threedollars.manager.R
@@ -107,7 +114,7 @@ fun HomeScreen() {
                     top.linkTo(parent.top, margin = 44.dp)
                 }
                 .clip(RoundedCornerShape(16.dp))
-                .background(colorResource(id = R.color.white))
+                .background(White)
         )
 
         CurrentLocationButton(Modifier.constrainAs(imageButton) {
@@ -126,7 +133,21 @@ fun HomeScreen() {
                     bottom.linkTo(parent.bottom)
                 }
                 .clip(RoundedCornerShape(16.dp))
-                .background(colorResource(id = R.color.white))
+                .background(White)
+        )
+        CenterMarker()
+    }
+}
+
+@Composable
+private fun CenterMarker() {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        drawCircle(
+            color = PinkOpacity20,
+            center = Offset(x = canvasWidth / 2, y = canvasHeight / 2),
+            radius = size.minDimension / 5
         )
     }
 }
@@ -204,7 +225,7 @@ fun SalesLayout(modifier: Modifier) {
     val sale = remember { mutableStateOf(false) }
     Column(
         modifier = modifier.background(
-            color = colorResource(id = if (sale.value) R.color.green500 else R.color.white)
+            color = if (sale.value) Green500 else White
         )
     ) {
         Row(modifier = Modifier.padding(start = 26.dp, top = 24.dp)) {
@@ -212,18 +233,18 @@ fun SalesLayout(modifier: Modifier) {
                 text = if (sale.value) "오늘은" else "지금 계신 위치에서 영업을 시작할까요?",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = colorResource(id = if (sale.value) R.color.white else R.color.black)
+                color = if (sale.value) White else Black
             )
             if (sale.value) {
                 Text(
                     modifier = Modifier
                         .padding(start = 6.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(colorResource(id = R.color.green400)),
+                        .background(Green400),
                     text = "5시간 24분 23초",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = colorResource(id = R.color.white)
+                    color = White
                 )
             }
         }
@@ -232,10 +253,10 @@ fun SalesLayout(modifier: Modifier) {
             text = if (sale.value) "동안 영업중이시네요! 오늘도 대박나세요!" else "영업을 시작하면 위치가 손님들에게 공개됩니다.",
             fontWeight = if (sale.value) FontWeight.Bold else FontWeight.Normal,
             fontSize = if (sale.value) 18.sp else 14.sp,
-            color = colorResource(id = if (sale.value) R.color.white else R.color.black)
+            color = if (sale.value) White else Black
         )
         Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = if (sale.value) R.color.white else R.color.green500)),
+            colors = ButtonDefaults.buttonColors(backgroundColor = if (sale.value) White else Green500),
             onClick = { sale.value = !sale.value },
             modifier = Modifier
                 .fillMaxWidth()
@@ -244,9 +265,9 @@ fun SalesLayout(modifier: Modifier) {
         ) {
             Text(
                 modifier = Modifier.padding(vertical = 8.dp),
-                text = if (sale.value) "셔터 내리기" else "오늘의 영업 시작하기",
+                text = stringResource(if (sale.value) R.string.shutter_down else R.string.start_sale_today),
                 fontSize = 16.sp,
-                color = colorResource(id = if (sale.value) R.color.green500 else R.color.white)
+                color = if (sale.value) Green500 else White
             )
         }
     }
@@ -283,13 +304,13 @@ fun moveToCurrentLocation(
 }
 
 fun moveCamera(position: LatLng) {
-        val cameraUpdate = CameraUpdate.scrollTo(position)
-        naverMap?.moveCamera(cameraUpdate)
+    val cameraUpdate = CameraUpdate.scrollTo(position)
+    naverMap?.moveCamera(cameraUpdate)
 }
 
 fun moveCameraWithAnim(position: LatLng) {
-        val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
-        naverMap?.moveCamera(cameraUpdate)
+    val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
+    naverMap?.moveCamera(cameraUpdate)
 }
 
 fun addMarkers(@DrawableRes drawableRes: Int, positions: List<LatLng>) {
