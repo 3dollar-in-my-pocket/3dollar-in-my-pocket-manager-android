@@ -3,6 +3,7 @@ package app.threedollars.manager.screen
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -33,15 +34,17 @@ import app.threedollars.manager.R
 import app.threedollars.manager.viewModels.HomeViewModel
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraAnimation
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapView
+import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.launch
 
+private val markers = arrayListOf<Marker>()
+
 var currentPosition: LatLng? = null
 var mapView: MapView? = null
+var naverMap: NaverMap? = null
 
 @Composable
 fun HomeScreen() {
@@ -53,11 +56,12 @@ fun HomeScreen() {
     // recomposition시에도 유지되어야 하기 때문에 remember { } 로 기억합니다.
     mapView = remember {
         MapView(context).apply {
-            getMapAsync { naverMap ->
-                naverMap.locationSource =
+            getMapAsync { map ->
+                naverMap = map
+                naverMap?.locationSource =
                     context.getActivity()?.let { FusedLocationSource(it, 1000) }
-                naverMap.locationTrackingMode = LocationTrackingMode.Follow
-                naverMap.uiSettings.isZoomControlEnabled = false
+                naverMap?.locationTrackingMode = LocationTrackingMode.Follow
+                naverMap?.uiSettings?.isZoomControlEnabled = false
             }
         }
     }
@@ -154,6 +158,8 @@ fun AddressRoundTextView(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
+        val lifecycleOwner = LocalLifecycleOwner.current
+
         val latLng = remember { mutableStateOf(currentPosition) }
 
         val activity = LocalContext.current.getActivity()
@@ -172,6 +178,15 @@ fun AddressRoundTextView(
                             mapLatitude = it.latitude.toString()
                         )
                     )
+                    viewModel.storesAroundResponseList.observe(lifecycleOwner) { storesAroundResponseList ->
+                        val latLngList = storesAroundResponseList.map { storesAroundResponse ->
+                            LatLng(
+                                storesAroundResponse.location?.latitude!!,
+                                storesAroundResponse.location?.longitude!!
+                            )
+                        }
+                        addMarkers(R.drawable.ic_gps, latLngList)
+                    }
                 }
             }
         }
@@ -268,16 +283,28 @@ fun moveToCurrentLocation(
 }
 
 fun moveCamera(position: LatLng) {
-    mapView?.getMapAsync { naverMap ->
         val cameraUpdate = CameraUpdate.scrollTo(position)
-        naverMap.moveCamera(cameraUpdate)
-    }
+        naverMap?.moveCamera(cameraUpdate)
 }
 
 fun moveCameraWithAnim(position: LatLng) {
-    mapView?.getMapAsync { naverMap ->
         val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
-        naverMap.moveCamera(cameraUpdate)
-    }
+        naverMap?.moveCamera(cameraUpdate)
+}
 
+fun addMarkers(@DrawableRes drawableRes: Int, positions: List<LatLng>) {
+
+    naverMap ?: return
+
+    markers.forEach { it.map = null }
+    markers.clear()
+
+    val newMarkers = positions.map { position ->
+        Marker().apply {
+            this.position = position
+            this.icon = OverlayImage.fromResource(drawableRes)
+            this.map = naverMap
+        }
+    }
+    markers.addAll(newMarkers)
 }
