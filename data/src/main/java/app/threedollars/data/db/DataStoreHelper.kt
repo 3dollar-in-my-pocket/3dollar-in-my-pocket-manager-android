@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DataStoreManager @Inject constructor(@ApplicationContext val context: Context) {
+class DataStoreHelper @Inject constructor(@ApplicationContext val context: Context) {
 
     val moshi: Moshi = Moshi.Builder().build()
 
