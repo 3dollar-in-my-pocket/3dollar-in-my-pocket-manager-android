@@ -41,4 +41,5 @@ android {
 
 dependencies {
     common()
+    implementation(project(":domain"))
 }

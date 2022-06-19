@@ -20,7 +20,9 @@ object Dependencies {
         const val DATASTORE = "androidx.datastore:datastore-preferences:${Versions.DATASTORE}"
         const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.ANDROIDX_APPCOMPAT}"
         const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
-        const val CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
+        const val CONSTRAINT_LAYOUT =
+            "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
+        const val NAVIGATION = "androidx.navigation:navigation-fragment:{Versions.NAVIGATION}"
     }
 
     object Firebase {
@@ -81,6 +83,7 @@ object Dependencies {
         implementation(Android.ANDROIDX_APPCOMPAT)
         implementation(Android.ANDROID_MATERIAL)
         implementation(Android.CONSTRAINT_LAYOUT)
+        implementation(Android.NAVIGATION)
         implementation(Compose.COMPOSE_ACTIVITY)
         implementation(Compose.COMPOSE_FOUNDATION)
         implementation(Compose.COMPOSE_MATERIAL)
