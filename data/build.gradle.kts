@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 31
+        targetSdk = 32
     }
     buildFeatures {
         compose = true
@@ -35,7 +35,7 @@ android {
         jvmTarget = "1.8"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha04"
+        kotlinCompilerExtensionVersion = "1.2.0-rc01"
     }
 }
 

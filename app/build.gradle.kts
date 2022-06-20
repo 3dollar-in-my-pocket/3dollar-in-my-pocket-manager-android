@@ -13,12 +13,12 @@ plugins {
 
 android {
 
-    compileSdk = 31
+    compileSdk = 32
 
     defaultConfig {
         applicationId = "app.threedollars.manager"
         minSdk = 23
-        targetSdk = 31
+        targetSdk = 32
         versionCode = 1
         versionName = "0.0.0-alpha01"
 
@@ -64,7 +64,7 @@ android {
         jvmTarget = "1.8"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha04"
+        kotlinCompilerExtensionVersion = "1.2.0-rc01"
     }
 }
 

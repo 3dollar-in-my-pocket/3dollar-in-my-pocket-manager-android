@@ -12,6 +12,7 @@ object Dependencies {
     }
 
     object Naver {
+        const val NAVER_MAP_COMPOSE = "io.github.fornewid:naver-map-compose:${Versions.NAVER_MAP_COMPOSE}"
         const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
         const val GOOGLE_LOCATION_SERVICES =
             "com.google.android.gms:play-services-location:${Versions.GOOGLE_LOCATION_SERVICES}"
@@ -125,6 +126,7 @@ object Dependencies {
         implementation(Network.MOSHI_CONVERTER)
         kapt(Network.MOSHI_CODEGEN)
         implementation(Login.KAKAO_LOGIN)
+        implementation(Naver.NAVER_MAP_COMPOSE)
         implementation(Naver.NAVER_MAP)
         implementation(Naver.GOOGLE_LOCATION_SERVICES)
     }

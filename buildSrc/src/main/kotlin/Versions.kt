@@ -1,5 +1,5 @@
 object Versions {
-    const val KOTLIN = "1.6.10"
+    const val KOTLIN = "1.6.21"
     const val GRADLE = "7.0.4"
     const val DESUGAR_LIBS = "1.1.5"
     const val DATASTORE = "1.0.0"
@@ -15,7 +15,7 @@ object Versions {
     const val CONSTRAINT_LAYOUT = "2.1.3"
 
     const val COMPOSE_ACTIVITY = "1.3.1"
-    const val COMPOSE_MATERIAL = "1.2.0-alpha04"
+    const val COMPOSE_MATERIAL = "1.2.0-rc01"
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "1.0.0-alpha07"
     const val COMPOSE_NAVIGATION = "2.4.2"
     const val COMPOSE_CONSTRAINT_LAYOUT = "1.0.0"
@@ -34,6 +34,7 @@ object Versions {
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
 
+    const val NAVER_MAP_COMPOSE = "1.1.4"
     const val NAVER_MAP = "3.15.0"
     const val GOOGLE_LOCATION_SERVICES = "19.0.1"
 }
