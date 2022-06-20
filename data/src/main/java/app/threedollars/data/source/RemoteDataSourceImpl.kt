@@ -3,6 +3,7 @@ package app.threedollars.data.source
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.store.StoreService
 import app.threedollars.data.store.request.StoresAroundRequest
+import app.threedollars.data.store.response.MyStoreResponse
 import app.threedollars.data.store.response.StoresAroundResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -27,4 +28,13 @@ class RemoteDataSourceImpl @Inject constructor(private val storeService: StoreSe
             )
         )
     }
+
+    override fun getMyStore(authorization: String): Flow<Response<BaseResponse<MyStoreResponse>>> =
+        flow {
+            emit(
+                storeService.getMyStore(
+                    authorization = authorization
+                )
+            )
+        }
 }

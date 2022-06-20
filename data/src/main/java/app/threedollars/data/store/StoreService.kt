@@ -1,6 +1,7 @@
 package app.threedollars.data.store
 
 import app.threedollars.data.BaseResponse
+import app.threedollars.data.store.response.MyStoreResponse
 import app.threedollars.data.store.response.StoresAroundResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -19,4 +20,9 @@ interface StoreService {
         @Query("orderType") orderType: String?,
         @Query("size") size: Int?
     ): Response<BaseResponse<List<StoresAroundResponse>>>
+
+    @GET("v1/boss/store/me")
+    suspend fun getMyStore(
+        @Header("Authorization") authorization: String
+    ): Response<BaseResponse<MyStoreResponse>>
 }
