@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import app.threedollars.manager.R
 
 @Composable
-fun AddStoreScreen() {
+fun ManagementScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,7 +24,7 @@ fun AddStoreScreen() {
             .wrapContentSize(Alignment.Center)
     ) {
         Text(
-            text = "AddStoreScreen",
+            text = "ManagementScreen",
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             modifier = Modifier.align(Alignment.CenterHorizontally),

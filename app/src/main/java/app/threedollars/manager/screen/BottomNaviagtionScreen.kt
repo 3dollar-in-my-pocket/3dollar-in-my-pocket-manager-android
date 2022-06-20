@@ -16,8 +16,7 @@ import app.threedollars.manager.R
 fun BottomNavigation(navController: NavController) {
     val items = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Category,
-        BottomNavItem.AddStore,
+        BottomNavItem.Management,
         BottomNavItem.MyPage
     )
     androidx.compose.material.BottomNavigation(

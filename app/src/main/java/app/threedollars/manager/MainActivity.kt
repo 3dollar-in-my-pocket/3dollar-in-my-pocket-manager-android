@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.threedollars.manager.home.screen.HomeScreen
 import app.threedollars.manager.screen.*
 import app.threedollars.manager.sign.ui.LoginButtons
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,11 +51,8 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomNavItem.Home.screenRoute) {
             HomeScreen()
         }
-        composable(BottomNavItem.Category.screenRoute) {
-            CategoryScreen()
-        }
-        composable(BottomNavItem.AddStore.screenRoute) {
-            AddStoreScreen()
+        composable(BottomNavItem.Management.screenRoute) {
+            ManagementScreen()
         }
         composable(BottomNavItem.MyPage.screenRoute) {
             MyPageScreen()
