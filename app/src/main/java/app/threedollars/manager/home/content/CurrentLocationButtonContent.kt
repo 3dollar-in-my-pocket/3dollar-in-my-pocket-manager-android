@@ -11,18 +11,22 @@ import app.threedollars.manager.R
 import app.threedollars.manager.getActivity
 import app.threedollars.manager.home.moveToCurrentLocation
 import app.threedollars.manager.requestPermissionIfNeeds
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.CameraPositionState
 
 @Composable
 fun CurrentLocationButtonContent(
-    modifier: Modifier, cameraPositionState: CameraPositionState
+    modifier: Modifier, cameraPositionState: CameraPositionState, setLatLng: (LatLng) -> Unit
 ) {
     val activity = LocalContext.current.getActivity()
     IconButton(
         modifier = modifier,
         onClick = {
             activity?.requestPermissionIfNeeds()
-            moveToCurrentLocation(activity, cameraPositionState)
+            moveToCurrentLocation(activity, cameraPositionState) {
+                setLatLng(it)
+            }
         }
     ) {
         Icon(

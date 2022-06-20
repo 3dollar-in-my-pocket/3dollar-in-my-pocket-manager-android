@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.threedollars.data.store.request.StoresAroundRequest
 import app.threedollars.manager.*
-import app.threedollars.manager.home.screen.currentPosition
 import app.threedollars.manager.viewModels.HomeViewModel
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
@@ -26,13 +25,12 @@ import com.naver.maps.geometry.LatLng
 @SuppressLint("MissingPermission")
 @Composable
 fun AddressRoundTextViewContent(
-    modifier: Modifier, viewModel: HomeViewModel = hiltViewModel()
+    modifier: Modifier, viewModel: HomeViewModel = hiltViewModel(), setLatLng: (LatLng)->Unit,currentPosition : LatLng
 ) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        var latLng by rememberSaveable { mutableStateOf(currentPosition) }
 
         val activity = LocalContext.current.getActivity()
         val fusedLocationProviderClient = activity?.let {
@@ -42,7 +40,7 @@ fun AddressRoundTextViewContent(
             val locationResult = fusedLocationProviderClient?.lastLocation
             locationResult?.addOnSuccessListener {
                 if (it != null) {
-                    latLng = LatLng(it.latitude, it.longitude)
+                    setLatLng(LatLng(it.latitude, it.longitude))
                     viewModel.getStoresAround(
                         "e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75",
                         storesAroundRequest = StoresAroundRequest(
@@ -54,7 +52,7 @@ fun AddressRoundTextViewContent(
             }
         }
         Text(
-            text = getCurrentLocationName(latLng)
+            text = getCurrentLocationName(currentPosition)
                 ?: stringResource(id = R.string.location_no_address),
             textAlign = TextAlign.Center,
             fontSize = 16.sp

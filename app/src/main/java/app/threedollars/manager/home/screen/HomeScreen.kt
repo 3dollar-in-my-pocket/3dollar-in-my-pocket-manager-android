@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
+import app.threedollars.common.ui.PinkOpacity20
 import app.threedollars.manager.R
 import app.threedollars.manager.getActivity
 import app.threedollars.manager.home.content.AddressRoundTextViewContent
@@ -23,11 +24,10 @@ import app.threedollars.manager.home.content.SalesLayoutContent
 import app.threedollars.manager.viewModels.HomeViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
-
-var currentPosition: LatLng? = null
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Preview
@@ -48,9 +48,14 @@ fun HomeScreen(
             MapUiSettings(isZoomControlEnabled = false)
         )
     }
+    var currentPosition by remember {
+        mutableStateOf(
+            LatLng(37.56, 126.97)
+        )
+    }
     val cameraPositionState: CameraPositionState = rememberCameraPositionState {
         // 카메라 초기 위치를 설정합니다.
-        position = CameraPosition(LatLng(37.56, 126.97), 15.0)
+        position = CameraPosition(currentPosition, 15.0)
     }
     val markersStateList = remember {
         mutableStateListOf<MarkerState>()
@@ -67,7 +72,7 @@ fun HomeScreen(
             locationSource = context.getActivity()?.let { FusedLocationSource(it, 1000) },
             properties = mapProperties,
             uiSettings = mapUiSettings,
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
         ) {
             markersStateList.forEach {
                 Marker(
@@ -75,9 +80,10 @@ fun HomeScreen(
                     icon = OverlayImage.fromResource(R.drawable.ic_gps)
                 )
             }
+            CircleOverlay(center = currentPosition, color = PinkOpacity20, radius = 150.0)
         }
         AddressRoundTextViewContent(
-            Modifier
+            modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .height(54.dp)
                 .fillMaxWidth()
@@ -86,13 +92,20 @@ fun HomeScreen(
                     top.linkTo(parent.top, margin = 44.dp)
                 }
                 .clip(RoundedCornerShape(16.dp))
-                .background(White)
+                .background(White),
+            setLatLng = {
+                currentPosition = it
+            },
+            currentPosition = currentPosition
         )
 
         CurrentLocationButtonContent(Modifier.constrainAs(imageButton) {
             end.linkTo(parent.end, margin = 16.dp)
             bottom.linkTo(bottomLayout.top, margin = 16.dp)
-        }, cameraPositionState)
+        }, cameraPositionState) {
+            currentPosition = it
+            cameraPositionState.move(CameraUpdate.scrollTo(currentPosition))
+        }
 
         SalesLayoutContent(
             modifier = Modifier

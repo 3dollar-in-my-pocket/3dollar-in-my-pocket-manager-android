@@ -1,4 +1,4 @@
-package app.threedollars.manager.screen
+package app.threedollars.manager.home.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

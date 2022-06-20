@@ -7,7 +7,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import app.threedollars.manager.home.screen.CloseSaleScreen
-import app.threedollars.manager.screen.StartSaleScreen
+import app.threedollars.manager.home.screen.StartSaleScreen
 import com.naver.maps.map.compose.MapUiSettings
 
 @Composable

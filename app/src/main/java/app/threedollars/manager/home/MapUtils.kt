@@ -3,7 +3,6 @@ package app.threedollars.manager.home
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import app.threedollars.manager.home.screen.currentPosition
 import app.threedollars.manager.isGpsAvailable
 import app.threedollars.manager.isLocationAvailable
 import com.google.android.gms.location.LocationServices
@@ -16,7 +15,8 @@ import com.naver.maps.map.compose.ExperimentalNaverMapApi
 @SuppressLint("MissingPermission")
 fun moveToCurrentLocation(
     activity: AppCompatActivity?,
-    cameraPositionState: CameraPositionState
+    cameraPositionState: CameraPositionState,
+    setLatLng: (LatLng) -> Unit
 ) {
     try {
         val fusedLocationProviderClient = activity?.let {
@@ -26,10 +26,7 @@ fun moveToCurrentLocation(
             val locationResult = fusedLocationProviderClient?.lastLocation
             locationResult?.addOnSuccessListener {
                 if (it != null) {
-                    currentPosition = LatLng(it.latitude, it.longitude)
-                    currentPosition?.let { position ->
-                        cameraPositionState.move(CameraUpdate.scrollTo(position))
-                    }
+                    setLatLng(LatLng(it.latitude, it.longitude))
                 }
             }
         }
