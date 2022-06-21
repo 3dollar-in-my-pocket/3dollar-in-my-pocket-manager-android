@@ -4,24 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LifecycleOwner
 import app.threedollars.common.ui.PinkOpacity20
+import app.threedollars.data.store.response.MyAccountResponse
 import app.threedollars.manager.R
 import app.threedollars.manager.getActivity
+import app.threedollars.manager.home.HomeViewModel
 import app.threedollars.manager.home.content.AddressRoundTextViewContent
 import app.threedollars.manager.home.content.CurrentLocationButtonContent
 import app.threedollars.manager.home.content.SalesLayoutContent
-import app.threedollars.manager.home.HomeViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
@@ -35,7 +33,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     val mapProperties by remember {
         mutableStateOf(
@@ -56,11 +53,7 @@ fun HomeScreen(
         // 카메라 초기 위치를 설정합니다.
         position = CameraPosition(currentPosition, 15.0)
     }
-    val markersStateList = remember {
-        mutableStateListOf<MarkerState>()
-    }
-
-    initViewModels(viewModel, lifecycleOwner, markersStateList)
+    val markersStateList: List<MarkerState> by viewModel.markerStateList.observeAsState(listOf())
 
     viewModel.getMyStore("Bearer e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75")
 
@@ -119,24 +112,5 @@ fun HomeScreen(
                 .background(White),
             mapUiSettings = mapUiSettings
         )
-    }
-}
-
-private fun initViewModels(
-    viewModel: HomeViewModel,
-    lifecycleOwner: LifecycleOwner,
-    markerStateList: SnapshotStateList<MarkerState>
-) {
-    viewModel.storesAroundResponseList.observe(lifecycleOwner) { storesAroundResponseList ->
-        val latLngList = storesAroundResponseList.map { storesAroundResponse ->
-            MarkerState(
-                LatLng(
-                    storesAroundResponse.location?.latitude!!,
-                    storesAroundResponse.location?.longitude!!
-                )
-            )
-        }
-        markerStateList.clear()
-        markerStateList.addAll(latLngList)
     }
 }
