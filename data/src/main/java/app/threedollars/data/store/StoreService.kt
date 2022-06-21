@@ -1,6 +1,7 @@
 package app.threedollars.data.store
 
 import app.threedollars.data.BaseResponse
+import app.threedollars.data.store.response.MyAccountResponse
 import app.threedollars.data.store.response.MyStoreResponse
 import app.threedollars.data.store.response.StoresAroundResponse
 import retrofit2.Response
@@ -25,4 +26,9 @@ interface StoreService {
     suspend fun getMyStore(
         @Header("Authorization") authorization: String
     ): Response<BaseResponse<MyStoreResponse>>
+
+    @GET("v1/boss/account/me")
+    suspend fun getMyAccount(
+        @Header("Authorization") authorization: String
+    ): Response<BaseResponse<MyAccountResponse>>
 }

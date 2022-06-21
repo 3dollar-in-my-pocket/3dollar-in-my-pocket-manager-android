@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class OpeningHoursModel(
     @Json(name = "endTime")
-    val endTime: TimeModel?,
+    val endTime: String?,
     @Json(name = "startTime")
-    val startTime: TimeModel?
+    val startTime: String?
 )
