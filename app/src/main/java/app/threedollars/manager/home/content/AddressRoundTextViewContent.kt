@@ -4,10 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.threedollars.data.store.request.StoresAroundRequest
 import app.threedollars.manager.*
-import app.threedollars.manager.viewModels.HomeViewModel
+import app.threedollars.manager.home.HomeViewModel
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 
@@ -25,7 +21,7 @@ import com.naver.maps.geometry.LatLng
 @SuppressLint("MissingPermission")
 @Composable
 fun AddressRoundTextViewContent(
-    modifier: Modifier, viewModel: HomeViewModel = hiltViewModel(), setLatLng: (LatLng)->Unit,currentPosition : LatLng
+    modifier: Modifier, viewModel: HomeViewModel = hiltViewModel(), setLatLng: (LatLng)->Unit, currentPosition : LatLng
 ) {
     Box(
         modifier = modifier,
@@ -42,7 +38,7 @@ fun AddressRoundTextViewContent(
                 if (it != null) {
                     setLatLng(LatLng(it.latitude, it.longitude))
                     viewModel.getStoresAround(
-                        "e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75",
+                        "Bearer e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75",
                         storesAroundRequest = StoresAroundRequest(
                             mapLongitude = it.longitude.toString(),
                             mapLatitude = it.latitude.toString()
