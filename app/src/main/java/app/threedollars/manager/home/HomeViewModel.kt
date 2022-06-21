@@ -1,6 +1,5 @@
-package app.threedollars.manager.viewModels
+package app.threedollars.manager.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,7 +9,6 @@ import app.threedollars.data.store.request.StoresAroundRequest
 import app.threedollars.data.store.response.MyStoreResponse
 import app.threedollars.data.store.response.StoresAroundResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +43,6 @@ class HomeViewModel @Inject constructor(private val remoteDataSource: RemoteData
                 if (it.isSuccessful) {
                     it.body()?.data?.let { myStore ->
                         _myStoreResponse.value = myStore
-                        Log.e("asdasdasd",myStore.toString())
                     }
                 }
             }

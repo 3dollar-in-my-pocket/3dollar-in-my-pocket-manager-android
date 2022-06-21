@@ -12,7 +12,8 @@ object Dependencies {
     }
 
     object Naver {
-        const val NAVER_MAP_COMPOSE = "io.github.fornewid:naver-map-compose:${Versions.NAVER_MAP_COMPOSE}"
+        const val NAVER_MAP_COMPOSE =
+            "io.github.fornewid:naver-map-compose:${Versions.NAVER_MAP_COMPOSE}"
         const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
         const val GOOGLE_LOCATION_SERVICES =
             "com.google.android.gms:play-services-location:${Versions.GOOGLE_LOCATION_SERVICES}"
@@ -62,6 +63,8 @@ object Dependencies {
             "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
         const val COMPOSE_CONSTRAINT_LAYOUT =
             "androidx.constraintlayout:constraintlayout-compose:${Versions.COMPOSE_CONSTRAINT_LAYOUT}"
+        const val COMPOSE_LIVEDATA =
+            "androidx.compose.runtime:runtime-livedata:${Versions.COMPOSE_LIVEDATA}"
     }
 
     object Hilt {
@@ -112,6 +115,7 @@ object Dependencies {
         implementation(Compose.COMPOSE_VIEWMODEL)
         implementation(Compose.COMPOSE_NAVIGATION)
         implementation(Compose.COMPOSE_CONSTRAINT_LAYOUT)
+        implementation(Compose.COMPOSE_LIVEDATA)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
         implementation(Hilt.HILT_COMPOSE)

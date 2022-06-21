@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.threedollars.manager.home.screen.HomeScreen
 import app.threedollars.manager.screen.*
+import app.threedollars.manager.setting.MyPageScreen
 import app.threedollars.manager.sign.ui.LoginButtons
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -21,7 +21,7 @@ import app.threedollars.manager.getActivity
 import app.threedollars.manager.home.content.AddressRoundTextViewContent
 import app.threedollars.manager.home.content.CurrentLocationButtonContent
 import app.threedollars.manager.home.content.SalesLayoutContent
-import app.threedollars.manager.viewModels.HomeViewModel
+import app.threedollars.manager.home.HomeViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
@@ -30,7 +30,6 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 
 @OptIn(ExperimentalNaverMapApi::class)
-@Preview
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
@@ -63,7 +62,7 @@ fun HomeScreen(
 
     initViewModels(viewModel, lifecycleOwner, markersStateList)
 
-    viewModel.getMyStore("e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75")
+    viewModel.getMyStore("Bearer e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75")
 
     ConstraintLayout {
         val (imageButton, box, bottomLayout) = createRefs()
