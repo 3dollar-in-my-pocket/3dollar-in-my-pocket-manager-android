@@ -11,8 +11,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.threedollars.manager.home.screen.HomeScreen
-import app.threedollars.manager.screen.*
-import app.threedollars.manager.setting.MyPageScreen
+import app.threedollars.manager.screen.BottomNavigation
+import app.threedollars.manager.screen.ManagementScreen
+import app.threedollars.manager.setting.screen.FaqScreen
+import app.threedollars.manager.setting.PrivacyPolicyScreen
+import app.threedollars.manager.setting.screen.SettingScreen
 import app.threedollars.manager.sign.ui.LoginButtons
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,7 +59,13 @@ fun NavigationGraph(navController: NavHostController) {
             ManagementScreen()
         }
         composable(BottomNavItem.MyPage.screenRoute) {
-            MyPageScreen()
+            SettingScreen(navController)
+        }
+        composable(SettingNavItem.PrivacyPolicy.screenRoute) {
+            PrivacyPolicyScreen()
+        }
+        composable(SettingNavItem.Faq.screenRoute) {
+            FaqScreen()
         }
     }
 }

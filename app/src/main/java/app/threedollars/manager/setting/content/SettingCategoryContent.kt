@@ -1,4 +1,4 @@
-package app.threedollars.manager.setting
+package app.threedollars.manager.setting.content
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

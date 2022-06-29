@@ -1,4 +1,4 @@
-package app.threedollars.manager.setting
+package app.threedollars.manager.setting.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,11 +21,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import app.threedollars.data.store.response.MyAccountResponse
 import app.threedollars.manager.R
+import app.threedollars.manager.SettingNavItem
+import app.threedollars.manager.setting.content.SettingCategoryContent
+import app.threedollars.manager.setting.SettingViewModel
 
 @Composable
-fun MyPageScreen(
+fun SettingScreen(
+    navController: NavHostController,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
     Column(
@@ -82,14 +87,14 @@ fun MyPageScreen(
             leftText = "FAQ", rightImage = R.drawable.ic_right_arrow,
             modifier = Modifier.padding(top = 8.dp),
             onClick = {
-                // TODO: FAQ 페이지 이동
+                navController.navigate(SettingNavItem.Faq.screenRoute)
             }
         )
         SettingCategoryContent(
             leftText = "개인정보 처리방침", rightImage = R.drawable.ic_right_arrow,
             modifier = Modifier.padding(top = 8.dp),
             onClick = {
-                // TODO: 개인정보 처리방침 페이지 이동
+                navController.navigate(SettingNavItem.PrivacyPolicy.screenRoute)
             }
         )
         SettingCategoryContent(
