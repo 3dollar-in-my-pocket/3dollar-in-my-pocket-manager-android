@@ -11,7 +11,10 @@ import app.threedollars.manager.home.screen.StartSaleScreen
 import com.naver.maps.map.compose.MapUiSettings
 
 @Composable
-fun SalesLayoutContent(modifier: Modifier, mapUiSettings: MapUiSettings) {
+fun SalesLayoutContent(
+    modifier: Modifier,
+    onClick: (Boolean) -> Unit
+) {
     var startTime by rememberSaveable { mutableStateOf(0L) }
     var isSale by rememberSaveable { mutableStateOf(false) }
 
@@ -20,17 +23,15 @@ fun SalesLayoutContent(modifier: Modifier, mapUiSettings: MapUiSettings) {
             // TODO: 운영 종료 api 호출
             startTime = 0L
             isSale = !isSale
+            onClick(true)
         })
     } else {
         CloseSaleScreen(modifier = modifier, closeClick = {
             // TODO: 운영 시작 api 호출
             startTime = System.currentTimeMillis()
             isSale = !isSale
+            onClick(false)
+
         })
     }
-    CenterMarkerContent(isSale)
-    mapUiSettings.copy(
-        isScrollGesturesEnabled = !isSale,
-        isZoomGesturesEnabled = !isSale
-    )
 }

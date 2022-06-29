@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -12,12 +13,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import app.threedollars.common.ui.PinkOpacity20
-import app.threedollars.data.store.response.MyAccountResponse
 import app.threedollars.manager.R
 import app.threedollars.manager.getActivity
 import app.threedollars.manager.home.HomeViewModel
 import app.threedollars.manager.home.content.AddressRoundTextViewContent
+import app.threedollars.manager.home.content.CenterMarkerContent
 import app.threedollars.manager.home.content.CurrentLocationButtonContent
 import app.threedollars.manager.home.content.SalesLayoutContent
 import com.naver.maps.geometry.LatLng
@@ -39,9 +39,13 @@ fun HomeScreen(
             MapProperties(locationTrackingMode = LocationTrackingMode.Follow)
         )
     }
-    val mapUiSettings by remember {
+    var mapUiSettings by remember {
         mutableStateOf(
-            MapUiSettings(isZoomControlEnabled = false)
+            MapUiSettings(
+                isZoomControlEnabled = false,
+                isCompassEnabled = false,
+                isTiltGesturesEnabled = false
+            )
         )
     }
     var currentPosition by remember {
@@ -49,8 +53,9 @@ fun HomeScreen(
             LatLng(37.56, 126.97)
         )
     }
+    var isSale by rememberSaveable { mutableStateOf(false) }
+
     val cameraPositionState: CameraPositionState = rememberCameraPositionState {
-        // 카메라 초기 위치를 설정합니다.
         position = CameraPosition(currentPosition, 15.0)
     }
     val markersStateList: List<MarkerState> by viewModel.markerStateList.observeAsState(listOf())
@@ -58,7 +63,7 @@ fun HomeScreen(
     viewModel.getMyStore("Bearer e9a1708e-3c2a-4dd4-a89e-58a85b5d1f75")
 
     ConstraintLayout {
-        val (imageButton, box, bottomLayout) = createRefs()
+        val (imageButton, box, bottomLayout, centerMarkerContent) = createRefs()
         NaverMap(
             modifier = Modifier.fillMaxSize(),
             locationSource = context.getActivity()?.let { FusedLocationSource(it, 1000) },
@@ -72,7 +77,6 @@ fun HomeScreen(
                     icon = OverlayImage.fromResource(R.drawable.ic_gps)
                 )
             }
-            CircleOverlay(center = currentPosition, color = PinkOpacity20, radius = 150.0)
         }
         AddressRoundTextViewContent(
             modifier = Modifier
@@ -110,7 +114,15 @@ fun HomeScreen(
                 }
                 .clip(RoundedCornerShape(16.dp))
                 .background(White),
-            mapUiSettings = mapUiSettings
+            onClick = {
+                mapUiSettings = mapUiSettings.copy(
+                    isScrollGesturesEnabled = it,
+                    isZoomGesturesEnabled = it,
+                    isRotateGesturesEnabled = it
+                )
+                isSale = it
+            }
         )
+        CenterMarkerContent(isSale)
     }
 }
