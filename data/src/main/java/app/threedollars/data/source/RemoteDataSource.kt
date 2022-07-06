@@ -21,4 +21,23 @@ interface RemoteDataSource {
     fun getMyAccount(
         authorization: String
     ): Flow<Response<BaseResponse<MyAccountResponse>>>
+
+    fun closeStore(
+        authorization: String,
+        bossStoreId: String
+    ): Flow<Response<BaseResponse<String>>>
+
+    fun openStore(
+        authorization: String,
+        bossStoreId: String,
+        mapLatitude: String,
+        mapLongitude: String
+    ): Flow<Response<BaseResponse<String>>>
+
+    fun renewStore(
+        authorization: String,
+        bossStoreId: String,
+        mapLatitude: String,
+        mapLongitude: String
+    ): Flow<Response<BaseResponse<String>>>
 }
