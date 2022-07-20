@@ -26,7 +26,7 @@ object Dependencies {
         const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
         const val CONSTRAINT_LAYOUT =
             "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
-        const val NAVIGATION = "androidx.navigation:navigation-fragment:{Versions.NAVIGATION}"
+        const val NAVIGATION = "androidx.navigation:navigation-fragment:${Versions.NAVIGATION}"
     }
 
     object Firebase {
