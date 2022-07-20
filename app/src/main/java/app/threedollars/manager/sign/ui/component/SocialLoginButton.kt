@@ -1,4 +1,4 @@
-package app.threedollars.manager.sign.ui
+package app.threedollars.manager.sign.ui.component
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +48,7 @@ fun SocialLoginButton(
     ) {
         Button(
             modifier = Modifier
-                .padding(vertical = 12.dp)
+                .padding(vertical = 16.dp)
                 .fillMaxWidth(),
             onClick = { onClick() },
             shape = RoundedCornerShape(23.dp),
