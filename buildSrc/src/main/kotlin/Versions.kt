@@ -14,7 +14,7 @@ object Versions {
     const val CONSTRAINT_LAYOUT = "2.1.3"
     const val NAVIGATION = "2.4.0"
 
-    const val COMPOSE_ACTIVITY = "1.3.1"
+    const val COMPOSE_ACTIVITY = "1.5.0"
     const val COMPOSE_MATERIAL = "1.2.0-alpha04"
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "1.0.0-alpha07"
 
