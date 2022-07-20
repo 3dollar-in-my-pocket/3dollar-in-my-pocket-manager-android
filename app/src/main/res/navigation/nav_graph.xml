@@ -1,0 +1,20 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/splash_fragment">
+
+    <fragment
+        android:id="@+id/splash_fragment"
+        android:name="app.threedollars.manager.splash.SplashFragment"
+        android:label="splash"></fragment>
+
+    <fragment
+        android:id="@+id/sign_up_fragment"
+        android:name="app.threedollars.manager.sign.SignUpFormFragment"
+        android:label="sign_up"></fragment>
+
+    <fragment
+        android:id="@+id/social_login_fragment"
+        android:name="app.threedollars.manager.sign.LoginFragment"
+        android:label="login"></fragment>
+</navigation>

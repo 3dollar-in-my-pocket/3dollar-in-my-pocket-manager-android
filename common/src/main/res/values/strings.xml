@@ -5,12 +5,15 @@
     <string name="naver_login">네이버 계정으로 로그인</string>
     <string name="join">회원가입</string>
     <string name="logout">로그아웃</string>
-    <string name="join_intro_message">사장님, 가게 정보를\n입력해주세요!</string>
+    <string name="join_intro_message">사장님, 가게 정보 입력하시고\n부자 되세요!</string>
+    <string name="join_waiting_title">승인 대기 중입니다.</string>
+    <string name="join_waiting_message">우리는 소규모로 운영되는 팀이라\n시간이 어느정도(3일-5일) 소요된다 어쩐다 하는\n구구절절 먹먹문</string>
+    <string name="ask_email">이메일로 문의하기</string>
     <string name="manager_name">사장님 성함</string>
     <string name="manager_name_hint">사장님 성함을 입력해주세요.</string>
     <string name="store_name">가게이름</string>
     <string name="store_name_hint">가게이름을 입력해 주세요.</string>
-    <string name="store_name_max">최대 20자</string>
+    <string name="store_name_max">공백 포함 최대 20자</string>
     <string name="store_number">사업자 등록 번호</string>
     <string name="store_number_hint">사업자 등록 번호를 입력해 주세요.</string>
     <string name="input_without_dash">\"-\"를 제외한 숫자만 입력</string>

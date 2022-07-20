@@ -1,10 +1,8 @@
 package app.threedollars.common
 
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface EventFlow<out T> : Flow<T> {
@@ -32,7 +30,6 @@ private class EventFlowImpl<T>(
 
     private val flow: MutableSharedFlow<EventFlowSlot<T>> = MutableSharedFlow(replay = replay)
 
-    @InternalCoroutinesApi
     override suspend fun collect(collector: FlowCollector<T>) = flow.collect {
         if (!it.markConsumed()) {
             collector.emit(it.value)

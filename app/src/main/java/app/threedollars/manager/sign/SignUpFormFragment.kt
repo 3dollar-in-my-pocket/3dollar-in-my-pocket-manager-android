@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import app.threedollars.common.BaseFragment
-import app.threedollars.manager.sign.ui.SocialLoginScreen
+import app.threedollars.manager.sign.ui.SignUpFormScreen
 import app.threedollars.manager.sign.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginFragment : BaseFragment<LoginViewModel>() {
+class SignUpFormFragment : BaseFragment<LoginViewModel>() {
 
     override val viewModel: LoginViewModel by viewModels()
 
@@ -23,7 +23,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                SocialLoginScreen()
+                SignUpFormScreen(viewModel)
             }
         }
     }
