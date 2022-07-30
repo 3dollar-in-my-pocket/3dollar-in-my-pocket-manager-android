@@ -16,7 +16,8 @@
         android:theme="@style/Theme.ThreeDollarsManager">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,7 +36,7 @@
 
                 <data
                     android:host="oauth"
-                    android:scheme="kakao95f91f9656806e132796f0071ab99aaa" />
+                    android:scheme="kakao3826b74e62cacacd6525130f6a2469e0" />
             </intent-filter>
         </activity>
         <meta-data

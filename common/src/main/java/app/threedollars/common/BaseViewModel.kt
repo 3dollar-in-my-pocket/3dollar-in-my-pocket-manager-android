@@ -1,5 +1,6 @@
 package app.threedollars.common
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +10,7 @@ import kotlinx.coroutines.launch
 open class BaseViewModel : ViewModel() {
 
     val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
-
+        Log.d("error", throwable.message.toString())
     }
 
     private val _isLoading: MutableEventFlow<Boolean> = MutableEventFlow()
