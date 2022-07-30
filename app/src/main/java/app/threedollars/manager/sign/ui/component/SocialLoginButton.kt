@@ -48,7 +48,7 @@ fun SocialLoginButton(
     ) {
         Button(
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(vertical = 24.dp)
                 .fillMaxWidth(),
             onClick = { onClick() },
             shape = RoundedCornerShape(23.dp),
