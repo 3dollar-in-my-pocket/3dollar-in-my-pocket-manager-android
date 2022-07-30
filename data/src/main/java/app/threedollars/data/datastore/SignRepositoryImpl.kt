@@ -12,9 +12,9 @@ class SignRepositoryImpl @Inject constructor(
     private val remoteSignDataSource: RemoteSignDataSourceImpl,
 ) : SignRepository {
 
-    override suspend fun loginWithKakao(onResult: (Result<String?>) -> Unit) {
-        localSignDataSource.loginWithKakao(onResult)
-        remoteSignDataSource.loginWithKakao(onResult)
+    override suspend fun loginWithKakao(token: String, onResult: (Result<String?>) -> Unit) {
+        localSignDataSource.loginWithKakao(token, onResult)
+        remoteSignDataSource.loginWithKakao(token, onResult)
     }
 
     override suspend fun saveAccessToken(token: String) {
@@ -22,7 +22,15 @@ class SignRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAccessToken(): Flow<String> {
-        return remoteSignDataSource.getAccessToken()
+        return localSignDataSource.getAccessToken()
+    }
+
+    override suspend fun saveKakaoRefreshToken(token: String) {
+        localSignDataSource.saveKakaoRefreshToken(token)
+    }
+
+    override suspend fun getKakaoRefreshToken(): Flow<String> {
+        return localSignDataSource.getKakaoRefreshToken()
     }
 
     override suspend fun deleteMyAccount(onResult: (Result<Unit>) -> Unit) {
@@ -49,5 +57,13 @@ class SignRepositoryImpl @Inject constructor(
         newUserInfo: NewUser
     ): Result<User> {
         return remoteSignDataSource.signUpToManagerServer(kakaoAccessToken, newUserInfo)
+    }
+
+    override suspend fun saveKakaoAccessToken(token: String) {
+        localSignDataSource.saveKakaoRefreshToken(token)
+    }
+
+    override suspend fun getKakaoAccessToken(): Flow<String> {
+        return localSignDataSource.getKakaoAccessToken()
     }
 }

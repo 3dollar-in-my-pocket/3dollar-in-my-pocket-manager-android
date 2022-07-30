@@ -1,7 +1,14 @@
 package app.threedollars.data
 
-open class BaseResponse<T>(
-    val data: T? = null,
-    val message: String? = "",
-    val resultCode: String? = ""
-)
+import com.squareup.moshi.Json
+
+open class BaseResponse<T>() {
+    @Json(name = "data")
+    val data: T? = null
+
+    @Json(name = "message")
+    val message: String = ""
+
+    @Json(name = "resultCode")
+    val resultCode: String = ""
+}

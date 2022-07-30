@@ -7,11 +7,19 @@ import kotlinx.coroutines.flow.Flow
 
 interface SignRepository {
 
-    suspend fun loginWithKakao(onResult: (Result<String?>) -> Unit)
+    suspend fun loginWithKakao(token: String, onResult: (Result<String?>) -> Unit)
 
     suspend fun saveAccessToken(token: String)
 
     suspend fun getAccessToken(): Flow<String>
+
+    suspend fun saveKakaoAccessToken(token: String)
+
+    suspend fun saveKakaoRefreshToken(token: String)
+
+    suspend fun getKakaoAccessToken(): Flow<String>
+
+    suspend fun getKakaoRefreshToken(): Flow<String>
 
     suspend fun deleteMyAccount(onResult: (Result<Unit>) -> Unit)
 
