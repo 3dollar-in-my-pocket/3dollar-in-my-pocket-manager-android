@@ -28,13 +28,13 @@ fun BottomNavigation(navController: NavController) {
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
             BottomNavigationItem(
-                icon = { Icon(painterResource(id = item.icon), contentDescription = null) },
+                icon = { Icon(painterResource(id = item.resourceId), contentDescription = null) },
                 selectedContentColor = colorResource(id = R.color.green500),
                 unselectedContentColor = Color.Black.copy(0.4f),
                 alwaysShowLabel = true,
-                selected = currentRoute == item.screenRoute,
+                selected = currentRoute == item.route,
                 onClick = {
-                    navController.navigate(item.screenRoute) {
+                    navController.navigate(item.route) {
                         navController.graph.startDestinationRoute?.let { screenRoute ->
                             popUpTo(screenRoute) {
                                 saveState = true

@@ -5,20 +5,14 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.threedollars.data.oauth.KakaoLogin
 import app.threedollars.domain.LoginMethod
 import app.threedollars.domain.entity.SocialLoginToken
-import app.threedollars.manager.screen.*
-import app.threedollars.manager.sign.ui.component.LoginButtons
+import app.threedollars.manager.screen.BottomNavigation
 import app.threedollars.manager.sign.viewmodel.LoginViewModel
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
@@ -87,33 +81,6 @@ fun MainScreenView() {
     Scaffold(
         bottomBar = { BottomNavigation(navController = navController) }
     ) {
-        NavigationGraph(navController = navController)
+        HomeNavController(navController = navController)
     }
 }
-
-@Composable
-fun SocialLoginScreen() {
-    Column {
-        LoginButtons()
-    }
-}
-
-@Composable
-fun NavigationGraph(navController: NavHostController) {
-    NavHost(navController, startDestination = BottomNavItem.Home.screenRoute) {
-        composable(BottomNavItem.Home.screenRoute) {
-            HomeScreen()
-        }
-        composable(BottomNavItem.Category.screenRoute) {
-            CategoryScreen()
-        }
-        composable(BottomNavItem.AddStore.screenRoute) {
-            AddStoreScreen()
-        }
-        composable(BottomNavItem.MyPage.screenRoute) {
-            MyPageScreen()
-        }
-    }
-}
-
-

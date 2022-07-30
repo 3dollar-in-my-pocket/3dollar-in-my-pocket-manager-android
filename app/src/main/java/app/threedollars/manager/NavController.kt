@@ -4,9 +4,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.threedollars.manager.screen.AddStoreScreen
+import app.threedollars.manager.screen.CategoryScreen
+import app.threedollars.manager.screen.HomeScreen
+import app.threedollars.manager.screen.MyPageScreen
 import app.threedollars.manager.sign.ui.SignUpFormScreen
 import app.threedollars.manager.sign.ui.SocialLoginScreen
 import app.threedollars.manager.splash.SplashScreen
@@ -39,3 +44,22 @@ fun NavController(kakaoLogin: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun HomeNavController(navController: NavHostController) {
+    NavHost(navController, startDestination = BottomNavItem.Home.route) {
+        composable(BottomNavItem.Home.route) {
+            HomeScreen()
+        }
+        composable(BottomNavItem.Category.route) {
+            CategoryScreen()
+        }
+        composable(BottomNavItem.AddStore.route) {
+            AddStoreScreen()
+        }
+        composable(BottomNavItem.MyPage.route) {
+            MyPageScreen()
+        }
+    }
+}
+
