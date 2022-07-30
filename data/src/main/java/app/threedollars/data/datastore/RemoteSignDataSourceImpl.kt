@@ -1,7 +1,6 @@
 package app.threedollars.data.datastore
 
 import android.content.Context
-import app.threedollars.data.datastore.LocalSignDataSourceImpl.Companion.REFRESH_TOKEN
 import app.threedollars.data.db.DataStoreHelper
 import app.threedollars.data.mapper.UserMapper
 import app.threedollars.data.oauth.KakaoLogin
@@ -15,14 +14,14 @@ import app.threedollars.domain.repository.SignRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.lastOrNull
 import javax.inject.Inject
 
 class RemoteSignDataSourceImpl @Inject constructor(
     private val service: UserService,
     private val socialLogin: KakaoLogin,
     private val dataStoreHelper: DataStoreHelper,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val localSignDataSourceImpl: LocalSignDataSourceImpl
 ) : SignRepository {
 
     override suspend fun startSocialLogin(
@@ -45,26 +44,25 @@ class RemoteSignDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveKakaoAccessToken(token: String) {
+
+    }
+
+    override suspend fun getKakaoAccessToken(): Flow<String> {
+        return flow { }
+    }
+
     override suspend fun loginWithKakao(
+        kakaoToken: String,
         onResult: (Result<String?>) -> Unit
     ) {
-        val refreshToken = dataStoreHelper.getStringData(REFRESH_TOKEN).lastOrNull()
-        if (refreshToken.isNullOrBlank()) {
-            onResult(Result.failure(Exception("invalid token")))
-            return
-        }
-
-        val refreshResult = socialLogin.refreshToken(refreshToken)
-        if (refreshResult.accessToken.isNotBlank()) {
-            dataStoreHelper.saveStringData(REFRESH_TOKEN, refreshResult.refreshToken)
-            val loginResult = service.login(
-                LoginRequest("KAKAO", refreshResult.accessToken)
-            )
-            when {
-                loginResult.code() in 200..299 -> onResult(Result.success(loginResult.body()?.data?.token))
-                loginResult.code() in 400..499 -> onResult(Result.failure(Exception("not exist")))
-                else -> onResult(Result.failure(Exception("server error")))
-            }
+        val loginResult = service.login(
+            LoginRequest("KAKAO", kakaoToken)
+        )
+        when {
+            loginResult.code() in 200..299 -> onResult(Result.success(loginResult.body()?.data?.token))
+            loginResult.code() == 404 -> onResult(Result.failure(Exception("not exist"))) // 존재 X
+            else -> onResult(Result.failure(Exception("server error")))
         }
     }
 
@@ -73,7 +71,15 @@ class RemoteSignDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getAccessToken(): Flow<String> {
-        return flow { "" }
+        return flow { }
+    }
+
+    override suspend fun saveKakaoRefreshToken(token: String) {
+
+    }
+
+    override suspend fun getKakaoRefreshToken(): Flow<String> {
+        return flow { }
     }
 
     override suspend fun loginToManagerServer(

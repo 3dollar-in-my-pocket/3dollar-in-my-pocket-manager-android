@@ -17,7 +17,7 @@ class KakaoLogin @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : SocialLogin {
 
-    override suspend fun getToken(
+    override fun getToken(
         onResult: (Result<SocialLoginToken>) -> Unit
     ) {
         val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -49,17 +49,20 @@ class KakaoLogin @Inject constructor(
         }
     }
 
-    override suspend fun refreshToken(refreshToken: String): SocialLoginToken {
+    override suspend fun refreshToken(refreshToken: String): SocialLoginToken? {
         val data = kakaoLoginApi.refreshToken(
             refreshToken,
             BuildConfig.KAKAO_AUTH_KEY,
             "refresh_token"
         )
-        return SocialLoginToken(
+
+        return if (data.isSuccessful) SocialLoginToken(
             data.body()?.accessToken ?: "",
             data.body()?.refreshToken ?: "",
             LoginMethod.KAKAO
-        )
+        ) else {
+            null
+        }
     }
 
     override suspend fun signOut(callback: (error: Throwable?) -> Unit) {
