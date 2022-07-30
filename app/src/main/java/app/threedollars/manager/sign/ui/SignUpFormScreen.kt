@@ -19,14 +19,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import app.threedollars.manager.R
 import app.threedollars.manager.sign.ui.component.*
-import app.threedollars.manager.sign.viewmodel.LoginViewModel
+import app.threedollars.manager.sign.viewmodel.SignUpViewModel
 
 
 @Preview
 @Composable
-fun SignUpFormScreen(selectImage: LoginViewModel) {
+fun SignUpFormScreen() {
+    val viewModel: SignUpViewModel = hiltViewModel()
+
     var userName by remember {
         mutableStateOf("")
     }

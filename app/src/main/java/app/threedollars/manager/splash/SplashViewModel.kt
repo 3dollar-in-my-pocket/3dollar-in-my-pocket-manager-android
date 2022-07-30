@@ -1,10 +1,13 @@
 package app.threedollars.manager.splash
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
+import app.threedollars.data.oauth.KakaoLogin
 import app.threedollars.domain.repository.SignRepository
+import app.threedollars.manager.BottomNavItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -16,16 +19,13 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SplashViewModel @Inject constructor(
+    private val kakaoLogin: KakaoLogin,
     private val signRepository: SignRepository
 ) : BaseViewModel() {
 
-    private val _isLogin = MutableEventFlow<Boolean>()
-    val isLogin: EventFlow<Boolean>
-        get() = _isLogin
-
-    private val _needSignUp = MutableEventFlow<Boolean>()
-    val needSignUp: EventFlow<Boolean>
-        get() = _needSignUp
+    private val _nextScreen = MutableEventFlow<BottomNavItem>()
+    val nextScreen: EventFlow<BottomNavItem>
+        get() = _nextScreen
 
     init {
         viewModelScope.launch(exceptionHandler) {
@@ -35,17 +35,31 @@ class SplashViewModel @Inject constructor(
 
     private suspend fun tryLogin() {
         val accessToken = signRepository.getAccessToken().firstOrNull()
+        val refreshToken = signRepository.getAccessToken().firstOrNull() ?: ""
+
         if (accessToken.isNullOrBlank()) {
-            _isLogin.emit(false)
+            Log.e("tryLogin", "No accessToken")
+            _nextScreen.emit(BottomNavItem.LoginScreen)
             return
         }
 
-        signRepository.loginWithKakao {
-            viewModelScope.launch {
+        val refreshResult = kakaoLogin.refreshToken(refreshToken)
+        if (refreshResult == null) {
+            _nextScreen.emit(BottomNavItem.LoginScreen)
+            return
+        }
+
+        signRepository.saveKakaoRefreshToken(refreshResult.refreshToken)
+        signRepository.saveKakaoRefreshToken(refreshResult.refreshToken)
+        signRepository.loginWithKakao(refreshResult.accessToken) {
+            viewModelScope.launch(exceptionHandler) {
                 if (it.isSuccess && !it.getOrNull().isNullOrBlank()) {
-                    _isLogin.emit(true)
+                    Log.d("login success", "token : ${it.getOrNull()}")
+                    signRepository.saveAccessToken(it.getOrNull() ?: "")
+                    _nextScreen.emit(BottomNavItem.HomeScreen)
                 } else {
-                    _needSignUp.emit(true)
+                    Log.e("login failed", "error : ${it.getOrNull()}")
+                    _nextScreen.emit(BottomNavItem.SignUpFormScreen)
                 }
             }
         }
