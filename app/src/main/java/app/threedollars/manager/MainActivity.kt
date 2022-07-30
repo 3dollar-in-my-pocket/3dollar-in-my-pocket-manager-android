@@ -2,42 +2,67 @@ package app.threedollars.manager
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import com.google.android.material.navigation.NavigationView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import app.threedollars.data.oauth.KakaoLogin
+import app.threedollars.domain.LoginMethod
+import app.threedollars.domain.entity.SocialLoginToken
+import app.threedollars.manager.sign.viewmodel.LoginViewModel
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var kakaoLogin: KakaoLogin
+
+    private val loginViewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
-        Navigation.setViewNavController(navView, navController)
+        setContent {
+            NavController {
+                startKakaoLogin {
+                    loginViewModel.startKakaoLogin(it)
+                }
+            }
+        }
     }
 
-    private fun tryKakaoLogin() {
+    private fun startKakaoLogin(
+        onResult: (Result<SocialLoginToken>) -> Unit
+    ) {
         val loginResCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            Log.d("login", token.toString() + " " + error.toString())
             if (error != null) {
-                Log.e("localClassName", "로그인 실패", error)
-                // showToast(R.string.error_no_kakao_login)
+                onResult(Result.failure(error))
             } else if (token != null) {
-                Log.d("localClassName", token.toString())
-                // tryLoginBySocialType(token)
+                onResult(
+                    Result.success(
+                        SocialLoginToken(
+                            token.accessToken,
+                            token.refreshToken,
+                            LoginMethod.KAKAO
+                        )
+                    )
+                )
             }
         }
 
         if (LoginClient.instance.isKakaoTalkLoginAvailable(this)) {
-            LoginClient.instance.loginWithKakaoTalk(this, callback = loginResCallback)
+            LoginClient.instance.loginWithKakaoTalk(
+                context = this,
+                callback = loginResCallback
+            )
         } else {
             LoginClient.instance.loginWithKakaoAccount(
-                this,
+                context = this,
                 callback = loginResCallback
             )
         }
