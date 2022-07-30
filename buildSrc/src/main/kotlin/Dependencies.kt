@@ -36,15 +36,23 @@ object Dependencies {
     }
 
     object Compose {
-        const val COMPOSE_ACTIVITY = "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
-        const val COMPOSE_FOUNDATION = "androidx.compose.foundation:foundation:${Versions.COMPOSE_MATERIAL}"
-        const val COMPOSE_MATERIAL = "androidx.compose.material:material:${Versions.COMPOSE_MATERIAL}"
-        const val COMPOSE_ANIMATION = "androidx.compose.animation:animation:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_ACTIVITY =
+            "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
+        const val COMPOSE_FOUNDATION =
+            "androidx.compose.foundation:foundation:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_MATERIAL =
+            "androidx.compose.material:material:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_ANIMATION =
+            "androidx.compose.animation:animation:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_UI_TOOL = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_UI_TOOL_PREVIEW =
             "androidx.compose.ui:ui-tooling-preview:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_VIEWMODEL =
             "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.COMPOSE_LIFECYCLE_VIEWMODEL}"
+        const val NAVIGATION_COMPOSE =
+            "androidx.navigation:navigation-compose:${Versions.NAVIGATION}"
+        const val HILT_NAVIGATION_COMPOSE =
+            "androidx.hilt:hilt-navigation-compose:${Versions.HILT_NAVIGATION}"
     }
 
     object Hilt {
@@ -91,6 +99,8 @@ object Dependencies {
         implementation(Compose.COMPOSE_UI_TOOL)
         implementation(Compose.COMPOSE_UI_TOOL_PREVIEW)
         implementation(Compose.COMPOSE_VIEWMODEL)
+        implementation(Compose.NAVIGATION_COMPOSE)
+        implementation(Compose.HILT_NAVIGATION_COMPOSE)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
         implementation(Test.JUNIT)
