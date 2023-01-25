@@ -41,6 +41,7 @@ fun HomeScreen() {
                     Lifecycle.Event.ON_PAUSE -> mapView.onPause()
                     Lifecycle.Event.ON_STOP -> mapView.onStop()
                     Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
+                    else -> {}
                 }
             }
         }

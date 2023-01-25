@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 33
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 31
+        targetSdk = 33
     }
     buildFeatures {
         compose = true
@@ -35,8 +35,9 @@ android {
         jvmTarget = "1.8"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha04"
+        kotlinCompilerExtensionVersion = "1.4.0-alpha02"
     }
+    namespace = "app.threedollars.data"
 }
 
 dependencies {
