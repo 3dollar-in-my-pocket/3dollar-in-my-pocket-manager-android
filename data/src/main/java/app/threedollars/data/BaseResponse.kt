@@ -1,7 +1,7 @@
 package app.threedollars.data
 
 open class BaseResponse<T>(
-    data: T? = null,
-    message: String? = "",
-    resultCode: String? = ""
+    val data: T? = null,
+    val message: String? = "",
+    val resultCode: String? = ""
 )

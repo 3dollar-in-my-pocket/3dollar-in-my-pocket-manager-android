@@ -4,75 +4,78 @@ import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.*
 import app.threedollars.data.response.*
 import app.threedollars.network.NetworkService
+import app.threedollars.network.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
 import javax.inject.Inject
 
 class RemoteDataSourceImpl @Inject constructor(private val networkService: NetworkService) : RemoteDataSource {
-    override fun login(loginRequest: LoginRequest): Flow<Response<BaseResponse<LoginResponse>>> = flow {
-        emit(networkService.login(loginRequest))
+    override fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>> = flow {
+        emit(safeApiCall { networkService.login(loginRequest) })
     }
 
-    override fun logout(): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.logout())
+    override fun logout(): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.logout() })
     }
 
-    override fun signUp(signUpRequest: SignUpRequest): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.signUp(signUpRequest))
+    override fun signUp(signUpRequest: SignUpRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.signUp(signUpRequest) })
     }
 
-    override fun signOut(): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.signOut())
+    override fun signOut(): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.signOut() })
     }
 
-    override fun getBossAccount(): Flow<Response<BaseResponse<BossAccountInfoResponse>>> = flow {
-        emit(networkService.getBossAccount())
+    override fun getBossAccount(): Flow<Resource<BossAccountInfoResponse>> = flow {
+        emit(safeApiCall { networkService.getBossAccount() })
     }
 
-    override fun putBossAccount(bossAccountInfoRequest: BossAccountInfoRequest): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.putBossAccount(bossAccountInfoRequest))
+    override fun putBossAccount(bossAccountInfoRequest: BossAccountInfoRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.putBossAccount(bossAccountInfoRequest) })
     }
 
-    override fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.putBossDevice(bossDeviceRequest))
+    override fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.putBossDevice(bossDeviceRequest) })
     }
 
-    override fun deleteBossDevice(): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.deleteBossDevice())
+    override fun deleteBossDevice(): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.deleteBossDevice() })
     }
 
-    override fun putBossDeviceToken(bossDeviceRequest: BossDeviceRequest): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.putBossDeviceToken(bossDeviceRequest))
+    override fun putBossDeviceToken(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.putBossDeviceToken(bossDeviceRequest) })
     }
 
-    override fun putBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.putBossStore(bossStoreId, bossStoreRequest))
+    override fun putBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.putBossStore(bossStoreId, bossStoreRequest) })
     }
 
-    override fun patchBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.patchBossStore(bossStoreId, bossStoreRequest))
+    override fun patchBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.patchBossStore(bossStoreId, bossStoreRequest) })
     }
 
-    override fun deleteBossStoreOpen(bossStoreId: String): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.deleteBossStoreOpen(bossStoreId))
+    override fun deleteBossStoreOpen(bossStoreId: String): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.deleteBossStoreOpen(bossStoreId) })
     }
 
-    override fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Flow<Response<BaseResponse<String>>> = flow {
-        emit(networkService.postBossStoreOpen(bossStoreId, mapLatitude, mapLongitude))
+    override fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.postBossStoreOpen(bossStoreId, mapLatitude, mapLongitude) })
     }
 
     override fun getBossStoreRetrieveSpecific(
         bossStoreId: String,
         latitude: Double,
         longitude: Double
-    ): Flow<Response<BaseResponse<BossStoreRetrieveResponse>>> = flow {
-        emit(networkService.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude))
+    ): Flow<Resource<BossStoreRetrieveResponse>> = flow {
+        emit(safeApiCall { networkService.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude) })
     }
 
-    override fun getBossStoreRetrieveMe(): Flow<Response<BaseResponse<BossStoreRetrieveResponse>>> = flow {
-        emit(networkService.getBossStoreRetrieveMe())
+    override fun getBossStoreRetrieveMe(): Flow<Resource<BossStoreRetrieveResponse>> = flow {
+        emit(safeApiCall { networkService.getBossStoreRetrieveMe() })
     }
 
     override fun getBossStoreRetrieveAround(
@@ -84,24 +87,35 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         mapLongitude: Double,
         orderType: String,
         size: Int
-    ): Flow<Response<BaseResponse<List<BossStoreRetrieveAroundResponse>>>> = flow {
-        emit(networkService.getBossStoreRetrieveAround(categoryId, distanceKm, latitude, longitude, mapLatitude, mapLongitude, orderType, size))
+    ): Flow<Resource<List<BossStoreRetrieveAroundResponse>>> = flow {
+        emit(safeApiCall {
+            networkService.getBossStoreRetrieveAround(
+                categoryId,
+                distanceKm,
+                latitude,
+                longitude,
+                mapLatitude,
+                mapLongitude,
+                orderType,
+                size
+            )
+        })
     }
 
-    override fun getBossEnums(): Flow<Response<BaseResponse<BossEnumsResponse>>> = flow {
-        emit(networkService.getBossEnums())
+    override fun getBossEnums(): Flow<Resource<BossEnumsResponse>> = flow {
+        emit(safeApiCall { networkService.getBossEnums() })
     }
 
-    override fun getFaqCategories(): Flow<Response<BaseResponse<List<FaqCategoriesResponse>>>> = flow {
-        emit(networkService.getFaqCategories())
+    override fun getFaqCategories(): Flow<Resource<List<FaqCategoriesResponse>>> = flow {
+        emit(safeApiCall { networkService.getFaqCategories() })
     }
 
-    override fun getFaqs(category: String): Flow<Response<BaseResponse<List<FaqResponse>>>> = flow {
-        emit(networkService.getFaqs(category))
+    override fun getFaqs(category: String): Flow<Resource<List<FaqResponse>>> = flow {
+        emit(safeApiCall { networkService.getFaqs(category) })
     }
 
-    override fun getFeedbackFull(targetType: String, targetId: String): Flow<Response<BaseResponse<List<FeedbackFullResponse>>>> = flow {
-        emit(networkService.getFeedbackFull(targetType, targetId))
+    override fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullResponse>>> = flow {
+        emit(safeApiCall { networkService.getFeedbackFull(targetType, targetId) })
     }
 
     override fun getFeedbackSpecific(
@@ -109,24 +123,42 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         targetId: String,
         startDAte: String,
         endDate: String
-    ): Flow<Response<BaseResponse<FeedbackSpecificResponse>>> = flow {
-        emit(networkService.getFeedbackSpecific(targetType, targetId, startDAte, endDate))
+    ): Flow<Resource<FeedbackSpecificResponse>> = flow {
+        emit(safeApiCall { networkService.getFeedbackSpecific(targetType, targetId, startDAte, endDate) })
     }
 
-    override fun getFeedbackTypes(targetType: String): Flow<Response<BaseResponse<List<FeedbackTypesResponse>>>> = flow {
-        emit(networkService.getFeedbackTypes(targetType))
+    override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesResponse>>> = flow {
+        emit(safeApiCall { networkService.getFeedbackTypes(targetType) })
     }
 
-    override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Response<BaseResponse<ImageUploadResponse>>> = flow {
-        emit(networkService.postImageUpload(fileType, file))
+    override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadResponse>> = flow {
+        emit(safeApiCall { networkService.postImageUpload(fileType, file) })
     }
 
-    override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Response<BaseResponse<List<ImageUploadResponse>>>> =
+    override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadResponse>>> =
         flow {
-            emit(networkService.postImageUploadBulk(fileType, fileList))
+            emit(safeApiCall { networkService.postImageUploadBulk(fileType, fileList) })
         }
 
-    override fun getStoreCategories(storeType: String): Flow<Response<BaseResponse<List<StoreCategoriesResponse>>>> = flow {
-        emit(networkService.getStoreCategories(storeType))
+    override fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesResponse>>> = flow {
+        emit(safeApiCall { networkService.getStoreCategories(storeType) })
+    }
+
+    private fun <T> safeApiCall(apiToBeCalled: () -> Response<BaseResponse<T>>): Resource<T> {
+        return try {
+            val response: Response<BaseResponse<T>> = apiToBeCalled()
+            if (response.isSuccessful) {
+                Resource.Success(data = response.body()?.data!!)
+            } else {
+                Resource.Error(errorMessage = response.errorBody().toString())
+            }
+
+        } catch (e: HttpException) {
+            Resource.Error(errorMessage = e.message ?: "Something went wrong")
+        } catch (e: IOException) {
+            Resource.Error(errorMessage = e.message ?: "Please check your network connection")
+        } catch (e: Exception) {
+            Resource.Error(errorMessage = e.message ?: "Something went wrong")
+        }
     }
 }

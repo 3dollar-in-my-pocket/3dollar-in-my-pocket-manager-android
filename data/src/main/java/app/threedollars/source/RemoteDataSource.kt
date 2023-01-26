@@ -1,47 +1,47 @@
 package app.threedollars.source
 
-import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.*
 import app.threedollars.data.response.*
+import app.threedollars.network.Resource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
 
 interface RemoteDataSource {
-    fun login(loginRequest: LoginRequest): Flow<Response<BaseResponse<LoginResponse>>>
+    fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>>
 
-    fun logout(): Flow<Response<BaseResponse<String>>>
+    fun logout(): Flow<Resource<String>>
 
-    fun signUp(signUpRequest: SignUpRequest): Flow<Response<BaseResponse<String>>>
+    fun signUp(signUpRequest: SignUpRequest): Flow<Resource<String>>
 
-    fun signOut(): Flow<Response<BaseResponse<String>>>
+    fun signOut(): Flow<Resource<String>>
 
     // boss-account-controller
-    fun getBossAccount(): Flow<Response<BaseResponse<BossAccountInfoResponse>>>
+    fun getBossAccount(): Flow<Resource<BossAccountInfoResponse>>
 
-    fun putBossAccount(bossAccountInfoRequest: BossAccountInfoRequest): Flow<Response<BaseResponse<String>>>
+    fun putBossAccount(bossAccountInfoRequest: BossAccountInfoRequest): Flow<Resource<String>>
 
     // boss-device-controller
-    fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Response<BaseResponse<String>>>
+    fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>>
 
-    fun deleteBossDevice(): Flow<Response<BaseResponse<String>>>
+    fun deleteBossDevice(): Flow<Resource<String>>
 
-    fun putBossDeviceToken(bossDeviceRequest: BossDeviceRequest): Flow<Response<BaseResponse<String>>>
+    fun putBossDeviceToken(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>>
 
     // boss-store-controller
-    fun putBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Response<BaseResponse<String>>>
+    fun putBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Resource<String>>
 
-    fun patchBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Response<BaseResponse<String>>>
+    fun patchBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Resource<String>>
 
     // boss-store-open-controller
-    fun deleteBossStoreOpen(bossStoreId: String): Flow<Response<BaseResponse<String>>>
+    fun deleteBossStoreOpen(bossStoreId: String): Flow<Resource<String>>
 
-    fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Flow<Response<BaseResponse<String>>>
+    fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Flow<Resource<String>>
 
     // boss-store-retrieve-controller
-    fun getBossStoreRetrieveSpecific(bossStoreId: String, latitude: Double, longitude: Double): Flow<Response<BaseResponse<BossStoreRetrieveResponse>>>
+    fun getBossStoreRetrieveSpecific(bossStoreId: String, latitude: Double, longitude: Double): Flow<Resource<BossStoreRetrieveResponse>>
 
-    fun getBossStoreRetrieveMe(): Flow<Response<BaseResponse<BossStoreRetrieveResponse>>>
+    fun getBossStoreRetrieveMe(): Flow<Resource<BossStoreRetrieveResponse>>
 
     fun getBossStoreRetrieveAround(
         categoryId: String,
@@ -52,33 +52,33 @@ interface RemoteDataSource {
         mapLongitude: Double,
         orderType: String,
         size: Int
-    ): Flow<Response<BaseResponse<List<BossStoreRetrieveAroundResponse>>>>
+    ): Flow<Resource<List<BossStoreRetrieveAroundResponse>>>
 
     // enum-mapper-controller
-    fun getBossEnums(): Flow<Response<BaseResponse<BossEnumsResponse>>>
+    fun getBossEnums(): Flow<Resource<BossEnumsResponse>>
 
     // faq-controller
-    fun getFaqCategories(): Flow<Response<BaseResponse<List<FaqCategoriesResponse>>>>
+    fun getFaqCategories(): Flow<Resource<List<FaqCategoriesResponse>>>
 
-    fun getFaqs(category: String = ""): Flow<Response<BaseResponse<List<FaqResponse>>>>
+    fun getFaqs(category: String = ""): Flow<Resource<List<FaqResponse>>>
 
     // feedback-controller
-    fun getFeedbackFull(targetType: String, targetId: String): Flow<Response<BaseResponse<List<FeedbackFullResponse>>>>
+    fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullResponse>>>
 
     fun getFeedbackSpecific(
         targetType: String,
         targetId: String,
         startDAte: String,
         endDate: String
-    ): Flow<Response<BaseResponse<FeedbackSpecificResponse>>>
+    ): Flow<Resource<FeedbackSpecificResponse>>
 
-    fun getFeedbackTypes(targetType: String): Flow<Response<BaseResponse<List<FeedbackTypesResponse>>>>
+    fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesResponse>>>
 
     // image-upload-controller
-    fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Response<BaseResponse<ImageUploadResponse>>>
+    fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadResponse>>
 
-    fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Response<BaseResponse<List<ImageUploadResponse>>>>
+    fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadResponse>>>
 
     // platform-store-category-controller
-    fun getStoreCategories(storeType: String): Flow<Response<BaseResponse<List<StoreCategoriesResponse>>>>
+    fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesResponse>>>
 }
