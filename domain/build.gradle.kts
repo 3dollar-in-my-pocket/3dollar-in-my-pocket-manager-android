@@ -37,10 +37,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0-alpha02"
     }
-    namespace = "app.threedollars.data"
+    namespace = "app.threedollars.domain"
 }
 
 dependencies {
     common()
-    implementation(project(":domain"))
 }
