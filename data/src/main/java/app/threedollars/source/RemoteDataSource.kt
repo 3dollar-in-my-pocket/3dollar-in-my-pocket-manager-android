@@ -1,8 +1,8 @@
 package app.threedollars.source
 
 import app.threedollars.data.BaseResponse
-import app.threedollars.data.network.request.*
-import app.threedollars.data.network.response.*
+import app.threedollars.data.request.*
+import app.threedollars.data.response.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.Response
