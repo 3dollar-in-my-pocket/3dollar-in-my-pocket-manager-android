@@ -7,5 +7,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class BossAccountInfoRequest(
     @Json(name = "name")
-    val name: String? = null,
+    val name: String? = null
 )

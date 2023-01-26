@@ -1,6 +1,8 @@
 package app.threedollars.data.response
 
 
+import app.threedollars.dto.LoginDto
+import app.threedollars.dto.StoreCategoriesDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -18,4 +20,7 @@ data class StoreCategoriesResponse(
     val isNew: Boolean? = null,
     @Json(name = "name")
     val name: String? = null
-)
+) {
+    fun toDto() = StoreCategoriesDto(category, categoryId, description, imageUrl, isNew, name)
+
+}

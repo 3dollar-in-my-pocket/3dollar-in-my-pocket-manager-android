@@ -2,6 +2,7 @@ package app.threedollars.data.response
 
 
 import app.threedollars.data.BaseResponse
+import app.threedollars.dto.BossAccountInfoDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -21,4 +22,6 @@ data class BossAccountInfoResponse(
     val socialType: String? = null,
     @Json(name = "updatedAt")
     val updatedAt: String? = null
-) : BaseResponse<BossAccountInfoResponse>()
+) : BaseResponse<BossAccountInfoResponse>() {
+    fun toDto() = BossAccountInfoDto(bossId, businessNumber, createdAt, isSetupNotification, name, socialType, updatedAt)
+}

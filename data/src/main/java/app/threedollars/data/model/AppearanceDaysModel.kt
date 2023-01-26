@@ -1,6 +1,7 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.AppearanceDaysDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -13,3 +14,6 @@ data class AppearanceDaysModel(
     @Json(name = "locationDescription")
     val locationDescription: String? = null
 )
+fun List<AppearanceDaysModel>.toDto() = map {
+    AppearanceDaysDto(it.dayOfTheWeek,it.openingHours?.toDto(),it.locationDescription)
+}

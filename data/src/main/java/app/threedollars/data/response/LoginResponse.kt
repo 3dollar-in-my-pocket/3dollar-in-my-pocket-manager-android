@@ -1,6 +1,7 @@
 package app.threedollars.data.response
 
 
+import app.threedollars.dto.LoginDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -10,4 +11,7 @@ data class LoginResponse(
     val bossId: String? = null,
     @Json(name = "token")
     val token: String? = null
-)
+) {
+    fun toDto() = LoginDto(bossId, token)
+
+}

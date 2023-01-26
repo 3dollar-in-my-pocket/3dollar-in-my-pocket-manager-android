@@ -1,6 +1,7 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.FavoriteDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -8,4 +9,7 @@ import com.squareup.moshi.JsonClass
 data class FavoriteModel(
     @Json(name = "isFavorite")
     val isFavorite: Boolean? = null
-)
+){
+    fun toDto() = FavoriteDto(isFavorite)
+
+}

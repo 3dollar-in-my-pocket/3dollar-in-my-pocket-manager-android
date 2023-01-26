@@ -3,6 +3,8 @@ package app.threedollars.data.response
 
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.model.*
+import app.threedollars.dto.BossAccountInfoDto
+import app.threedollars.dto.BossStoreRetrieveAroundDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -28,4 +30,17 @@ data class BossStoreRetrieveAroundResponse(
     val totalFeedbacksCounts: Int? = null,
     @Json(name = "updatedAt")
     val updatedAt: String? = null
-) : BaseResponse<BossStoreRetrieveAroundResponse>()
+) : BaseResponse<BossStoreRetrieveAroundResponse>() {
+    fun toDto() = BossStoreRetrieveAroundDto(
+        bossStoreId,
+        categories.toDto(),
+        createdAt,
+        distance,
+        location?.toDto(),
+        menus.toDto(),
+        name,
+        openStatus.toDto(),
+        totalFeedbacksCounts,
+        updatedAt
+    )
+}

@@ -1,6 +1,8 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.CategoriesDto
+import app.threedollars.dto.CursorDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -19,3 +21,7 @@ data class CategoriesModel(
     @Json(name = "name")
     val name: String? = null
 )
+
+fun List<CategoriesModel>.toDto() = map {
+    CategoriesDto(it.category, it.categoryId, it.description, it.imageUrl, it.isNew, it.name)
+}

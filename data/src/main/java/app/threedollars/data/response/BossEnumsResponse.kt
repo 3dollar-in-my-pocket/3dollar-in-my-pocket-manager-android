@@ -3,6 +3,8 @@ package app.threedollars.data.response
 
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.model.EnumsModel
+import app.threedollars.data.model.toDto
+import app.threedollars.dto.BossEnumsDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -48,4 +50,27 @@ data class BossEnumsResponse(
     val userSocialType: List<EnumsModel> = listOf(),
     @Json(name = "FeedbackEmojiType")
     val feedbackEmojiType: List<EnumsModel> = listOf()
-) : BaseResponse<BossEnumsResponse>()
+) : BaseResponse<BossEnumsResponse>() {
+    fun toDto() = BossEnumsDto(
+        paymentMethodType.toDto(),
+        bossStoreOpenType.toDto(),
+        feedbackTargetType.toDto(),
+        advertisementPositionType.toDto(),
+        userMenuCategoryType.toDto(),
+        pushPlatformType.toDto(),
+        bossRegistrationStatus.toDto(),
+        storeType.toDto(),
+        applicationType.toDto(),
+        dayOfTheWeek.toDto(),
+        pushOptionsType.toDto(),
+        fileType.toDto(),
+        bossAccountSocialType.toDto(),
+        boosRegistrationRejectReasonType.toDto(),
+        deleteReasonType.toDto(),
+        visitType.toDto(),
+        faqCategory.toDto(),
+        storeSalesType.toDto(),
+        userSocialType.toDto(),
+        feedbackEmojiType.toDto()
+    )
+}

@@ -1,6 +1,7 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.ContentsDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -11,3 +12,6 @@ data class ContentsModel(
     @Json(name = "feedbacks")
     val feedbacks: List<FeedbacksModel> = listOf()
 )
+fun List<ContentsModel>.toDto() = map {
+    ContentsDto(it.date, it.feedbacks.toDto())
+}

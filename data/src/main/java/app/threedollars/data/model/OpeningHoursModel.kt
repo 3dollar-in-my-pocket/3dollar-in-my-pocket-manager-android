@@ -1,6 +1,7 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.OpeningHoursDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -10,4 +11,6 @@ data class OpeningHoursModel(
     val startTime: String? = null,
     @Json(name = "endTime")
     val endTime: String? = null
-)
+){
+    fun toDto() = OpeningHoursDto(startTime, endTime)
+}

@@ -1,6 +1,7 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.CategoryInfoDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -12,4 +13,7 @@ data class CategoryInfoModel(
     val description: String? = null,
     @Json(name = "displayOrder")
     val displayOrder: String? = null
-)
+){
+    fun toDto() = CategoryInfoDto(category, description, displayOrder)
+
+}

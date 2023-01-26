@@ -1,6 +1,7 @@
 package app.threedollars.data.model
 
 
+import app.threedollars.dto.LocationDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -10,4 +11,7 @@ data class LocationModel(
     val latitude: Double? = null,
     @Json(name = "longitude")
     val longitude: Double? = null
-)
+){
+    fun toDto() = LocationDto(latitude, longitude)
+
+}
