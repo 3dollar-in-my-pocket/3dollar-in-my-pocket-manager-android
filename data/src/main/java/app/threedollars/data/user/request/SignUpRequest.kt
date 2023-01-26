@@ -12,8 +12,6 @@ data class SignUpRequest(
     val businessNumber: String? = null,
     @Json(name = "certificationPhotoUrl")
     val certificationPhotoUrl: String? = null,
-    @Json(name = "contactsNumber")
-    val contactsNumber: String? = null,
     @Json(name = "socialType")
     val socialType: String? = null,
     @Json(name = "storeCategoriesIds")
