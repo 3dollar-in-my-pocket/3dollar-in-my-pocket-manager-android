@@ -13,10 +13,10 @@ data class BossAccountInfoResponse(
     val businessNumber: String? = null,
     @Json(name = "createdAt")
     val createdAt: String? = null,
+    @Json(name = "isSetupNotification")
+    val isSetupNotification: Boolean? = null,
     @Json(name = "name")
     val name: String? = null,
-    @Json(name = "pushSettingsStatus")
-    val pushSettingsStatus: String? = null,
     @Json(name = "socialType")
     val socialType: String? = null,
     @Json(name = "updatedAt")
