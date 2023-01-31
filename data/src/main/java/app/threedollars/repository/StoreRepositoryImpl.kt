@@ -1,10 +1,15 @@
 package app.threedollars.repository
 
-import app.threedollars.Resource
-import app.threedollars.dto.*
-import app.threedollars.dto.AppearanceDaysRequestDto
-import app.threedollars.dto.MenusDto
+import app.threedollars.common.Resource
+import app.threedollars.data.model.AppearanceDaysRequestModel
+import app.threedollars.data.model.MenusModel
+import app.threedollars.data.request.BossStoreRequest
+import app.threedollars.data.response.*
+import app.threedollars.domain.dto.*
+import app.threedollars.domain.repository.StoreRepository
 import app.threedollars.source.RemoteDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -18,8 +23,23 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
         menus: List<MenusDto>,
         name: String?,
         snsUrl: String?
-    ): Resource<String> {
-        TODO("Not yet implemented")
+    ): Flow<Resource<String>> {
+        val appearanceDaysModel = appearanceDays.map {
+            AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
+        }
+        val menusModel = menus.map {
+            MenusModel(it.imageUrl, it.name, it.price)
+        }
+        val bossStoreRequest = BossStoreRequest(
+            appearanceDaysModel,
+            categoriesIds,
+            imageUrl,
+            introduction,
+            menusModel,
+            name,
+            snsUrl
+        )
+        return remoteDataSource.putBossStore(bossStoreId, bossStoreRequest)
     }
 
     override fun patchBossStore(
@@ -31,25 +51,53 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
         menus: List<MenusDto>,
         name: String?,
         snsUrl: String?
-    ): Resource<String> {
-        TODO("Not yet implemented")
+    ): Flow<Resource<String>> {
+        val appearanceDaysModel = appearanceDays.map {
+            AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
+        }
+        val menusModel = menus.map {
+            MenusModel(it.imageUrl, it.name, it.price)
+        }
+        val bossStoreRequest = BossStoreRequest(
+            appearanceDaysModel,
+            categoriesIds,
+            imageUrl,
+            introduction,
+            menusModel,
+            name,
+            snsUrl
+        )
+        return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest)
     }
 
-    override fun deleteBossStoreOpen(bossStoreId: String): Resource<String> {
-        TODO("Not yet implemented")
+    override fun deleteBossStoreOpen(bossStoreId: String): Flow<Resource<String>> =
+        remoteDataSource.deleteBossStoreOpen(bossStoreId)
+
+    override fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Flow<Resource<String>> =
+        remoteDataSource.postBossStoreOpen(bossStoreId, mapLatitude, mapLongitude)
+
+    override fun getBossStoreRetrieveSpecific(
+        bossStoreId: String,
+        latitude: Double,
+        longitude: Double
+    ): Flow<Resource<BossStoreRetrieveDto>> {
+        return remoteDataSource.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
     }
 
-    override fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Resource<String> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getBossStoreRetrieveSpecific(bossStoreId: String, latitude: Double, longitude: Double): Resource<BossStoreRetrieveDto> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getBossStoreRetrieveMe(): Resource<BossStoreRetrieveDto> {
-        TODO("Not yet implemented")
-    }
+    override fun getBossStoreRetrieveMe(): Flow<Resource<BossStoreRetrieveDto>> =
+        remoteDataSource.getBossStoreRetrieveMe().map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
     override fun getBossStoreRetrieveAround(
         categoryId: String,
@@ -60,43 +108,100 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
         mapLongitude: Double,
         orderType: String,
         size: Int
-    ): Resource<List<BossStoreRetrieveAroundDto>> {
-        TODO("Not yet implemented")
+    ): Flow<Resource<List<BossStoreRetrieveAroundDto>>> {
+        return remoteDataSource.getBossStoreRetrieveAround(categoryId, distanceKm, latitude, longitude, mapLatitude, mapLongitude, orderType, size)
+            .map {
+                if (it.data != null) {
+                    Resource.Success(data = it.data!!.toDto())
+                } else {
+                    Resource.Error(errorMessage = it.message.toString())
+                }
+            }
     }
 
-    override fun getBossEnums(): Resource<BossEnumsDto> {
-        TODO("Not yet implemented")
-    }
+    override fun getBossEnums(): Flow<Resource<BossEnumsDto>> =
+        remoteDataSource.getBossEnums().map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun getFaqCategories(): Resource<List<FaqCategoriesDto>> {
-        TODO("Not yet implemented")
-    }
+    override fun getFaqCategories(): Flow<Resource<List<FaqCategoriesDto>>> =
+        remoteDataSource.getFaqCategories().map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun getFaqs(category: String): Resource<List<FaqDto>> {
-        TODO("Not yet implemented")
-    }
+    override fun getFaqs(category: String): Flow<Resource<List<FaqDto>>> =
+        remoteDataSource.getFaqs(category).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun getFeedbackFull(targetType: String, targetId: String): Resource<List<FeedbackFullDto>> {
-        TODO("Not yet implemented")
-    }
+    override fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullDto>>> =
+        remoteDataSource.getFeedbackFull(targetType, targetId).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun getFeedbackSpecific(targetType: String, targetId: String, startDAte: String, endDate: String): Resource<FeedbackSpecificDto> {
-        TODO("Not yet implemented")
-    }
+    override fun getFeedbackSpecific(
+        targetType: String,
+        targetId: String,
+        startDAte: String,
+        endDate: String
+    ): Flow<Resource<FeedbackSpecificDto>> =
+        remoteDataSource.getFeedbackSpecific(targetType, targetId, startDAte, endDate).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun getFeedbackTypes(targetType: String): Resource<List<FeedbackTypesDto>> {
-        TODO("Not yet implemented")
-    }
+    override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesDto>>> =
+        remoteDataSource.getFeedbackTypes(targetType).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun postImageUpload(fileType: String, file: MultipartBody.Part): Resource<ImageUploadDto> {
-        TODO("Not yet implemented")
-    }
+    override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadDto>> =
+        remoteDataSource.postImageUpload(fileType, file).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Resource<List<ImageUploadDto>> {
-        TODO("Not yet implemented")
-    }
+    override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadDto>>> =
+        remoteDataSource.postImageUploadBulk(fileType, fileList).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 
-    override fun getStoreCategories(storeType: String): Resource<List<StoreCategoriesDto>> {
-        TODO("Not yet implemented")
-    }
+    override fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesDto>>> =
+        remoteDataSource.getStoreCategories(storeType).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
 }

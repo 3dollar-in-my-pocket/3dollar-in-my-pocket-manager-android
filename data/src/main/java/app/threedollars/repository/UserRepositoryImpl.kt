@@ -1,20 +1,30 @@
 package app.threedollars.repository
 
-import app.threedollars.Resource
+import app.threedollars.common.Resource
+import app.threedollars.data.request.BossAccountInfoRequest
+import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.LoginRequest
-import app.threedollars.dto.BossAccountInfoDto
-import app.threedollars.dto.LoginDto
+import app.threedollars.data.request.SignUpRequest
+import app.threedollars.domain.dto.LoginDto
+import app.threedollars.domain.repository.UserRepository
 import app.threedollars.source.RemoteDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) : UserRepository {
-    override fun login(socialType: String, token: String): Resource<LoginDto> {
+    override fun login(socialType: String, token: String): Flow<Resource<LoginDto>> {
         val loginRequest = LoginRequest(socialType, token)
+        return remoteDataSource.login(loginRequest).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
     }
 
-    override fun logout(): Resource<String> {
-        TODO("Not yet implemented")
-    }
+    override fun logout(): Flow<Resource<String>> = remoteDataSource.logout()
 
     override fun signUp(
         bossName: String,
@@ -24,31 +34,36 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
         storeCategoriesIds: List<String>,
         storeName: String,
         token: String
-    ): Resource<String> {
-        TODO("Not yet implemented")
+    ): Flow<Resource<String>> {
+        val signUpRequest = SignUpRequest(bossName, businessNumber, certificationPhotoUrl, socialType, storeCategoriesIds, storeName, token)
+        return remoteDataSource.signUp(signUpRequest)
     }
 
-    override fun signOut(): Resource<String> {
-        TODO("Not yet implemented")
+    override fun signOut(): Flow<Resource<String>> = remoteDataSource.signOut()
+
+    override fun getBossAccount(): Flow<Resource<app.threedollars.domain.dto.BossAccountInfoDto>> =
+        remoteDataSource.getBossAccount().map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto())
+            } else {
+                Resource.Error(errorMessage = it.message.toString())
+            }
+        }
+
+    override fun putBossAccount(name: String): Flow<Resource<String>> {
+        val bossAccountInfoRequest = BossAccountInfoRequest(name)
+        return remoteDataSource.putBossAccount(bossAccountInfoRequest)
     }
 
-    override fun getBossAccount(): Resource<BossAccountInfoDto> {
-        TODO("Not yet implemented")
+    override fun putBossDevice(pushPlatformType: String, pushToken: String): Flow<Resource<String>> {
+        val bossDeviceRequest = BossDeviceRequest(pushPlatformType, pushToken)
+        return remoteDataSource.putBossDevice(bossDeviceRequest)
     }
 
-    override fun putBossAccount(name: String): Resource<String> {
-        TODO("Not yet implemented")
-    }
+    override fun deleteBossDevice(): Flow<Resource<String>> = remoteDataSource.deleteBossDevice()
 
-    override fun putBossDevice(pushPlatformType: String, pushToken: String): Resource<String> {
-        TODO("Not yet implemented")
-    }
-
-    override fun deleteBossDevice(): Resource<String> {
-        TODO("Not yet implemented")
-    }
-
-    override fun putBossDeviceToken(pushPlatformType: String, pushToken: String): Resource<String> {
-        TODO("Not yet implemented")
+    override fun putBossDeviceToken(pushPlatformType: String, pushToken: String): Flow<Resource<String>> {
+        val bossDeviceRequest = BossDeviceRequest(pushPlatformType, pushToken)
+        return remoteDataSource.putBossDeviceToken(bossDeviceRequest)
     }
 }
