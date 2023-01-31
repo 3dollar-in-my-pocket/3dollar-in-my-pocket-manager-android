@@ -2,8 +2,7 @@ package app.threedollars.data.response
 
 
 import app.threedollars.data.BaseResponse
-import app.threedollars.dto.FeedbackTypesDto
-import app.threedollars.dto.ImageUploadDto
+import app.threedollars.domain.dto.ImageUploadDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -11,6 +10,11 @@ import com.squareup.moshi.JsonClass
 data class ImageUploadResponse(
     @Json(name = "imageUrl")
     val imageUrl: String? = null
-) : BaseResponse<ImageUploadResponse>(){
+) : BaseResponse<ImageUploadResponse>() {
     fun toDto() = ImageUploadDto(imageUrl)
 }
+
+fun List<ImageUploadResponse>.toDto() = map {
+    ImageUploadDto(it.imageUrl)
+}
+

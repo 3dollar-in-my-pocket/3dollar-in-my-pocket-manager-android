@@ -3,7 +3,7 @@ package app.threedollars.data.response
 
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.model.*
-import app.threedollars.dto.BossStoreRetrieveDto
+import app.threedollars.domain.dto.BossStoreRetrieveDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -50,7 +50,7 @@ data class BossStoreRetrieveResponse(
     @Json(name = "updatedAt")
     val updatedAt: String? = null
 ) : BaseResponse<BossStoreRetrieveResponse>() {
-    fun toDto() = BossStoreRetrieveDto(
+    fun toDto() = app.threedollars.domain.dto.BossStoreRetrieveDto(
         appearanceDays.toDto(),
         bossStoreId,
         categories.toDto(),

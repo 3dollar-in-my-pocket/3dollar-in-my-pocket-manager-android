@@ -1,10 +1,10 @@
 package app.threedollars.source
 
+import app.threedollars.common.Resource
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.*
 import app.threedollars.data.response.*
 import app.threedollars.network.NetworkService
-import app.threedollars.network.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody

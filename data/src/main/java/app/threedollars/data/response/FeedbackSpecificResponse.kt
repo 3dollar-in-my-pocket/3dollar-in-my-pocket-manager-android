@@ -5,8 +5,7 @@ import app.threedollars.data.BaseResponse
 import app.threedollars.data.model.ContentsModel
 import app.threedollars.data.model.CursorModel
 import app.threedollars.data.model.toDto
-import app.threedollars.dto.FeedbackFullDto
-import app.threedollars.dto.FeedbackSpecificDto
+import app.threedollars.domain.dto.FeedbackSpecificDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

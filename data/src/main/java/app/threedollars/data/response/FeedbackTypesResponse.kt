@@ -2,9 +2,7 @@ package app.threedollars.data.response
 
 
 import app.threedollars.data.BaseResponse
-import app.threedollars.data.model.toDto
-import app.threedollars.dto.FeedbackSpecificDto
-import app.threedollars.dto.FeedbackTypesDto
+import app.threedollars.domain.dto.FeedbackTypesDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -16,7 +14,9 @@ data class FeedbackTypesResponse(
     val emoji: String? = null,
     @Json(name = "feedbackType")
     val feedbackType: String? = null
-) : BaseResponse<FeedbackTypesResponse>(){
-    fun toDto() = FeedbackTypesDto(description, emoji, feedbackType)
+) : BaseResponse<FeedbackTypesResponse>()
 
+fun List<FeedbackTypesResponse>.toDto() = map {
+    FeedbackTypesDto(it.description, it.emoji, it.feedbackType)
 }
+

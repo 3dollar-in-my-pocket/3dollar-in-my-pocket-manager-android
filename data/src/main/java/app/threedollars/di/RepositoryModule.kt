@@ -1,11 +1,9 @@
 package app.threedollars.di
 
-import app.threedollars.repository.StoreRepository
+import app.threedollars.domain.repository.StoreRepository
+import app.threedollars.domain.repository.UserRepository
 import app.threedollars.repository.StoreRepositoryImpl
-import app.threedollars.repository.UserRepository
 import app.threedollars.repository.UserRepositoryImpl
-import app.threedollars.source.RemoteDataSource
-import app.threedollars.source.RemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

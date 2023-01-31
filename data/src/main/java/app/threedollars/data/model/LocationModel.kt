@@ -1,7 +1,7 @@
 package app.threedollars.data.model
 
 
-import app.threedollars.dto.LocationDto
+import app.threedollars.domain.dto.LocationDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

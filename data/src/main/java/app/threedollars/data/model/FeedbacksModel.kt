@@ -1,7 +1,7 @@
 package app.threedollars.data.model
 
 
-import app.threedollars.dto.FeedbacksDto
+import app.threedollars.domain.dto.FeedbacksDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

@@ -1,7 +1,7 @@
 package app.threedollars.data.model
 
 
-import app.threedollars.dto.EnumsDto
+import app.threedollars.domain.dto.EnumsDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

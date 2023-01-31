@@ -1,7 +1,7 @@
 package app.threedollars.data.model
 
 
-import app.threedollars.dto.OpeningHoursDto
+import app.threedollars.domain.dto.OpeningHoursDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

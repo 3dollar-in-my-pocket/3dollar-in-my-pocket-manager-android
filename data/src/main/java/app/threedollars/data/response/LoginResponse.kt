@@ -1,7 +1,7 @@
 package app.threedollars.data.response
 
 
-import app.threedollars.dto.LoginDto
+import app.threedollars.domain.dto.LoginDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

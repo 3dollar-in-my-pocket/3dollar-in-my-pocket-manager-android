@@ -2,8 +2,7 @@ package app.threedollars.data.response
 
 
 import app.threedollars.data.BaseResponse
-import app.threedollars.dto.FaqDto
-import app.threedollars.dto.FeedbackFullDto
+import app.threedollars.domain.dto.FeedbackFullDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -15,7 +14,9 @@ data class FeedbackFullResponse(
     val feedbackType: String? = null,
     @Json(name = "ratio")
     val ratio: String? = null
-) : BaseResponse<FeedbackFullResponse>() {
-    fun toDto() = FeedbackFullDto(count, feedbackType, ratio)
+) : BaseResponse<FeedbackFullResponse>()
 
+fun List<FeedbackFullResponse>.toDto() = map {
+    FeedbackFullDto(it.count, it.feedbackType, it.ratio)
 }
+

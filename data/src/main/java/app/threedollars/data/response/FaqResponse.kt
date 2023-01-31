@@ -2,8 +2,7 @@ package app.threedollars.data.response
 
 
 import app.threedollars.data.model.CategoryInfoModel
-import app.threedollars.dto.BossAccountInfoDto
-import app.threedollars.dto.FaqDto
+import app.threedollars.domain.dto.FaqDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -23,7 +22,8 @@ data class FaqResponse(
     val question: String? = null,
     @Json(name = "updatedAt")
     val updatedAt: String? = null
-){
-    fun toDto() = FaqDto(answer, category, categoryInfo?.toDto(), createdAt, faqId, question, updatedAt)
+)
 
+fun List<FaqResponse>.toDto() = map {
+    FaqDto(it.answer, it.category, it.categoryInfo?.toDto(), it.createdAt, it.faqId, it.question, it.updatedAt)
 }

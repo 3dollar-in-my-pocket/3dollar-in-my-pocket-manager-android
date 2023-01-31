@@ -1,7 +1,7 @@
 package app.threedollars.data.model
 
 
-import app.threedollars.dto.ContentsDto
+import app.threedollars.domain.dto.ContentsDto
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

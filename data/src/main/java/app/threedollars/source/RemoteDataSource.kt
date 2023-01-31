@@ -1,11 +1,10 @@
 package app.threedollars.source
 
+import app.threedollars.common.Resource
 import app.threedollars.data.request.*
 import app.threedollars.data.response.*
-import app.threedollars.network.Resource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
-import retrofit2.Response
 
 interface RemoteDataSource {
     fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>>
