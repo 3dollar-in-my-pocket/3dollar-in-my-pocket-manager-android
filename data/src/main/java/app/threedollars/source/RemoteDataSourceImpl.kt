@@ -15,55 +15,55 @@ import javax.inject.Inject
 
 class RemoteDataSourceImpl @Inject constructor(private val networkService: NetworkService) : RemoteDataSource {
     override fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>> = flow {
-        emit(safeApiCall { networkService.login(loginRequest) })
+        emit(safeApiCall(networkService.login(loginRequest)))
     }
 
     override fun logout(): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.logout() })
+        emit(safeApiCall(networkService.logout()))
     }
 
     override fun signUp(signUpRequest: SignUpRequest): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.signUp(signUpRequest) })
+        emit(safeApiCall(networkService.signUp(signUpRequest)))
     }
 
     override fun signOut(): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.signOut() })
+        emit(safeApiCall(networkService.signOut()))
     }
 
     override fun getBossAccount(): Flow<Resource<BossAccountInfoResponse>> = flow {
-        emit(safeApiCall { networkService.getBossAccount() })
+        emit(safeApiCall(networkService.getBossAccount()))
     }
 
     override fun putBossAccount(bossAccountInfoRequest: BossAccountInfoRequest): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.putBossAccount(bossAccountInfoRequest) })
+        emit(safeApiCall(networkService.putBossAccount(bossAccountInfoRequest)))
     }
 
     override fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.putBossDevice(bossDeviceRequest) })
+        emit(safeApiCall(networkService.putBossDevice(bossDeviceRequest)))
     }
 
     override fun deleteBossDevice(): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.deleteBossDevice() })
+        emit(safeApiCall(networkService.deleteBossDevice()))
     }
 
     override fun putBossDeviceToken(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.putBossDeviceToken(bossDeviceRequest) })
+        emit(safeApiCall(networkService.putBossDeviceToken(bossDeviceRequest)))
     }
 
     override fun putBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.putBossStore(bossStoreId, bossStoreRequest) })
+        emit(safeApiCall(networkService.putBossStore(bossStoreId, bossStoreRequest)))
     }
 
     override fun patchBossStore(bossStoreId: String, bossStoreRequest: BossStoreRequest): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.patchBossStore(bossStoreId, bossStoreRequest) })
+        emit(safeApiCall(networkService.patchBossStore(bossStoreId, bossStoreRequest)))
     }
 
     override fun deleteBossStoreOpen(bossStoreId: String): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.deleteBossStoreOpen(bossStoreId) })
+        emit(safeApiCall(networkService.deleteBossStoreOpen(bossStoreId)))
     }
 
     override fun postBossStoreOpen(bossStoreId: String, mapLatitude: Double, mapLongitude: Double): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.postBossStoreOpen(bossStoreId, mapLatitude, mapLongitude) })
+        emit(safeApiCall(networkService.postBossStoreOpen(bossStoreId, mapLatitude, mapLongitude)))
     }
 
     override fun getBossStoreRetrieveSpecific(
@@ -71,11 +71,11 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         latitude: Double,
         longitude: Double
     ): Flow<Resource<BossStoreRetrieveResponse>> = flow {
-        emit(safeApiCall { networkService.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude) })
+        emit(safeApiCall(networkService.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude)))
     }
 
     override fun getBossStoreRetrieveMe(): Flow<Resource<BossStoreRetrieveResponse>> = flow {
-        emit(safeApiCall { networkService.getBossStoreRetrieveMe() })
+        emit(safeApiCall(networkService.getBossStoreRetrieveMe()))
     }
 
     override fun getBossStoreRetrieveAround(
@@ -88,34 +88,36 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         orderType: String,
         size: Int
     ): Flow<Resource<List<BossStoreRetrieveAroundResponse>>> = flow {
-        emit(safeApiCall {
-            networkService.getBossStoreRetrieveAround(
-                categoryId,
-                distanceKm,
-                latitude,
-                longitude,
-                mapLatitude,
-                mapLongitude,
-                orderType,
-                size
+        emit(
+            safeApiCall(
+                networkService.getBossStoreRetrieveAround(
+                    categoryId,
+                    distanceKm,
+                    latitude,
+                    longitude,
+                    mapLatitude,
+                    mapLongitude,
+                    orderType,
+                    size
+                )
             )
-        })
+        )
     }
 
     override fun getBossEnums(): Flow<Resource<BossEnumsResponse>> = flow {
-        emit(safeApiCall { networkService.getBossEnums() })
+        emit(safeApiCall(networkService.getBossEnums()))
     }
 
     override fun getFaqCategories(): Flow<Resource<List<FaqCategoriesResponse>>> = flow {
-        emit(safeApiCall { networkService.getFaqCategories() })
+        emit(safeApiCall(networkService.getFaqCategories()))
     }
 
     override fun getFaqs(category: String): Flow<Resource<List<FaqResponse>>> = flow {
-        emit(safeApiCall { networkService.getFaqs(category) })
+        emit(safeApiCall(networkService.getFaqs(category)))
     }
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullResponse>>> = flow {
-        emit(safeApiCall { networkService.getFeedbackFull(targetType, targetId) })
+        emit(safeApiCall(networkService.getFeedbackFull(targetType, targetId)))
     }
 
     override fun getFeedbackSpecific(
@@ -124,29 +126,28 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         startDAte: String,
         endDate: String
     ): Flow<Resource<FeedbackSpecificResponse>> = flow {
-        emit(safeApiCall { networkService.getFeedbackSpecific(targetType, targetId, startDAte, endDate) })
+        emit(safeApiCall(networkService.getFeedbackSpecific(targetType, targetId, startDAte, endDate)))
     }
 
     override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesResponse>>> = flow {
-        emit(safeApiCall { networkService.getFeedbackTypes(targetType) })
+        emit(safeApiCall(networkService.getFeedbackTypes(targetType)))
     }
 
     override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadResponse>> = flow {
-        emit(safeApiCall { networkService.postImageUpload(fileType, file) })
+        emit(safeApiCall(networkService.postImageUpload(fileType, file)))
     }
 
     override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadResponse>>> =
         flow {
-            emit(safeApiCall { networkService.postImageUploadBulk(fileType, fileList) })
+            emit(safeApiCall(networkService.postImageUploadBulk(fileType, fileList)))
         }
 
     override fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesResponse>>> = flow {
-        emit(safeApiCall { networkService.getStoreCategories(storeType) })
+        emit(safeApiCall(networkService.getStoreCategories(storeType)))
     }
 
-    private fun <T> safeApiCall(apiToBeCalled: () -> Response<BaseResponse<T>>): Resource<T> {
+    private fun <T> safeApiCall(response: Response<BaseResponse<T>>): Resource<T> {
         return try {
-            val response: Response<BaseResponse<T>> = apiToBeCalled()
             if (response.isSuccessful) {
                 Resource.Success(data = response.body()?.data!!)
             } else {
