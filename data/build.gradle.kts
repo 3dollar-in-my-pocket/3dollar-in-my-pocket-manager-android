@@ -24,6 +24,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "KAKAO_KEY", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
+            buildConfigField("String", "BASE_URL", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["base_url_release"] as? String ?: "")
+        }
+
+        getByName("debug") {
+            buildConfigField("String", "KAKAO_KEY", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
+            buildConfigField("String", "BASE_URL", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["base_url_dev"] as? String ?: "")
         }
     }
     compileOptions {

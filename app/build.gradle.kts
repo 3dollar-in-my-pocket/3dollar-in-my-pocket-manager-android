@@ -36,6 +36,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
+            buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_release"] as? String ?: "")
             manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_release"] as String
             manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
@@ -52,6 +53,7 @@ android {
                 testers = "android"
             }
             buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
+            buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_dev"] as? String ?: "")
             manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_dev"] as String
             manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
@@ -73,4 +75,5 @@ dependencies {
     common()
     implementation(project(":common"))
     implementation(project(":data"))
+    implementation(project(":domain"))
 }
