@@ -51,7 +51,7 @@ data class BossEnumsResponse(
     @Json(name = "FeedbackEmojiType")
     val feedbackEmojiType: List<EnumsModel> = listOf()
 ) : BaseResponse<BossEnumsResponse>() {
-    fun toDto() = app.threedollars.domain.dto.BossEnumsDto(
+    fun toDto() = BossEnumsDto(
         paymentMethodType.toDto(),
         bossStoreOpenType.toDto(),
         feedbackTargetType.toDto(),
