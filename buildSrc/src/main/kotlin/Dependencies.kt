@@ -5,6 +5,7 @@ object Dependencies {
         const val KOTLIN = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.KOTLIN}"
         const val GRADLE = "com.android.tools.build:gradle:${Versions.GRADLE}"
         const val KOTLIN_GRADLE = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
+        const val KOTLIN_METADATA = "org.jetbrains.kotlinx:kotlinx-metadata-jvm:${Versions.KOTLIN_METADATA}"
     }
 
     object Login {
@@ -80,6 +81,7 @@ object Dependencies {
         implementation(Firebase.FIREBASE_ANALYTICS_KTX)
         implementation(Firebase.FIREBASE_CRASHLYTICS_KTX)
         implementation(Kotlin.KOTLIN)
+        kapt(Kotlin.KOTLIN_METADATA)
         implementation(Android.CORE_KTX)
         implementation(Android.LIFECYCLE_KTX)
         implementation(Android.FRAGMENT_KTX)

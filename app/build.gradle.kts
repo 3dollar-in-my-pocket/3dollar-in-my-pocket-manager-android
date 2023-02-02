@@ -13,12 +13,12 @@ plugins {
 
 android {
 
-    compileSdk = 31
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "app.threedollars.manager"
         minSdk = 23
-        targetSdk = 31
+        targetSdk = 33
         versionCode = 1
         versionName = "0.0.0-alpha01"
 
@@ -36,6 +36,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
+            buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_release"] as? String ?: "")
             manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_release"] as String
             manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
@@ -52,6 +53,7 @@ android {
                 testers = "android"
             }
             buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
+            buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_dev"] as? String ?: "")
             manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_dev"] as String
             manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
@@ -64,12 +66,14 @@ android {
         jvmTarget = "1.8"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.2.0-alpha04"
+        kotlinCompilerExtensionVersion = "1.4.0-alpha02"
     }
+    namespace = "app.threedollars.manager"
 }
 
 dependencies {
     common()
     implementation(project(":common"))
     implementation(project(":data"))
+    implementation(project(":domain"))
 }

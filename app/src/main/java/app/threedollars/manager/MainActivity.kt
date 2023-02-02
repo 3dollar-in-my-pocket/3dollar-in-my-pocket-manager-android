@@ -31,11 +31,11 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainScreenView() {
     val navController = rememberNavController()
-    Scaffold(
-        bottomBar = { BottomNavigation(navController = navController) }
-    ) {
-        NavigationGraph(navController = navController)
-    }
+//    Scaffold(
+//        bottomBar = { BottomNavigation(navController = navController) }
+//    ) {
+//        NavigationGraph(navController = navController)
+//    }
 }
 
 @Composable
