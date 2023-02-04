@@ -10,47 +10,47 @@ import retrofit2.http.*
 interface NetworkService {
 
     // auth-controller
-    @POST("/v1/auth/login")
+    @POST("v1/auth/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<LoginResponse>>
 
-    @POST("/v1/auth/logout")
+    @POST("v1/auth/logout")
     suspend fun logout(): Response<BaseResponse<String>>
 
-    @POST("/v1/auth/signup")
+    @POST("v1/auth/signup")
     suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<String>>
 
-    @DELETE("/v1/auth/signout")
+    @DELETE("v1/auth/signout")
     suspend fun signOut(): Response<BaseResponse<String>>
 
     // boss-account-controller
-    @GET("/v1/boss/account/me")
+    @GET("v1/boss/account/me")
     suspend fun getBossAccount(): Response<BaseResponse<BossAccountInfoResponse>>
 
-    @PUT("/v1/boss/account/me")
+    @PUT("v1/boss/account/me")
     suspend fun putBossAccount(@Body bossAccountInfoRequest: BossAccountInfoRequest): Response<BaseResponse<String>>
 
     // boss-device-controller
-    @PUT("/v1/device")
+    @PUT("v1/device")
     suspend fun putBossDevice(@Body bossDeviceRequest: BossDeviceRequest): Response<BaseResponse<String>>
 
-    @DELETE("/v1/device")
+    @DELETE("v1/device")
     suspend fun deleteBossDevice(): Response<BaseResponse<String>>
 
-    @PUT("/v1/device/token")
+    @PUT("v1/device/token")
     suspend fun putBossDeviceToken(@Body bossDeviceRequest: BossDeviceRequest): Response<BaseResponse<String>>
 
     // boss-store-controller
-    @PUT("/v1/boss/store/{bossStoreId}")
+    @PUT("v1/boss/store/{bossStoreId}")
     suspend fun putBossStore(@Path("bossStoreId") bossStoreId: String, @Body bossStoreRequest: BossStoreRequest): Response<BaseResponse<String>>
 
-    @PATCH("/v1/boss/store/{bossStoreId}")
+    @PATCH("v1/boss/store/{bossStoreId}")
     suspend fun patchBossStore(@Path("bossStoreId") bossStoreId: String, @Body bossStoreRequest: BossStoreRequest): Response<BaseResponse<String>>
 
     // boss-store-open-controller
-    @DELETE("/v1/boss/store/{bossStoreId}/close")
+    @DELETE("v1/boss/store/{bossStoreId}/close")
     suspend fun deleteBossStoreOpen(@Path("bossStoreId") bossStoreId: String): Response<BaseResponse<String>>
 
-    @POST("/v1/boss/store/{bossStoreId}/open")
+    @POST("v1/boss/store/{bossStoreId}/open")
     suspend fun postBossStoreOpen(
         @Path("bossStoreId") bossStoreId: String,
         @Query("mapLatitude") mapLatitude: Double,
@@ -58,17 +58,17 @@ interface NetworkService {
     ): Response<BaseResponse<String>>
 
     // boss-store-retrieve-controller
-    @GET("/v1/boss/store/{bossStoreId}")
+    @GET("v1/boss/store/{bossStoreId}")
     suspend fun getBossStoreRetrieveSpecific(
         @Path("bossStoreId") bossStoreId: String,
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double
     ): Response<BaseResponse<BossStoreRetrieveResponse>>
 
-    @GET("/v1/boss/store/me")
+    @GET("v1/boss/store/me")
     suspend fun getBossStoreRetrieveMe(): Response<BaseResponse<BossStoreRetrieveResponse>>
 
-    @GET("/v1/boss/store/around")
+    @GET("v1/boss/store/around")
     suspend fun getBossStoreRetrieveAround(
         @Query("categoryId") categoryId: String = "",
         @Query("distanceKm") distanceKm: Int = 1,
