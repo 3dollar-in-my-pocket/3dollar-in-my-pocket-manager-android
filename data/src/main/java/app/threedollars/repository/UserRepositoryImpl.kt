@@ -19,7 +19,7 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
             if (it.data != null) {
                 Resource.Success(data = it.data!!.toDto())
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage,code = it.code)
             }
         }
     }
@@ -46,7 +46,7 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
             if (it.data != null) {
                 Resource.Success(data = it.data!!.toDto())
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage,code = it.code)
             }
         }
 
