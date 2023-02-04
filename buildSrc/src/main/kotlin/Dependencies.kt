@@ -14,6 +14,7 @@ object Dependencies {
 
     object Naver {
         const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
+        const val NAVER_MAP_COMPOSE = "com.naver.maps:map-sdk:${Versions.NAVER_MAP_COMPOSE}"
     }
 
     object Android {
@@ -111,6 +112,7 @@ object Dependencies {
         kapt(Network.MOSHI_CODEGEN)
         implementation(Login.KAKAO_LOGIN)
         implementation(Naver.NAVER_MAP)
+        implementation(Naver.NAVER_MAP_COMPOSE)
     }
 
     fun DependencyHandler.implementation(dependency: Any) {
