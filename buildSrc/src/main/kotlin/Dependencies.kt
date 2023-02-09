@@ -50,12 +50,14 @@ object Dependencies {
             "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.COMPOSE_LIFECYCLE_VIEWMODEL}"
         const val COMPOSE_NAVIGATION =
             "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
+        const val COMPOSE_LIFECYCLE = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.COMPOSE_LIFECYCLE}"
     }
 
     object Hilt {
         const val HILT_PLUGIN = "com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}"
         const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
         const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
+        const val HILT_COMPOSE = "androidx.hilt:hilt-navigation-compose:${Versions.HILT_COMEPOSE}"
     }
 
     object Network {
@@ -97,8 +99,10 @@ object Dependencies {
         implementation(Compose.COMPOSE_UI_TOOL_PREVIEW)
         implementation(Compose.COMPOSE_VIEWMODEL)
         implementation(Compose.COMPOSE_NAVIGATION)
+        implementation(Compose.COMPOSE_LIFECYCLE)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
+        implementation(Hilt.HILT_COMPOSE)
         implementation(Test.JUNIT)
         androidTestImplementation(Test.ANDROIDX_JUNIT)
         androidTestImplementation(Test.ANDROIDX_ESPRESSO)
