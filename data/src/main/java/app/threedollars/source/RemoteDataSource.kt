@@ -14,7 +14,6 @@ interface RemoteDataSource {
     fun signUp(signUpRequest: SignUpRequest): Flow<Resource<String>>
 
     fun signOut(): Flow<Resource<String>>
-
     // boss-account-controller
     fun getBossAccount(): Flow<Resource<BossAccountInfoResponse>>
 

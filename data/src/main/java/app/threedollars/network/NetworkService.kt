@@ -116,10 +116,13 @@ interface NetworkService {
 
     @Multipart
     @POST("v1/upload/{fileType}/bulk")
-    suspend fun postImageUploadBulk(@Path("fileType") fileType: String, fileList: List<MultipartBody.Part>): Response<BaseResponse<List<ImageUploadResponse>>>
+    suspend fun postImageUploadBulk(
+        @Path("fileType") fileType: String,
+        fileList: List<MultipartBody.Part>
+    ): Response<BaseResponse<List<ImageUploadResponse>>>
 
     // platform-store-category-controller
     @GET("v1/store/{storeType}/categories")
-    suspend fun getStoreCategories(@Path("storeType") storeType: String) : Response<BaseResponse<List<StoreCategoriesResponse>>>
+    suspend fun getStoreCategories(@Path("storeType") storeType: String): Response<BaseResponse<List<StoreCategoriesResponse>>>
 
 }

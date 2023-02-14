@@ -1,11 +1,15 @@
 package app.threedollars.di
 
 import app.threedollars.data.BuildConfig
+import app.threedollars.db.DataStoreManager
 import app.threedollars.network.NetworkService
+import app.threedollars.source.LocalDataSourceImpl.Companion.ACCESS_TOKEN
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,16 +29,26 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideHeaderInterceptor(
-        httpLoggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(httpLoggingInterceptor)
-        .addInterceptor {
-            val request = it.request().newBuilder()
-                .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_0.0.0")
-                .build()
-            it.proceed(request)
-        }
-        .build()
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        dataStoreManager: DataStoreManager
+    ): OkHttpClient {
+        var token = ""
+
+        runBlocking { token = dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: "" }
+        return OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor {
+                val request = it.request().newBuilder()
+                    .addHeader(
+                        "Authorization",
+                        "Bearer $token"
+                    )
+                    .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_0.0.0")
+                    .build()
+                it.proceed(request)
+            }
+            .build()
+    }
 
     @Provides
     @Singleton
