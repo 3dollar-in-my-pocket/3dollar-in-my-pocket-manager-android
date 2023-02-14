@@ -149,7 +149,7 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
     private fun <T> safeApiCall(response: Response<BaseResponse<T>>): Resource<T> {
         return try {
             if (response.isSuccessful) {
-                Resource.Success(data = response.body()?.data!!)
+                Resource.Success(data = response.body()?.data!!, code = response.code().toString())
             } else {
                 Resource.Error(
                     errorMessage = response.errorBody()?.string(),

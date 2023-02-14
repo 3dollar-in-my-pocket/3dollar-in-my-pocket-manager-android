@@ -17,9 +17,9 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
         val loginRequest = LoginRequest(socialType, token)
         return remoteDataSource.login(loginRequest).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.errorMessage,code = it.code)
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
     }
@@ -44,9 +44,9 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
     override fun getBossAccount(): Flow<Resource<app.threedollars.domain.dto.BossAccountInfoDto>> =
         remoteDataSource.getBossAccount().map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.errorMessage,code = it.code)
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
