@@ -7,6 +7,7 @@ object Versions {
     const val KAKAO_LOGIN = "2.12.1"
 
     const val HILT = "2.44.2"
+    const val HILT_COMEPOSE = "1.0.0"
     const val CORE_KTX = "1.9.0"
     const val FRAGMENT_KTX = "1.5.5"
     const val LIFECYCLE_KTX = "2.5.1"
@@ -18,6 +19,7 @@ object Versions {
     const val COMPOSE_MATERIAL = "1.3.1"
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "2.5.1"
     const val COMPOSE_NAVIGATION = "2.5.3"
+    const val COMPOSE_LIFECYCLE = "2.6.0-alpha04"
 
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"
