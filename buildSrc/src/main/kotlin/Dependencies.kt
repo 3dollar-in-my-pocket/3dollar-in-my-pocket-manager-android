@@ -70,6 +70,10 @@ object Dependencies {
         const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
     }
 
+    object LOTTIE {
+        const val LOTTIE_COMPOSE = "com.airbnb.android:lottie-compose:${Versions.LOTTIE_COMPOSE}"
+    }
+
     object Test {
         const val JUNIT = "junit:junit:${Versions.JUNIT}"
         const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_JUNIT}"
@@ -115,6 +119,7 @@ object Dependencies {
         kapt(Network.MOSHI_CODEGEN)
         implementation(Login.KAKAO_LOGIN)
         implementation(Naver.NAVER_MAP)
+        implementation(LOTTIE.LOTTIE_COMPOSE)
     }
 
     fun DependencyHandler.implementation(dependency: Any) {

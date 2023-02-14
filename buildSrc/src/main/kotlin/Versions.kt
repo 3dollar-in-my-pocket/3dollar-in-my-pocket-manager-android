@@ -36,4 +36,5 @@ object Versions {
     const val OKHTTP = "4.9.1"
 
     const val NAVER_MAP = "3.16.1"
+    const val LOTTIE_COMPOSE = "5.2.0"
 }
