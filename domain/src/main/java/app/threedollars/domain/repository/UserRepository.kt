@@ -7,6 +7,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
 
+    suspend fun saveAccessToken(token: String)
+
+    fun getAccessToken(): Flow<Resource<String>>
+
     fun login(socialType: String, token: String): Flow<Resource<LoginDto>>
 
     fun logout(): Flow<Resource<String>>

@@ -83,9 +83,9 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
     ): Flow<Resource<BossStoreRetrieveDto>> {
         return remoteDataSource.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
     }
@@ -93,9 +93,9 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
     override fun getBossStoreRetrieveMe(): Flow<Resource<BossStoreRetrieveDto>> =
         remoteDataSource.getBossStoreRetrieveMe().map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
@@ -112,9 +112,9 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
         return remoteDataSource.getBossStoreRetrieveAround(categoryId, distanceKm, latitude, longitude, mapLatitude, mapLongitude, orderType, size)
             .map {
                 if (it.data != null) {
-                    Resource.Success(data = it.data!!.toDto())
+                    Resource.Success(data = it.data!!.toDto(), code = it.code)
                 } else {
-                    Resource.Error(errorMessage = it.message.toString())
+                    Resource.Error(errorMessage = it.errorMessage, code = it.code)
                 }
             }
     }
@@ -122,36 +122,36 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
     override fun getBossEnums(): Flow<Resource<BossEnumsDto>> =
         remoteDataSource.getBossEnums().map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun getFaqCategories(): Flow<Resource<List<FaqCategoriesDto>>> =
         remoteDataSource.getFaqCategories().map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun getFaqs(category: String): Flow<Resource<List<FaqDto>>> =
         remoteDataSource.getFaqs(category).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullDto>>> =
         remoteDataSource.getFeedbackFull(targetType, targetId).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
@@ -163,45 +163,45 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
     ): Flow<Resource<FeedbackSpecificDto>> =
         remoteDataSource.getFeedbackSpecific(targetType, targetId, startDAte, endDate).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesDto>>> =
         remoteDataSource.getFeedbackTypes(targetType).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadDto>> =
         remoteDataSource.postImageUpload(fileType, file).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadDto>>> =
         remoteDataSource.postImageUploadBulk(fileType, fileList).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
     override fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesDto>>> =
         remoteDataSource.getStoreCategories(storeType).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 }

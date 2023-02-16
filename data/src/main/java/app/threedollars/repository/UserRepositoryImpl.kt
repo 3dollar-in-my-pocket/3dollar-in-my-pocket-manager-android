@@ -7,19 +7,33 @@ import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.domain.dto.LoginDto
 import app.threedollars.domain.repository.UserRepository
+import app.threedollars.source.LocalDataSource
 import app.threedollars.source.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) : UserRepository {
+class UserRepositoryImpl @Inject constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource
+) :
+    UserRepository {
+
+    override suspend fun saveAccessToken(token: String) {
+        localDataSource.saveAccessToken(token)
+    }
+
+    override fun getAccessToken(): Flow<Resource<String>> = localDataSource.getAccessToken().map {
+        Resource.Success(data = it, code = null)
+    }
+
     override fun login(socialType: String, token: String): Flow<Resource<LoginDto>> {
         val loginRequest = LoginRequest(socialType, token)
         return remoteDataSource.login(loginRequest).map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
     }
@@ -44,9 +58,9 @@ class UserRepositoryImpl @Inject constructor(private val remoteDataSource: Remot
     override fun getBossAccount(): Flow<Resource<app.threedollars.domain.dto.BossAccountInfoDto>> =
         remoteDataSource.getBossAccount().map {
             if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto())
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
-                Resource.Error(errorMessage = it.message.toString())
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
 
