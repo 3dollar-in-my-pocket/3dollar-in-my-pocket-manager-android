@@ -13,7 +13,7 @@ object Dependencies {
     }
 
     object Naver {
-        const val NAVER_MAP_COMPOSE = "com.naver.maps:map-sdk:${Versions.NAVER_MAP_COMPOSE}"
+        const val NAVER_MAP_COMPOSE = "io.github.fornewid:naver-map-compose:${Versions.NAVER_MAP_COMPOSE}"
     }
 
     object Android {

@@ -1,60 +1,152 @@
 package app.threedollars.manager.screen
 
-import android.os.Bundle
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import com.naver.maps.map.MapView
-import kotlinx.coroutines.launch
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import app.threedollars.manager.R
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.MapUiSettings
+import com.naver.maps.map.compose.NaverMap
 
+@Preview
 @Composable
 fun HomeScreen() {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
-
-    // Lifecycle 이벤트를 수신하기 위해 AndroidView의 밖에서 먼저 선언합니다.
-    // recomposition시에도 유지되어야 하기 때문에 remember { } 로 기억합니다.
-    val mapView = remember {
-        MapView(context).apply {
-            getMapAsync { naverMap ->
-                naverMap.uiSettings.isZoomControlEnabled = false
-            }
-        }
-    }
-
-    // LifecycleEventObserver를 구현하고, 각 이벤트에 맞게 MapView의 Lifecycle 메소드를 호출합니다.
-    val lifecycleObserver = remember {
-        LifecycleEventObserver { source, event ->
-            // CoroutineScope 안에서 호출해야 정상적으로 동작합니다.
-            coroutineScope.launch {
-                when (event) {
-                    Lifecycle.Event.ON_CREATE -> mapView.onCreate(Bundle())
-                    Lifecycle.Event.ON_START -> mapView.onStart()
-                    Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                    Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                    Lifecycle.Event.ON_STOP -> mapView.onStop()
-                    Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
-                    else -> {}
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.77f)
+        ) {
+            MapView(modifier = Modifier)
+            Text(
+                text = "주소주소주소주소주소",
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.Black),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp, end = 24.dp, top = 44.dp)
+                    .height(56.dp)
+                    .background(Color.White, shape = RoundedCornerShape(16.dp))
+                    .wrapContentHeight(Alignment.CenterVertically),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp, end = 8.dp, bottom = 32.dp)
+                    .align(Alignment.BottomStart),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(start = 12.dp, end = 11.dp, top = 10.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(painter = painterResource(id = R.drawable.ic_check), contentDescription = "체크박스")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "다른 푸드트럭 보기", fontSize = 14.sp, color = colorResource(id = R.color.gray100))
                 }
+                Image(
+                    painter = painterResource(id = R.drawable.ic_location),
+                    contentDescription = "내 위치 아이콘"
+                )
             }
         }
+        HomeBottomOn(Modifier.align(Alignment.BottomStart))
     }
+}
 
-    // 뷰가 해제될 때 이벤트 리스너를 제거합니다.
-    DisposableEffect(true) {
-        lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+@Composable
+fun HomeBottomOn(modifier: Modifier) {
+    Column(
+        modifier
+            .background(colorResource(id = R.color.green500), shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+            .fillMaxWidth()
+            .fillMaxHeight(0.25f)
+            .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+    ) {
+        Row(modifier = Modifier.padding(start = 2.dp)) {
+            Text(
+                text = "오늘은",
+                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "5시간 24분 23초",
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White),
+                modifier = Modifier
+                    .background(colorResource(id = R.color.green300), shape = RoundedCornerShape(8.dp))
+                    .wrapContentHeight(Alignment.CenterVertically)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
         }
-    }
 
-    // 생성된 MapView 객체를 AndroidView로 Wrapping 합니다.
-    AndroidView(factory = { mapView })
+        Text(
+            text = "동안 영업중이시네요! 오늘도 대박나세요!",
+            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White),
+            modifier = Modifier.padding(start = 2.dp, top = 2.dp)
+        )
+        Spacer(modifier = Modifier.height(28.dp))
+        Text(
+            text = "셔터 내리기",
+            style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center, color = colorResource(id = R.color.green500)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .wrapContentHeight(Alignment.CenterVertically),
+        )
+    }
+}
+
+@Composable
+fun HomeBottomOff(modifier: Modifier) {
+    Column(
+        modifier
+            .background(Color.White, shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
+            .fillMaxWidth()
+            .fillMaxHeight(0.25f)
+            .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+    ) {
+        Text(
+            text = "지금 계신 위치에서 영업을 시작할까요?",
+            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(start = 2.dp)
+        )
+        Text(text = "영업을 시작하면 위치가 손님들에게 공개됩니다.", style = TextStyle(fontSize = 14.sp), modifier = Modifier.padding(start = 2.dp, top = 2.dp))
+        Spacer(modifier = Modifier.height(28.dp))
+        Text(
+            text = "오늘의 영업 시작하기",
+            style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(colorResource(id = R.color.green500), shape = RoundedCornerShape(8.dp))
+                .wrapContentHeight(Alignment.CenterVertically),
+        )
+    }
+}
+
+@OptIn(ExperimentalNaverMapApi::class)
+@Composable
+fun MapView(modifier: Modifier) {
+    NaverMap(
+        modifier, uiSettings = MapUiSettings(
+            isZoomControlEnabled = false
+        )
+    )
 }
