@@ -26,6 +26,7 @@ object Versions {
     const val ANDROIDX_ESPRESSO = "3.4.0"
 
     const val GOOGLE_SERVICE = "4.3.15"
+    const val GOOGLE_LOCATION = "21.0.1"
     const val FIREBASE_CRASHLYTICS = "2.9.2"
     const val FIREBASE_BOM = "31.2.0"
     const val FIREBASE_DISTRIBUTION = "3.2.0"
@@ -35,6 +36,6 @@ object Versions {
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
 
-    const val NAVER_MAP_COMPOSE = "1.2.3"
+    const val NAVER_MAP_COMPOSE = "1.3.1"
     const val LOTTIE_COMPOSE = "5.2.0"
 }

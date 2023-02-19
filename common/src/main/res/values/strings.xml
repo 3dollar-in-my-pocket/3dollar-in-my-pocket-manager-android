@@ -21,4 +21,5 @@
     <string name="store_photo">가게 인증 사진</string>
     <string name="store_photo_desc">사진은 사장님 인증 용도로 사용됩니다.</string>
     <string name="upload_image">이미지 업로드</string>
+    <string name="location_no_address">알 수 없는 위치</string>
 </resources>
