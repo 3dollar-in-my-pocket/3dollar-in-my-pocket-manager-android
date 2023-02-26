@@ -19,20 +19,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.threedollars.manager.R
+import app.threedollars.manager.main.viewmodel.HomeViewModel
 import app.threedollars.manager.util.getCurrentLocationName
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.compose.*
+import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Preview
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    val bossStoreRetrieveMe = viewModel.bossStoreRetrieveMe.collectAsStateWithLifecycle(null)
     var address by remember { mutableStateOf("") }
     rememberFusedLocationSource().activate {
         address = it?.let { context.getCurrentLocationName(LatLng(it)) } ?: ""
     }
+    var isFoodTruckCheck by remember { mutableStateOf(false) }
+    var isOpen by remember { mutableStateOf(false) }
+    var isOpenServer = viewModel.storeOpen.collectAsStateWithLifecycle(false)
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
@@ -60,12 +70,15 @@ fun HomeScreen() {
             ) {
                 Row(
                     modifier = Modifier
-                        .clickable { }
+                        .clickable { isFoodTruckCheck = !isFoodTruckCheck }
                         .background(Color.White, shape = RoundedCornerShape(8.dp))
                         .padding(start = 12.dp, end = 11.dp, top = 10.dp, bottom = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(painter = painterResource(id = R.drawable.ic_check), contentDescription = "체크박스")
+                    Image(
+                        painter = painterResource(id = if (isFoodTruckCheck) R.drawable.ic_check else R.drawable.ic_uncheck),
+                        contentDescription = "체크박스"
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "다른 푸드트럭 보기", fontSize = 14.sp, color = colorResource(id = R.color.gray100))
                 }
@@ -76,12 +89,22 @@ fun HomeScreen() {
                 )
             }
         }
-        HomeBottomOn(Modifier.align(Alignment.BottomStart)) {}
+        if (isOpen) HomeBottomOn(Modifier.align(Alignment.BottomStart), bossStoreRetrieveMe.value?.openStatus?.openStartDateTime ?: "") {
+            isOpen = !isOpen
+        }
+        else HomeBottomOff(Modifier.align(Alignment.BottomStart)) { isOpen = !isOpen }
     }
 }
 
 @Composable
-fun HomeBottomOn(modifier: Modifier, click: () -> Unit) {
+fun HomeBottomOn(modifier: Modifier, openDate: String, click: () -> Unit) {
+    var openTime by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        while (true) {
+            openTime = openDate.getTodayOpenTime()
+            delay(1000L)
+        }
+    }
     Column(
         modifier
             .background(colorResource(id = R.color.green500), shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
@@ -97,7 +120,7 @@ fun HomeBottomOn(modifier: Modifier, click: () -> Unit) {
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "5시간 24분 23초",
+                text = openTime,
                 style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White),
                 modifier = Modifier
                     .background(colorResource(id = R.color.green300), shape = RoundedCornerShape(8.dp))
@@ -116,11 +139,11 @@ fun HomeBottomOn(modifier: Modifier, click: () -> Unit) {
             text = "셔터 내리기",
             style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center, color = colorResource(id = R.color.green500)),
             modifier = Modifier
+                .clickable { click() }
                 .fillMaxWidth()
                 .height(48.dp)
                 .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .wrapContentHeight(Alignment.CenterVertically)
-                .clickable { click() },
+                .wrapContentHeight(Alignment.CenterVertically),
         )
     }
 }
@@ -145,11 +168,11 @@ fun HomeBottomOff(modifier: Modifier, click: () -> Unit) {
             text = "오늘의 영업 시작하기",
             style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.White),
             modifier = Modifier
+                .clickable { click() }
                 .fillMaxWidth()
                 .height(48.dp)
                 .background(colorResource(id = R.color.green500), shape = RoundedCornerShape(8.dp))
-                .wrapContentHeight(Alignment.CenterVertically)
-                .clickable { click() },
+                .wrapContentHeight(Alignment.CenterVertically),
         )
     }
 }
@@ -168,4 +191,15 @@ fun MapView(modifier: Modifier) {
     ) {
 
     }
+}
+
+fun String.getTodayOpenTime(): String {
+    val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val openTime = formatter.parse(this)
+    val currentTime = Date()
+    val durationInMillis = currentTime.time - (openTime?.time ?: 0)
+    val hours = durationInMillis / (60 * 60 * 1000)
+    val minutes = durationInMillis % (60 * 60 * 1000) / (60 * 1000)
+    val seconds = durationInMillis % (60 * 1000) / 1000
+    return String.format("%d시 %02d분 %02d초", hours, minutes, seconds)
 }
