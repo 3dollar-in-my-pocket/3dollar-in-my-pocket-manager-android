@@ -117,7 +117,7 @@ fun LoginNavigationGraph(viewModel: LoginViewModel, loginKakao: () -> Unit) {
             SignScreen()
         }
         composable(LoginNavItem.Waiting.screenRoute) {
-            WaitingScreen()
+            WaitingScreen(navController)
         }
     }
 }
