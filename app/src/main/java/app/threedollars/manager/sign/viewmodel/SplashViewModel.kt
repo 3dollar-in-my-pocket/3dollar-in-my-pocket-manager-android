@@ -11,6 +11,7 @@ import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManager
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,9 +34,10 @@ class SplashViewModel @Inject constructor(
 
                 if (it.code.toString() == "200") {
                     it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token)
+                        authUseCase.saveAccessToken(token).collect {
+                            checkMyInfo()
+                        }
                     }
-                    checkMyInfo()
                 } else if (it.code.toString() == "404") {
                     _loginNavItem.emit(LoginNavItem.Login)
                 }

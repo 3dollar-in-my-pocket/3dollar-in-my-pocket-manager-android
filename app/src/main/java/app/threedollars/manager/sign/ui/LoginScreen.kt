@@ -45,7 +45,7 @@ fun LoginScreen(
             loginKakao()
         }
     }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navItem) {
         navItem?.let {
             navController.popBackStack()
             navController.navigate(it.screenRoute)

@@ -25,9 +25,10 @@ class LoginViewModel @Inject constructor(
 
                 if (it.code.toString() == "200") {
                     it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token)
+                        authUseCase.saveAccessToken(token).collect{
+                            checkMyInfo()
+                        }
                     }
-                    checkMyInfo()
                 } else if (it.code.toString() == "404") {
                     _loginNavItem.emit(LoginNavItem.Sign)
                 }

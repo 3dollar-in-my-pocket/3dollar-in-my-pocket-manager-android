@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthUseCase {
 
-    suspend fun saveAccessToken(token: String)
+    suspend fun saveAccessToken(token: String) : Flow<Unit>
 
     fun getAccessToken(): Flow<Resource<String>>
 

@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class AuthUseCaseImpl @Inject constructor(private val userRepository: UserRepository) : AuthUseCase {
-    override suspend fun saveAccessToken(token: String) {
-        userRepository.saveAccessToken(token)
-    }
+    override suspend fun saveAccessToken(token: String) = userRepository.saveAccessToken(token)
 
     override fun getAccessToken(): Flow<Resource<String>> = userRepository.getAccessToken()
 
