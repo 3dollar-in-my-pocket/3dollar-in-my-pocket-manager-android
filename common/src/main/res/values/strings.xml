@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">3천원 사장님앱</string>
+    <string name="android_version">Android Version</string>
     <string name="app_name_debug">3천원 사장님앱_debug</string>
     <string name="kakao_login">카카오 계정으로 로그인</string>
     <string name="naver_login">네이버 계정으로 로그인</string>
@@ -21,4 +22,18 @@
     <string name="store_photo">가게 인증 사진</string>
     <string name="store_photo_desc">사진은 사장님 인증 용도로 사용됩니다.</string>
     <string name="upload_image">이미지 업로드</string>
+    <string name="completed_application">신청 완료!</string>
+    <string name="waiting_explanation_1">사장님! 소중한 정보를 입력해주셔서 감사합니다.\n심사는 지원한 날로부터 </string>
+    <string name="waiting_explanation_2">주말을 제외한 평일 기준 약 2–5일</string>
+    <string name="waiting_explanation_3">\n소요될 수 있어요. 최대한 빠르게 처리하여 사장님의 영업을\n도와드릴 테니 조금만 기다려주세요 :)</string>
+    <string name="waiting_text_1">사장님이 영업 시작 버튼을 누르면\n근처 고객들에게 홍보 돼요!</string>
+    <string name="waiting_text_2">사장님이 영업 일정과 같은 가게 정보를\n직접 관리 하실 수 있어요!</string>
+    <string name="waiting_text_3">고객의 리뷰를 확인하면서\n좋은 점을 더 좋게 만들어요!</string>
+    <string name="shop_location">가게 위치</string>
+    <string name="business_schedule">영업 일정</string>
+    <string name="menu_information">메뉴 정보</string>
+    <string name="contact_email">이메일로 문의하기</string>
+    <string name="official_email">3dollarinmypocket@gmail.com</string>
+    <string name="help_feedback_title">[Android] 가슴속 3천원(사장님) 1:1 문의</string>
+
 </resources>
