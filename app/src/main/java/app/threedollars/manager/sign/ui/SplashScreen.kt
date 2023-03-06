@@ -19,7 +19,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hiltViewModel()) {
-    val isLogin by viewModel.isLogin.collectAsStateWithLifecycle(null)
+    val navItem by viewModel.loginNavItem.collectAsStateWithLifecycle(null)
 
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.partners_splash))
@@ -42,15 +42,11 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
         )
     }
 
-    LaunchedEffect(isLogin) {
+    LaunchedEffect(Unit) {
         delay(2000L)
-        isLogin?.let {
-            if (it) {
-                // TODO: 홈 화면
-            } else {
-                navController.popBackStack()
-                navController.navigate(LoginNavItem.Login.screenRoute)
-            }
+        navItem?.let {
+            navController.popBackStack()
+            navController.navigate(it.screenRoute)
         }
     }
 }

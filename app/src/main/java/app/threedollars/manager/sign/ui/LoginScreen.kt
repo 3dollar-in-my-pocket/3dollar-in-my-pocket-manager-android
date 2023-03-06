@@ -32,7 +32,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
-    val isLogin by viewModel.isLogin.collectAsStateWithLifecycle(null)
+    val navItem by viewModel.loginNavItem.collectAsStateWithLifecycle(null)
 
     Column(
         modifier = Modifier
@@ -45,14 +45,10 @@ fun LoginScreen(
             loginKakao()
         }
     }
-    LaunchedEffect(isLogin) {
-        isLogin?.let {
-            if (it) {
-                // TODO: 홈 화면
-            } else {
-                navController.popBackStack()
-                navController.navigate(LoginNavItem.Sign.screenRoute)
-            }
+    LaunchedEffect(navItem) {
+        navItem?.let {
+            navController.popBackStack()
+            navController.navigate(it.screenRoute)
         }
     }
 }

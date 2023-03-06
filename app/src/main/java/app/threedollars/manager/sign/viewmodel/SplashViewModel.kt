@@ -6,10 +6,12 @@ import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
+import app.threedollars.manager.sign.LoginNavItem
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManager
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,8 +21,8 @@ class SplashViewModel @Inject constructor(
     private val bossAccountUseCase: BossAccountUseCase
 ) : BaseViewModel() {
 
-    private val _isLogin = MutableEventFlow<Boolean>()
-    val isLogin: EventFlow<Boolean> get() = _isLogin
+    private val _loginNavItem = MutableEventFlow<LoginNavItem>()
+    val loginNavItem: EventFlow<LoginNavItem> get() = _loginNavItem
 
     init {
         autoLogin()
@@ -32,11 +34,12 @@ class SplashViewModel @Inject constructor(
 
                 if (it.code.toString() == "200") {
                     it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token)
+                        authUseCase.saveAccessToken(token).collect {
+                            checkMyInfo()
+                        }
                     }
-                    checkMyInfo()
                 } else if (it.code.toString() == "404") {
-                    _isLogin.emit(false)
+                    _loginNavItem.emit(LoginNavItem.Login)
                 }
             }
         }
@@ -46,13 +49,13 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
                 if (it.code.toString() == "200") {
-                    _isLogin.emit(true)
+                    // TODO: 홈화면
                 } else if (it.code.toString() == "401") {
                     autoLogin()
                 } else if (it.code.toString() == "403") {
-                    // TODO: 가입 신청 대기 페이지로 이동
+                    _loginNavItem.emit(LoginNavItem.Waiting)
                 } else if (it.code.toString() == "404") {
-                    _isLogin.emit(false)
+                    _loginNavItem.emit(LoginNavItem.Login)
                 }
             }
         }
@@ -62,7 +65,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = TokenManager.instance.getToken()?.accessToken
             if (accessToken.isNullOrBlank()) {
-                _isLogin.emit(false)
+                _loginNavItem.emit(LoginNavItem.Login)
                 return@launch
             } else {
                 if (AuthApiClient.instance.hasToken()) {
@@ -70,11 +73,13 @@ class SplashViewModel @Inject constructor(
                         if (error == null) {
                             TokenManager.instance.getToken()?.accessToken?.let { login(it) }
                         } else {
-                            viewModelScope.launch { _isLogin.emit(false) }
+                            viewModelScope.launch {
+                                _loginNavItem.emit(LoginNavItem.Login)
+                            }
                         }
                     }
                 } else {
-                    _isLogin.emit(false)
+                    _loginNavItem.emit(LoginNavItem.Login)
                 }
             }
         }

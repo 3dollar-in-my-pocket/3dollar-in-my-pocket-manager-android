@@ -19,9 +19,7 @@ class UserRepositoryImpl @Inject constructor(
 ) :
     UserRepository {
 
-    override suspend fun saveAccessToken(token: String) {
-        localDataSource.saveAccessToken(token)
-    }
+    override suspend fun saveAccessToken(token: String) = localDataSource.saveAccessToken(token)
 
     override fun getAccessToken(): Flow<Resource<String>> = localDataSource.getAccessToken().map {
         Resource.Success(data = it, code = null)

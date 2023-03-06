@@ -19,6 +19,7 @@ import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.sign.ui.LoginScreen
 import app.threedollars.manager.sign.ui.SignScreen
 import app.threedollars.manager.sign.ui.SplashScreen
+import app.threedollars.manager.sign.ui.WaitingScreen
 import app.threedollars.manager.sign.viewmodel.LoginViewModel
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -115,6 +116,9 @@ fun LoginNavigationGraph(viewModel: LoginViewModel, loginKakao: () -> Unit) {
         }
         composable(LoginNavItem.Sign.screenRoute) {
             SignScreen()
+        }
+        composable(LoginNavItem.Waiting.screenRoute) {
+            WaitingScreen(navController)
         }
     }
 }

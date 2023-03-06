@@ -6,6 +6,7 @@ import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
+import app.threedollars.manager.sign.LoginNavItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,19 +17,20 @@ class LoginViewModel @Inject constructor(
     private val bossAccountUseCase: BossAccountUseCase
 ) : BaseViewModel() {
 
-    private val _isLogin = MutableEventFlow<Boolean>()
-    val isLogin: EventFlow<Boolean> get() = _isLogin
+    private val _loginNavItem = MutableEventFlow<LoginNavItem>()
+    val loginNavItem: EventFlow<LoginNavItem> get() = _loginNavItem
     fun login(accessToken: String) {
         viewModelScope.launch(exceptionHandler) {
             authUseCase.login("KAKAO", accessToken).collect {
 
                 if (it.code.toString() == "200") {
                     it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token)
+                        authUseCase.saveAccessToken(token).collect{
+                            checkMyInfo()
+                        }
                     }
-                    checkMyInfo()
                 } else if (it.code.toString() == "404") {
-                    _isLogin.emit(false)
+                    _loginNavItem.emit(LoginNavItem.Sign)
                 }
             }
         }
@@ -38,11 +40,11 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
                 if (it.code.toString() == "200") {
-                    _isLogin.emit(true)
+                    // TODO: 홈화면 이동
                 } else if (it.code.toString() == "403") {
-                    // TODO: 가입 신청 대기 페이지로 이동
+                    _loginNavItem.emit(LoginNavItem.Waiting)
                 } else if (it.code.toString() == "404") {
-                    _isLogin.emit(false)
+                    _loginNavItem.emit(LoginNavItem.Sign)
                 }
             }
         }
