@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.threedollars.manager.screen.*
 import androidx.compose.ui.tooling.preview.Preview
+import app.threedollars.manager.main.ui.HomeScreen
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.sign.ui.LoginScreen
 import app.threedollars.manager.sign.ui.SignScreen

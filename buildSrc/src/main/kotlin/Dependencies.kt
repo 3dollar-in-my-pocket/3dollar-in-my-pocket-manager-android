@@ -13,7 +13,7 @@ object Dependencies {
     }
 
     object Naver {
-        const val NAVER_MAP = "com.naver.maps:map-sdk:${Versions.NAVER_MAP}"
+        const val NAVER_MAP_COMPOSE = "io.github.fornewid:naver-map-compose:${Versions.NAVER_MAP_COMPOSE}"
     }
 
     object Android {
@@ -26,6 +26,7 @@ object Dependencies {
         const val ANDROIDX_APPCOMPAT = "androidx.appcompat:appcompat:${Versions.ANDROIDX_APPCOMPAT}"
         const val ANDROID_MATERIAL = "com.google.android.material:material:${Versions.ANDROID_MATERIAL}"
         const val CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout:${Versions.CONSTRAINT_LAYOUT}"
+        const val GOOGLE_LOCATION = "com.google.android.gms:play-services-location:${Versions.GOOGLE_LOCATION}"
     }
 
     object Firebase {
@@ -118,7 +119,7 @@ object Dependencies {
         implementation(Network.MOSHI_CONVERTER)
         kapt(Network.MOSHI_CODEGEN)
         implementation(Login.KAKAO_LOGIN)
-        implementation(Naver.NAVER_MAP)
+        implementation(Naver.NAVER_MAP_COMPOSE)
         implementation(LOTTIE.LOTTIE_COMPOSE)
     }
 
