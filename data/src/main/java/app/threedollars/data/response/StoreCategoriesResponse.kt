@@ -8,17 +8,17 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class StoreCategoriesResponse(
     @Json(name = "category")
-    val category: String? = null,
+    val category: String = "",
     @Json(name = "categoryId")
-    val categoryId: String? = null,
+    val categoryId: String = "",
     @Json(name = "description")
-    val description: String? = null,
+    val description: String = "",
     @Json(name = "imageUrl")
-    val imageUrl: String? = null,
+    val imageUrl: String = "",
     @Json(name = "isNew")
-    val isNew: Boolean? = null,
+    val isNew: Boolean = false,
     @Json(name = "name")
-    val name: String? = null
+    val name: String = ""
 )
 
 fun List<StoreCategoriesResponse>.toDto() = map {
