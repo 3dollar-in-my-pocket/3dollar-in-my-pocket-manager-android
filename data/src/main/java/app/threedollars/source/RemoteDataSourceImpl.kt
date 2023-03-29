@@ -26,7 +26,7 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         emit(safeApiCall(networkService.logout()))
     }
 
-    override fun signUp(signUpRequest: SignUpRequest): Flow<Resource<String>> = flow {
+    override fun signUp(signUpRequest: SignUpRequest): Flow<Resource<LoginResponse>> = flow {
         emit(safeApiCall(networkService.signUp(signUpRequest)))
     }
 

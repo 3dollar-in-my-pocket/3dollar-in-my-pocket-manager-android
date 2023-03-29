@@ -17,7 +17,7 @@ interface NetworkService {
     suspend fun logout(): Response<BaseResponse<String>>
 
     @POST("v1/auth/signup")
-    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<String>>
+    suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<LoginResponse>>
 
     @DELETE("v1/auth/signout")
     suspend fun signOut(): Response<BaseResponse<String>>

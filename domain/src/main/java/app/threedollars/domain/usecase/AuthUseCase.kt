@@ -22,7 +22,7 @@ interface AuthUseCase {
         storeCategoriesIds: List<String>,
         storeName: String,
         token: String
-    ): Flow<Resource<String>>
+    ): Flow<Resource<LoginDto>>
 
     fun signOut(): Flow<Resource<String>>
 

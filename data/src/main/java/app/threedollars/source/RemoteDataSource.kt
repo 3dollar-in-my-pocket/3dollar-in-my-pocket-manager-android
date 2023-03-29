@@ -13,7 +13,7 @@ interface RemoteDataSource {
 
     fun logout(): Flow<Resource<String>>
 
-    fun signUp(signUpRequest: SignUpRequest): Flow<Resource<String>>
+    fun signUp(signUpRequest: SignUpRequest): Flow<Resource<LoginResponse>>
 
     fun signOut(): Flow<Resource<String>>
     // boss-account-controller
