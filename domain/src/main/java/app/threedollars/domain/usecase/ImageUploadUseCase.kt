@@ -3,10 +3,10 @@ package app.threedollars.domain.usecase
 import app.threedollars.common.Resource
 import app.threedollars.domain.dto.ImageUploadDto
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 interface ImageUploadUseCase {
-    fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadDto>>
+    fun postImageUpload(fileType: String, requestBody: RequestBody): Flow<Resource<ImageUploadDto>>
 
-    fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadDto>>>
+    fun postImageUploadBulk(fileType: String, requestBodyList: List<RequestBody>): Flow<Resource<List<ImageUploadDto>>>
 }

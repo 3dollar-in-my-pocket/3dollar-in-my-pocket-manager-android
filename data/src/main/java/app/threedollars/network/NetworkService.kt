@@ -112,13 +112,13 @@ interface NetworkService {
     // image-upload-controller
     @Multipart
     @POST("v1/upload/{fileType}")
-    suspend fun postImageUpload(@Path("fileType") fileType: String, file: MultipartBody.Part): Response<BaseResponse<ImageUploadResponse>>
+    suspend fun postImageUpload(@Path("fileType") fileType: String, @Part file: MultipartBody.Part): Response<BaseResponse<ImageUploadResponse>>
 
     @Multipart
     @POST("v1/upload/{fileType}/bulk")
     suspend fun postImageUploadBulk(
         @Path("fileType") fileType: String,
-        fileList: List<MultipartBody.Part>
+        @Part fileList: List<MultipartBody.Part>
     ): Response<BaseResponse<List<ImageUploadResponse>>>
 
     // platform-store-category-controller

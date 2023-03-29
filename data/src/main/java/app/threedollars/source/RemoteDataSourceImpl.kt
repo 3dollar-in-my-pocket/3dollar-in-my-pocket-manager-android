@@ -7,9 +7,13 @@ import app.threedollars.data.response.*
 import app.threedollars.network.NetworkService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.HttpException
 import retrofit2.Response
+import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
@@ -133,13 +137,27 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         emit(safeApiCall(networkService.getFeedbackTypes(targetType)))
     }
 
-    override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadResponse>> = flow {
-        emit(safeApiCall(networkService.postImageUpload(fileType, file)))
+    override fun postImageUpload(fileType: String, requestBody: RequestBody): Flow<Resource<ImageUploadResponse>> {
+        return flow {
+            val multipartBody = MultipartBody.Part.createFormData(
+                name = "file",
+                filename = "file.jpeg",
+                body = requestBody
+            )
+            emit(safeApiCall(networkService.postImageUpload(fileType, multipartBody)))
+        }
     }
 
-    override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadResponse>>> =
+    override fun postImageUploadBulk(fileType: String, requestBodyList: List<RequestBody>): Flow<Resource<List<ImageUploadResponse>>> =
         flow {
-            emit(safeApiCall(networkService.postImageUploadBulk(fileType, fileList)))
+            val multipartBodyList = requestBodyList.mapIndexed { index, requestBody ->
+                MultipartBody.Part.createFormData(
+                    name = "file",
+                    filename = "file$index.jpeg",
+                    body = requestBody
+                )
+            }
+            emit(safeApiCall(networkService.postImageUploadBulk(fileType, multipartBodyList)))
         }
 
     override fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesResponse>>> = flow {

@@ -5,6 +5,8 @@ import app.threedollars.data.request.*
 import app.threedollars.data.response.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 interface RemoteDataSource {
     fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>>
@@ -73,9 +75,9 @@ interface RemoteDataSource {
     fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesResponse>>>
 
     // image-upload-controller
-    fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadResponse>>
+    fun postImageUpload(fileType: String, requestBody: RequestBody): Flow<Resource<ImageUploadResponse>>
 
-    fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadResponse>>>
+    fun postImageUploadBulk(fileType: String, requestBodyList: List<RequestBody>): Flow<Resource<List<ImageUploadResponse>>>
 
     // platform-store-category-controller
     fun getStoreCategories(storeType: String): Flow<Resource<List<StoreCategoriesResponse>>>
