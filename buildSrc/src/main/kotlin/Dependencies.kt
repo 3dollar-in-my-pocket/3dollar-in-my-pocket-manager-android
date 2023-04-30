@@ -52,6 +52,7 @@ object Dependencies {
         const val COMPOSE_NAVIGATION =
             "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
         const val COMPOSE_LIFECYCLE = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.COMPOSE_LIFECYCLE}"
+        const val COMPOSE_COIL = "io.coil-kt:coil-compose:${Versions.COMPOSE_COIL}"
     }
 
     object Hilt {
@@ -102,6 +103,7 @@ object Dependencies {
         implementation(Compose.COMPOSE_ANIMATION)
         implementation(Compose.COMPOSE_UI_TOOL)
         implementation(Compose.COMPOSE_UI_TOOL_PREVIEW)
+        implementation(Compose.COMPOSE_COIL)
         implementation(Compose.COMPOSE_VIEWMODEL)
         implementation(Compose.COMPOSE_NAVIGATION)
         implementation(Compose.COMPOSE_LIFECYCLE)

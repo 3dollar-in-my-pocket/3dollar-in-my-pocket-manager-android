@@ -11,6 +11,8 @@ import app.threedollars.source.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import javax.inject.Inject
 
 class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) : StoreRepository {
@@ -178,17 +180,18 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
             }
         }
 
-    override fun postImageUpload(fileType: String, file: MultipartBody.Part): Flow<Resource<ImageUploadDto>> =
-        remoteDataSource.postImageUpload(fileType, file).map {
+    override fun postImageUpload(fileType: String, requestBody: RequestBody): Flow<Resource<ImageUploadDto>> {
+        return remoteDataSource.postImageUpload(fileType, requestBody).map {
             if (it.data != null) {
                 Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {
                 Resource.Error(errorMessage = it.errorMessage, code = it.code)
             }
         }
+    }
 
-    override fun postImageUploadBulk(fileType: String, fileList: List<MultipartBody.Part>): Flow<Resource<List<ImageUploadDto>>> =
-        remoteDataSource.postImageUploadBulk(fileType, fileList).map {
+    override fun postImageUploadBulk(fileType: String, requestBodyList: List<RequestBody>): Flow<Resource<List<ImageUploadDto>>> =
+        remoteDataSource.postImageUploadBulk(fileType, requestBodyList).map {
             if (it.data != null) {
                 Resource.Success(data = it.data!!.toDto(), code = it.code)
             } else {

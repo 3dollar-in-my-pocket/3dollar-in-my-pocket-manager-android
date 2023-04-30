@@ -20,6 +20,7 @@ object Versions {
     const val COMPOSE_LIFECYCLE_VIEWMODEL = "2.5.1"
     const val COMPOSE_NAVIGATION = "2.5.3"
     const val COMPOSE_LIFECYCLE = "2.6.0-alpha04"
+    const val COMPOSE_COIL = "2.3.0"
 
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"

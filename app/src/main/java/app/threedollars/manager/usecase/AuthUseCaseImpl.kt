@@ -26,7 +26,7 @@ class AuthUseCaseImpl @Inject constructor(private val userRepository: UserReposi
         storeCategoriesIds: List<String>,
         storeName: String,
         token: String
-    ): Flow<Resource<String>> =
+    ): Flow<Resource<LoginDto>> =
         userRepository.signUp(bossName, businessNumber, certificationPhotoUrl, socialType, storeCategoriesIds, storeName, token)
 
     override fun signOut(): Flow<Resource<String>> =

@@ -46,9 +46,15 @@ class UserRepositoryImpl @Inject constructor(
         storeCategoriesIds: List<String>,
         storeName: String,
         token: String
-    ): Flow<Resource<String>> {
+    ): Flow<Resource<LoginDto>> {
         val signUpRequest = SignUpRequest(bossName, businessNumber, certificationPhotoUrl, socialType, storeCategoriesIds, storeName, token)
-        return remoteDataSource.signUp(signUpRequest)
+        return remoteDataSource.signUp(signUpRequest).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
+            } else {
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
+            }
+        }
     }
 
     override fun signOut(): Flow<Resource<String>> = remoteDataSource.signOut()
