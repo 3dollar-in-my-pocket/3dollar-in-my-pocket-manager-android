@@ -1,6 +1,5 @@
 package app.threedollars.manager.sign.ui
 
-import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +26,6 @@ import app.threedollars.manager.sign.ui.content.SignCertificationPhoto
 import app.threedollars.manager.sign.ui.content.SignTextFieldContent
 import app.threedollars.manager.sign.ui.content.SignTitleTextContent
 import app.threedollars.manager.sign.viewmodel.SignViewModel
-import app.threedollars.manager.util.ContentUriToRequestBody
 import okhttp3.RequestBody
 
 @Composable
