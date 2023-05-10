@@ -40,7 +40,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
                 if (it.code.toString() == "200") {
-                    // TODO: 홈화면 이동
+                    _loginNavItem.emit(LoginNavItem.Home)
                 } else if (it.code.toString() == "403") {
                     _loginNavItem.emit(LoginNavItem.Waiting)
                 } else if (it.code.toString() == "404") {
