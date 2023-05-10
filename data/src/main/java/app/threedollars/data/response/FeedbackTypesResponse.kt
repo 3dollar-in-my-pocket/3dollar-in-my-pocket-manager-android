@@ -9,11 +9,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class FeedbackTypesResponse(
     @Json(name = "description")
-    val description: String? = null,
+    val description: String = "",
     @Json(name = "emoji")
-    val emoji: String? = null,
+    val emoji: String = "",
     @Json(name = "feedbackType")
-    val feedbackType: String? = null
+    val feedbackType: String = ""
 ) : BaseResponse<FeedbackTypesResponse>()
 
 fun List<FeedbackTypesResponse>.toDto() = map {

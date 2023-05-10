@@ -9,11 +9,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class FeedbackFullResponse(
     @Json(name = "count")
-    val count: Int? = null,
+    val count: Int = 0,
     @Json(name = "feedbackType")
-    val feedbackType: String? = null,
+    val feedbackType: String = "",
     @Json(name = "ratio")
-    val ratio: String? = null
+    val ratio: String = ""
 ) : BaseResponse<FeedbackFullResponse>()
 
 fun List<FeedbackFullResponse>.toDto() = map {
