@@ -1,8 +1,9 @@
 package app.threedollars.manager.usecase
 
+import androidx.paging.PagingData
 import app.threedollars.common.Resource
+import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.domain.dto.FeedbackFullDto
-import app.threedollars.domain.dto.FeedbackSpecificDto
 import app.threedollars.domain.dto.FeedbackTypesDto
 import app.threedollars.domain.repository.StoreRepository
 import app.threedollars.domain.usecase.FeedbackUseCase
@@ -13,8 +14,8 @@ class FeedbackUseCaseImpl @Inject constructor(private val storeRepository: Store
     override fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullDto>>> =
         storeRepository.getFeedbackFull(targetType, targetId)
 
-    override fun getFeedbackSpecific(targetType: String, targetId: String, startDAte: String, endDate: String): Flow<Resource<FeedbackSpecificDto>> =
-        storeRepository.getFeedbackSpecific(targetType, targetId, startDAte, endDate)
+    override fun getFeedbackSpecific(targetId: String): Flow<PagingData<ContentsDto>> =
+        storeRepository.getFeedbackSpecific(targetId)
 
     override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesDto>>> =
         storeRepository.getFeedbackTypes(targetType)
