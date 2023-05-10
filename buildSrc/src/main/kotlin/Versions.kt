@@ -8,6 +8,7 @@ object Versions {
 
     const val HILT = "2.44.2"
     const val HILT_COMEPOSE = "1.0.0"
+    const val HILT_PAGING = "1.0.0-alpha03"
     const val CORE_KTX = "1.9.0"
     const val FRAGMENT_KTX = "1.5.5"
     const val LIFECYCLE_KTX = "2.5.1"
@@ -21,6 +22,9 @@ object Versions {
     const val COMPOSE_NAVIGATION = "2.5.3"
     const val COMPOSE_LIFECYCLE = "2.6.0-alpha04"
     const val COMPOSE_COIL = "2.3.0"
+
+    const val PAGING = "3.1.1"
+    const val PAGING_COMPOSE = "1.0.0-alpha18"
 
     const val JUNIT = "4.13.2"
     const val ANDROIDX_JUNIT = "1.1.3"

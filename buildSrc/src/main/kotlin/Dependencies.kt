@@ -43,6 +43,7 @@ object Dependencies {
         const val COMPOSE_ACTIVITY = "androidx.activity:activity-compose:${Versions.COMPOSE_ACTIVITY}"
         const val COMPOSE_FOUNDATION = "androidx.compose.foundation:foundation:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_MATERIAL = "androidx.compose.material:material:${Versions.COMPOSE_MATERIAL}"
+        const val COMPOSE_UI = "androidx.compose.ui:ui:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_ANIMATION = "androidx.compose.animation:animation:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_UI_TOOL = "androidx.compose.ui:ui-tooling:${Versions.COMPOSE_MATERIAL}"
         const val COMPOSE_UI_TOOL_PREVIEW =
@@ -55,11 +56,17 @@ object Dependencies {
         const val COMPOSE_COIL = "io.coil-kt:coil-compose:${Versions.COMPOSE_COIL}"
     }
 
+    object Paging {
+        const val PAGING = "androidx.paging:paging-runtime:${Versions.PAGING}"
+        const val PAGING_COMPOSE = "androidx.paging:paging-compose:${Versions.PAGING_COMPOSE}"
+    }
+
     object Hilt {
         const val HILT_PLUGIN = "com.google.dagger:hilt-android-gradle-plugin:${Versions.HILT}"
         const val HILT_COMPILER = "com.google.dagger:hilt-android-compiler:${Versions.HILT}"
         const val HILT_ANDROID = "com.google.dagger:hilt-android:${Versions.HILT}"
         const val HILT_COMPOSE = "androidx.hilt:hilt-navigation-compose:${Versions.HILT_COMEPOSE}"
+        const val HILT_PAGING = "androidx.hilt:hilt-paging:${Versions.HILT_PAGING}"
     }
 
     object Network {
@@ -107,6 +114,8 @@ object Dependencies {
         implementation(Compose.COMPOSE_VIEWMODEL)
         implementation(Compose.COMPOSE_NAVIGATION)
         implementation(Compose.COMPOSE_LIFECYCLE)
+        implementation(Paging.PAGING)
+        implementation(Paging.PAGING_COMPOSE)
         kapt(Hilt.HILT_COMPILER)
         implementation(Hilt.HILT_ANDROID)
         implementation(Hilt.HILT_COMPOSE)
