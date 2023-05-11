@@ -9,19 +9,19 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class BossAccountInfoResponse(
     @Json(name = "bossId")
-    val bossId: String? = null,
+    val bossId: String = "",
     @Json(name = "businessNumber")
-    val businessNumber: String? = null,
+    val businessNumber: String = "",
     @Json(name = "createdAt")
-    val createdAt: String? = null,
+    val createdAt: String = "",
     @Json(name = "isSetupNotification")
-    val isSetupNotification: Boolean? = null,
+    val isSetupNotification: Boolean = false,
     @Json(name = "name")
-    val name: String? = null,
+    val name: String = "",
     @Json(name = "socialType")
-    val socialType: String? = null,
+    val socialType: String = "",
     @Json(name = "updatedAt")
-    val updatedAt: String? = null
+    val updatedAt: String = ""
 ) : BaseResponse<BossAccountInfoResponse>() {
-    fun toDto() = app.threedollars.domain.dto.BossAccountInfoDto(bossId, businessNumber, createdAt, isSetupNotification, name, socialType, updatedAt)
+    fun toDto() = BossAccountInfoDto(bossId, businessNumber, createdAt, isSetupNotification, name, socialType, updatedAt)
 }
