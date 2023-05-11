@@ -8,10 +8,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class FeedbacksModel(
     @Json(name = "count")
-    val count: String? = null,
+    val count: Int = 0,
     @Json(name = "feedbackType")
-    val feedbackType: String? = ""
+    val feedbackType: String = ""
 )
+
 fun List<FeedbacksModel>.toDto() = map {
     FeedbacksDto(it.count, it.feedbackType)
 }

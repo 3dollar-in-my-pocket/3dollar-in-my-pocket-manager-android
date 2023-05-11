@@ -7,13 +7,10 @@ import app.threedollars.data.response.*
 import app.threedollars.network.NetworkService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.HttpException
 import retrofit2.Response
-import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
@@ -124,15 +121,6 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         emit(safeApiCall(networkService.getFeedbackFull(targetType, targetId)))
     }
 
-    override fun getFeedbackSpecific(
-        targetType: String,
-        targetId: String,
-        startDAte: String,
-        endDate: String
-    ): Flow<Resource<FeedbackSpecificResponse>> = flow {
-        emit(safeApiCall(networkService.getFeedbackSpecific(targetType, targetId, startDAte, endDate)))
-    }
-
     override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesResponse>>> = flow {
         emit(safeApiCall(networkService.getFeedbackTypes(targetType)))
     }
@@ -164,23 +152,23 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         emit(safeApiCall(networkService.getStoreCategories(storeType)))
     }
 
-    private fun <T> safeApiCall(response: Response<BaseResponse<T>>): Resource<T> {
-        return try {
-            if (response.isSuccessful) {
-                Resource.Success(data = response.body()?.data!!, code = response.code().toString())
-            } else {
-                Resource.Error(
-                    errorMessage = response.errorBody()?.string(),
-                    code = response.code().toString()
-                )
-            }
-
-        } catch (e: HttpException) {
-            Resource.Error(errorMessage = e.message ?: "Something went wrong", code = null)
-        } catch (e: IOException) {
-            Resource.Error(errorMessage = e.message ?: "Please check your network connection", code = null)
-        } catch (e: Exception) {
-            Resource.Error(errorMessage = e.message ?: "Something went wrong", code = null)
+}
+fun <T> safeApiCall(response: Response<BaseResponse<T>>): Resource<T> {
+    return try {
+        if (response.isSuccessful) {
+            Resource.Success(data = response.body()?.data!!, code = response.code().toString())
+        } else {
+            Resource.Error(
+                errorMessage = response.errorBody()?.string(),
+                code = response.code().toString()
+            )
         }
+
+    } catch (e: HttpException) {
+        Resource.Error(errorMessage = e.message ?: "Something went wrong", code = null)
+    } catch (e: IOException) {
+        Resource.Error(errorMessage = e.message ?: "Please check your network connection", code = null)
+    } catch (e: Exception) {
+        Resource.Error(errorMessage = e.message ?: "Something went wrong", code = null)
     }
 }

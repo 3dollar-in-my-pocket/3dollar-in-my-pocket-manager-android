@@ -8,10 +8,8 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ContentsModel(
     @Json(name = "date")
-    val date: String? = null,
+    val date: String = "",
     @Json(name = "feedbacks")
     val feedbacks: List<FeedbacksModel> = listOf()
 )
-fun List<ContentsModel>.toDto() = map {
-    ContentsDto(it.date, it.feedbacks.toDto())
-}
+fun ContentsModel.toDto() = ContentsDto(date, feedbacks.toDto())

@@ -130,8 +130,8 @@ fun FeedbackFullDto.dtoToVo() = FeedbackFullVo(
 )
 
 fun FeedbackSpecificDto.dtoToVo() = FeedbackSpecificVo(
-    contents = contents?.map { it.dtoToVo() },
-    cursor = cursor?.dtoToVo(),
+    contents = contents.map { it.dtoToVo() },
+    cursor = cursor.dtoToVo(),
 )
 
 fun FeedbacksDto.dtoToVo() = FeedbacksVo(

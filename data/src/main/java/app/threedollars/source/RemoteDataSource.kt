@@ -4,9 +4,7 @@ import app.threedollars.common.Resource
 import app.threedollars.data.request.*
 import app.threedollars.data.response.*
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.File
 
 interface RemoteDataSource {
     fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>>
@@ -64,13 +62,6 @@ interface RemoteDataSource {
 
     // feedback-controller
     fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullResponse>>>
-
-    fun getFeedbackSpecific(
-        targetType: String,
-        targetId: String,
-        startDAte: String,
-        endDate: String
-    ): Flow<Resource<FeedbackSpecificResponse>>
 
     fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesResponse>>>
 

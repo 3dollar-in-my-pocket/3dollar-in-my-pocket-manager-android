@@ -11,7 +11,6 @@ import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManager
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,7 +48,7 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
                 if (it.code.toString() == "200") {
-                    // TODO: 홈화면
+                    _loginNavItem.emit(LoginNavItem.Home)
                 } else if (it.code.toString() == "401") {
                     autoLogin()
                 } else if (it.code.toString() == "403") {

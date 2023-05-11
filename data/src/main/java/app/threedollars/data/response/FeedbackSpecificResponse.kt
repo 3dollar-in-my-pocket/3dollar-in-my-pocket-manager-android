@@ -12,10 +12,9 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class FeedbackSpecificResponse(
     @Json(name = "contents")
-    val contents: List<ContentsModel>? = null,
+    val contents: List<ContentsModel> = listOf(),
     @Json(name = "cursor")
-    val cursor: CursorModel? = null,
+    val cursor: CursorModel = CursorModel(),
 ) : BaseResponse<FeedbackSpecificResponse>() {
-    fun toDto() = FeedbackSpecificDto(contents?.toDto(), cursor?.toDto())
 
 }

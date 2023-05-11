@@ -1,5 +1,6 @@
 package app.threedollars.manager.sign.ui
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,9 +23,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import app.threedollars.common.ui.Yellow
+import app.threedollars.manager.MainActivity
 import app.threedollars.manager.R
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.sign.viewmodel.LoginViewModel
+import app.threedollars.manager.util.findActivity
 
 @Composable
 fun LoginScreen(
@@ -31,7 +35,7 @@ fun LoginScreen(
     loginKakao: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-
+    val context = LocalContext.current
     val navItem by viewModel.loginNavItem.collectAsStateWithLifecycle(null)
 
     Column(
@@ -47,8 +51,13 @@ fun LoginScreen(
     }
     LaunchedEffect(navItem) {
         navItem?.let {
-            navController.popBackStack()
-            navController.navigate(it.screenRoute)
+            if (it == LoginNavItem.Home) {
+                context.startActivity(Intent(context, MainActivity::class.java))
+                context.findActivity().finish()
+            } else {
+                navController.popBackStack()
+                navController.navigate(it.screenRoute)
+            }
         }
     }
 }

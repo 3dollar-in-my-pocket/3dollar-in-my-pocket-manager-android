@@ -1,5 +1,6 @@
 package app.threedollars.domain.repository
 
+import androidx.paging.PagingData
 import app.threedollars.common.Resource
 import app.threedollars.domain.dto.*
 import kotlinx.coroutines.flow.Flow
@@ -64,12 +65,7 @@ interface StoreRepository {
     // feedback-controller
     fun getFeedbackFull(targetType: String, targetId: String): Flow<Resource<List<FeedbackFullDto>>>
 
-    fun getFeedbackSpecific(
-        targetType: String,
-        targetId: String,
-        startDAte: String,
-        endDate: String
-    ): Flow<Resource<FeedbackSpecificDto>>
+    fun getFeedbackSpecific(targetId: String): Flow<PagingData<ContentsDto>>
 
     fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesDto>>>
 

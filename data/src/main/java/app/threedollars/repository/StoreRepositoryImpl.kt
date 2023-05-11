@@ -1,21 +1,29 @@
 package app.threedollars.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import app.threedollars.common.Resource
 import app.threedollars.data.model.AppearanceDaysRequestModel
 import app.threedollars.data.model.MenusModel
+import app.threedollars.data.model.toDto
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.response.*
 import app.threedollars.domain.dto.*
 import app.threedollars.domain.repository.StoreRepository
+import app.threedollars.network.NetworkService
+import app.threedollars.source.FeedbackSpecificDataSource
 import app.threedollars.source.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.File
 import javax.inject.Inject
 
-class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: RemoteDataSource) : StoreRepository {
+class StoreRepositoryImpl @Inject constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val networkService: NetworkService
+) : StoreRepository {
     override fun putBossStore(
         bossStoreId: String,
         appearanceDays: List<AppearanceDaysRequestDto>,
@@ -157,19 +165,13 @@ class StoreRepositoryImpl @Inject constructor(private val remoteDataSource: Remo
             }
         }
 
-    override fun getFeedbackSpecific(
-        targetType: String,
-        targetId: String,
-        startDAte: String,
-        endDate: String
-    ): Flow<Resource<FeedbackSpecificDto>> =
-        remoteDataSource.getFeedbackSpecific(targetType, targetId, startDAte, endDate).map {
-            if (it.data != null) {
-                Resource.Success(data = it.data!!.toDto(), code = it.code)
-            } else {
-                Resource.Error(errorMessage = it.errorMessage, code = it.code)
-            }
+    override fun getFeedbackSpecific(targetId: String): Flow<PagingData<ContentsDto>> = Pager(PagingConfig(pageSize = 10)) {
+        FeedbackSpecificDataSource(networkService, targetId)
+    }.flow.map {
+        it.map { contentsModel ->
+            contentsModel.toDto()
         }
+    }
 
     override fun getFeedbackTypes(targetType: String): Flow<Resource<List<FeedbackTypesDto>>> =
         remoteDataSource.getFeedbackTypes(targetType).map {

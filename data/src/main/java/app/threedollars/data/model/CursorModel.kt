@@ -8,7 +8,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class CursorModel(
     @Json(name = "hasMore")
-    val hasMore: Boolean? = null,
+    val hasMore: Boolean = false,
     @Json(name = "nextCursor")
     val nextCursor: String? = null
 ){
