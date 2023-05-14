@@ -32,15 +32,18 @@ import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.*
 import app.threedollars.manager.R
 import app.threedollars.manager.storeManagement.viewModel.MyViewModel
+import app.threedollars.manager.vo.AppearanceDaysVo
 import coil.compose.AsyncImage
 
 @Composable
 fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
     val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         bossStore.value?.let {
+            val introduction = it.introduction.ifEmpty { "손님들에게 감동을 드릴 한마디를 적어주세요!ex) 오전에 오시면 서비스가 있습니다!" }
             displayProfileInfo(Profile(it.imageUrl, it.name, it.categories.map { it.category.toString() }, it.snsUrl))
             Spacer(modifier = Modifier.height(44.dp))
             Column(
@@ -50,13 +53,13 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
             ) {
                 TitleContents(bottomPadding = 12.dp, Title("사장님 한마디", "정보수정") {})
                 Text(
-                    text = it.introduction,
+                    text = introduction,
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(White, shape = RoundedCornerShape(12.dp))
                         .padding(16.dp),
                     fontSize = 14.sp,
-                    color = Gray40
+                    color = if (it.introduction.isEmpty()) Gray40 else Gray95
                 )
                 Spacer(modifier = Modifier.height(37.dp))
                 TitleContents(bottomPadding = 16.dp, Title("메뉴 정보", "메뉴 관리") {})
@@ -69,7 +72,7 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                 })
                 Spacer(modifier = Modifier.height(40.dp))
                 TitleContents(bottomPadding = 16.dp, Title("영업 일정", "일정 관리") {})
-                
+                BusinessScheduleContents(it.appearanceDays.map { dto -> dto.toBusinessSchedule() })
             }
         }
     }
@@ -213,7 +216,59 @@ fun MenuEmptyItem() {
     }
 }
 
-data class Menu(
+@Preview
+@Composable
+fun BusinessScheduleContents(businessSchedules: List<BusinessSchedule> = emptyBusinessSchedules) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(businessSchedules) {
+            BusinessScheduleItem(it)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BusinessScheduleItem(businessSchedule: BusinessSchedule = emptyBusinessSchedules[0]) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(White, shape = RoundedCornerShape(12.dp))
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = businessSchedule.dayOfTheWeek, fontSize = 14.sp, color = if (businessSchedule.isWeekend) Red else Gray95)
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = businessSchedule.openingHours,
+                fontSize = 16.sp,
+                color = if (businessSchedule.isOpen) Gray70 else Red,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(text = businessSchedule.locationDescription, fontSize = 14.sp, color = Gray70)
+        }
+    }
+}
+
+data class BusinessSchedule(
+    val dayOfTheWeek: String,
+    val locationDescription: String,
+    val openingHours: String,
+    val isOpen: Boolean,
+    val isWeekend: Boolean
+)
+
+val emptyBusinessSchedules = listOf(
+    BusinessSchedule("월요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = false),
+    BusinessSchedule("화요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = false),
+    BusinessSchedule("수요일", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("목요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = false),
+    BusinessSchedule("금요일", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("토요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = true),
+    BusinessSchedule("일요일", "-", "휴무", false, isWeekend = true)
+)
+
+class Menu(
     val menuName: String,
     val menuImage: String,
     val menuPrice: String
@@ -246,4 +301,13 @@ val emptyProfile = Profile(
 fun Int.toWon(): String {
     val formatter = java.text.DecimalFormat("#,###")
     return "${formatter.format(this)}원"
+}
+
+private fun AppearanceDaysVo.toBusinessSchedule(): BusinessSchedule {
+    val openingHours = openingHours?.let {
+        "${it.startTime.toStringDefault()} - ${it.endTime.toStringDefault()}"
+    } ?: "휴무"
+    val dayOfTheWeek = dayOfTheWeek.toStringDefault()
+    val isWeekend = dayOfTheWeek == "일요일" || dayOfTheWeek == "토요일"
+    return BusinessSchedule(dayOfTheWeek, locationDescription.toStringDefault(), openingHours, openingHours != "휴무", isWeekend)
 }
