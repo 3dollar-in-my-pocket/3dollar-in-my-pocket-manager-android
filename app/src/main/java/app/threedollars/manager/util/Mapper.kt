@@ -1,5 +1,9 @@
 package app.threedollars.manager.util
 
+import app.threedollars.common.ext.toBooleanDefault
+import app.threedollars.common.ext.toDoubleDefault
+import app.threedollars.common.ext.toIntDefault
+import app.threedollars.common.ext.toStringDefault
 import app.threedollars.domain.dto.*
 import app.threedollars.manager.vo.*
 
@@ -57,19 +61,19 @@ fun BossStoreRetrieveAroundDto.dtoToVo() = BossStoreRetrieveAroundVo(
 
 fun BossStoreRetrieveDto.dtoToVo() = BossStoreRetrieveVo(
     appearanceDays = appearanceDays.map { it.dtoToVo() },
-    bossStoreId = bossStoreId,
+    bossStoreId = bossStoreId.toStringDefault(),
     categories = categories.map { it.dtoToVo() },
-    createdAt = createdAt,
-    distance = distance,
-    favorite = favorite?.dtoToVo(),
-    imageUrl = imageUrl,
-    introduction = introduction,
-    location = location?.dtoToVo(),
+    createdAt = createdAt.toStringDefault(),
+    distance = distance.toIntDefault(),
+    favorite = favorite.dtoToVo(),
+    imageUrl = imageUrl.toStringDefault(),
+    introduction = introduction.toStringDefault(),
+    location = location.dtoToVo(),
     menus = menus.map { it.dtoToVo() },
-    name = name,
-    openStatus = openStatus?.dtoToVo(),
-    snsUrl = snsUrl,
-    updatedAt = updatedAt
+    name = name.toStringDefault(),
+    openStatus = openStatus.dtoToVo(),
+    snsUrl = snsUrl.toStringDefault(),
+    updatedAt = updatedAt.toStringDefault()
 )
 
 fun CategoriesDto.dtoToVo() = CategoriesVo(
@@ -119,8 +123,8 @@ fun FaqDto.dtoToVo() = FaqVo(
     updatedAt = updatedAt
 )
 
-fun FavoriteDto.dtoToVo() = FavoriteVo(
-    isFavorite = isFavorite
+fun FavoriteDto?.dtoToVo() = FavoriteVo(
+    isFavorite = this?.isFavorite?.toBooleanDefault() ?: false
 )
 
 fun FeedbackFullDto.dtoToVo() = FeedbackFullVo(
@@ -149,9 +153,9 @@ fun ImageUploadDto.dtoToVo() = ImageUploadVo(
     imageUrl = imageUrl
 )
 
-fun LocationDto.dtoToVo() = LocationVo(
-    latitude = latitude,
-    longitude = longitude
+fun LocationDto?.dtoToVo() = LocationVo(
+    latitude = this?.latitude?.toDoubleDefault(),
+    longitude = this?.longitude?.toDoubleDefault()
 )
 
 fun LoginDto.dtoToVo() = LoginVo(
@@ -170,9 +174,9 @@ fun OpeningHoursDto.dtoToVo() = OpeningHoursVo(
     endTime = endTime
 )
 
-fun OpenStatusDto.dtoToVo() = OpenStatusVo(
-    openStartDateTime = openStartDateTime,
-    status = status,
+fun OpenStatusDto?.dtoToVo() = OpenStatusVo(
+    openStartDateTime = this?.openStartDateTime?.toStringDefault(),
+    status = this?.status?.toStringDefault(),
 )
 
 fun StoreCategoriesDto.dtoToVo() = StoreCategoriesVo(
