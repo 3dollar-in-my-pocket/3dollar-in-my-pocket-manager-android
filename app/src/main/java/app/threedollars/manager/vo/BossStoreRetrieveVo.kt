@@ -3,17 +3,17 @@ package app.threedollars.manager.vo
 
 data class BossStoreRetrieveVo(
     val appearanceDays: List<AppearanceDaysVo> = listOf(),
-    val bossStoreId: String? = null,
+    val bossStoreId: String,
     val categories: List<CategoriesVo> = listOf(),
-    val createdAt: String? = null,
-    val distance: Int? = null,
-    val favorite: FavoriteVo? = null,
-    val imageUrl: String? = null,
-    val introduction: String? = null,
-    val location: LocationVo? = null,
+    val createdAt: String,
+    val distance: Int,
+    val favorite: FavoriteVo,
+    val imageUrl: String,
+    val introduction: String,
+    val location: LocationVo,
     val menus: List<MenusVo>,
-    val name: String? = null,
-    val openStatus: OpenStatusVo? = null,
-    val snsUrl: String? = null,
-    val updatedAt: String? = null
+    val name: String,
+    val openStatus: OpenStatusVo,
+    val snsUrl: String,
+    val updatedAt: String
 )

@@ -2,5 +2,5 @@ package app.threedollars.manager.vo
 
 
 data class FavoriteVo(
-    val isFavorite: Boolean? = null
+    val isFavorite: Boolean
 )
