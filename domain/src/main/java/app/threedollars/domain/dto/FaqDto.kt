@@ -2,11 +2,11 @@ package app.threedollars.domain.dto
 
 
 data class FaqDto(
-    val answer: String? = null,
-    val category: String? = null,
-    val categoryInfo: CategoryInfoDto? = null,
-    val createdAt: String? = null,
-    val faqId: Int? = null,
-    val question: String? = null,
-    val updatedAt: String? = null
+    val answer: String = "",
+    val category: String = "",
+    val categoryInfo: CategoryInfoDto = CategoryInfoDto(),
+    val createdAt: String = "",
+    val faqId: Int = 0,
+    val question: String = "",
+    val updatedAt: String = ""
 )

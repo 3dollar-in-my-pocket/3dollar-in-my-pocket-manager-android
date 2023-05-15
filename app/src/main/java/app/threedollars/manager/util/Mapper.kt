@@ -111,12 +111,8 @@ fun FaqCategoriesDto.dtoToVo() = FaqCategoriesVo(
 
 fun FaqDto.dtoToVo() = FaqVo(
     answer = answer,
-    category = category,
-    categoryInfo = categoryInfo?.dtoToVo(),
-    createdAt = createdAt,
-    faqId = faqId,
-    question = question,
-    updatedAt = updatedAt
+    categoryInfo = categoryInfo.dtoToVo(),
+    question = question
 )
 
 fun FavoriteDto.dtoToVo() = FavoriteVo(
