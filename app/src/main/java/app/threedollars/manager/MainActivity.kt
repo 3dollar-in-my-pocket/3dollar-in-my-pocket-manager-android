@@ -49,6 +49,8 @@ fun NavigationGraph(navController: NavHostController) {
         }
         composable(BottomNavItem.MyPage.screenRoute) {
             MyPageScreen()
+        composable(SettingNavItem.Faq.screenRoute) {
+            FaqScreen(navController)
         }
     }
 }
