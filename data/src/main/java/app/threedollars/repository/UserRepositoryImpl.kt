@@ -18,8 +18,12 @@ class UserRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) :
     UserRepository {
+    override suspend fun saveSocialAccessToken(token: String): Flow<Unit> = localDataSource.saveSocialAccessToken(token)
 
     override suspend fun saveAccessToken(token: String) = localDataSource.saveAccessToken(token)
+    override fun getSocialAccessToken(): Flow<Resource<String>> = localDataSource.getSocialAccessToken().map {
+        Resource.Success(data = it, code = null)
+    }
 
     override fun getAccessToken(): Flow<Resource<String>> = localDataSource.getAccessToken().map {
         Resource.Success(data = it, code = null)

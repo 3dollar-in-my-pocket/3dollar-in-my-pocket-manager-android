@@ -12,6 +12,8 @@ import app.threedollars.manager.vo.BossAccountInfoVo
 import app.threedollars.manager.vo.FaqVo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -59,9 +61,15 @@ class SettingViewModel @Inject constructor(
         viewModelScope.launch {
             authUseCase.signOut().collect {
                 if (it.data == "OK") {
-                    authUseCase.saveAccessToken("").collect {
-                        _isSuccess.emit(true)
+
+                    val accessTokenDeferred = async { authUseCase.saveAccessToken("") }
+                    val socialAccessTokenDeferred = async { authUseCase.saveSocialAccessToken("") }
+
+                    awaitAll(accessTokenDeferred, socialAccessTokenDeferred).forEach { flow ->
+                        flow.collect()
                     }
+
+                    _isSuccess.emit(true)
                 }
             }
         }
@@ -71,9 +79,13 @@ class SettingViewModel @Inject constructor(
         viewModelScope.launch {
             authUseCase.logout().collect {
                 if (it.data == "OK") {
-                    authUseCase.saveAccessToken("").collect {
-                        _isSuccess.emit(true)
+                    val accessTokenDeferred = async { authUseCase.saveAccessToken("") }
+                    val socialAccessTokenDeferred = async { authUseCase.saveSocialAccessToken("") }
+
+                    awaitAll(accessTokenDeferred, socialAccessTokenDeferred).forEach { flow ->
+                        flow.collect()
                     }
+                    _isSuccess.emit(true)
                 }
             }
         }
