@@ -17,7 +17,9 @@ import app.threedollars.common.ui.Gray95
 fun StoreManagementScreen() {
     var isStoreInfoClicked by remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier.fillMaxSize().background(Gray0)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(Gray0)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -41,7 +43,8 @@ fun StoreManagementScreen() {
             }
         }
         if (isStoreInfoClicked) {
-
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+            MyScreen()
         } else {
             Spacer(modifier = Modifier.padding(top = 36.dp))
             ReviewScreen()
