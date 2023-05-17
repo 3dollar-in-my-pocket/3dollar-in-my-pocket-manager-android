@@ -45,4 +45,5 @@
     <string name="of">의</string>
     <string name="review_reached_boss">리뷰가 사장님께 도착했어요 :)</string>
     <string name="by_day">일별</string>
+    <string name="boss_name">%s 사장님</string>
 </resources>

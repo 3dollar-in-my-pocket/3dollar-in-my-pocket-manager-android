@@ -8,6 +8,7 @@ import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.manager.sign.LoginNavItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,10 +23,10 @@ class LoginViewModel @Inject constructor(
     fun login(accessToken: String) {
         viewModelScope.launch(exceptionHandler) {
             authUseCase.login("KAKAO", accessToken).collect {
-
+                authUseCase.saveSocialAccessToken(accessToken).collect()
                 if (it.code.toString() == "200") {
                     it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token).collect{
+                        authUseCase.saveAccessToken(token).collect {
                             checkMyInfo()
                         }
                     }

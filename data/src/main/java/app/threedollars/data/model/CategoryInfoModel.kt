@@ -8,11 +8,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class CategoryInfoModel(
     @Json(name = "category")
-    val category: String? = null,
+    val category: String = "",
     @Json(name = "description")
-    val description: String? = null,
+    val description: String = "",
     @Json(name = "displayOrder")
-    val displayOrder: String? = null
+    val displayOrder: String = ""
 ){
     fun toDto() = CategoryInfoDto(category, description, displayOrder)
 

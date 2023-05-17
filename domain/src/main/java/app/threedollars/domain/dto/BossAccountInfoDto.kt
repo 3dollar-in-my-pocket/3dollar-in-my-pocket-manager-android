@@ -1,11 +1,11 @@
 package app.threedollars.domain.dto
 
 data class BossAccountInfoDto(
-    val bossId: String? = null,
-    val businessNumber: String? = null,
-    val createdAt: String? = null,
-    val isSetupNotification: Boolean? = null,
-    val name: String? = null,
-    val socialType: String? = null,
-    val updatedAt: String? = null
+    val bossId: String = "",
+    val businessNumber: String = "",
+    val createdAt: String = "",
+    val isSetupNotification: Boolean = false,
+    val name: String = "",
+    val socialType: String = "",
+    val updatedAt: String = ""
 )

@@ -11,6 +11,7 @@ import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManager
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,14 +31,13 @@ class SplashViewModel @Inject constructor(
     private fun login(accessToken: String) {
         viewModelScope.launch(exceptionHandler) {
             authUseCase.login("KAKAO", accessToken).collect {
-
                 if (it.code.toString() == "200") {
                     it.data?.token?.let { token ->
                         authUseCase.saveAccessToken(token).collect {
                             checkMyInfo()
                         }
                     }
-                } else if (it.code.toString() == "404") {
+                } else if (it.code.toString() == "404" || it.code.toString() == "400") {
                     _loginNavItem.emit(LoginNavItem.Login)
                 }
             }
@@ -62,24 +62,13 @@ class SplashViewModel @Inject constructor(
 
     private fun autoLogin() {
         viewModelScope.launch {
-            val accessToken = TokenManager.instance.getToken()?.accessToken
-            if (accessToken.isNullOrBlank()) {
+
+            val token = authUseCase.getSocialAccessToken().firstOrNull()?.data
+
+            if (token.isNullOrBlank()) {
                 _loginNavItem.emit(LoginNavItem.Login)
-                return@launch
             } else {
-                if (AuthApiClient.instance.hasToken()) {
-                    UserApiClient.instance.accessTokenInfo { _, error ->
-                        if (error == null) {
-                            TokenManager.instance.getToken()?.accessToken?.let { login(it) }
-                        } else {
-                            viewModelScope.launch {
-                                _loginNavItem.emit(LoginNavItem.Login)
-                            }
-                        }
-                    }
-                } else {
-                    _loginNavItem.emit(LoginNavItem.Login)
-                }
+                login(token)
             }
         }
     }

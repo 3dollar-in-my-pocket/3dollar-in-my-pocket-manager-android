@@ -2,13 +2,13 @@ package app.threedollars.manager.screen
 
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import app.threedollars.common.ui.Gray100
 import app.threedollars.manager.BottomNavItem
 import app.threedollars.manager.R
 
@@ -17,10 +17,12 @@ fun BottomNavigation(navController: NavController) {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.StoreManagement,
-        BottomNavItem.MyPage
+        BottomNavItem.Setting
     )
+    var backgroundColor by remember { mutableStateOf(Color.White) }
+
     androidx.compose.material.BottomNavigation(
-        backgroundColor = colorResource(id = R.color.white),
+        backgroundColor = backgroundColor,
         contentColor = Color.Black
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -34,6 +36,11 @@ fun BottomNavigation(navController: NavController) {
                 selected = currentRoute == item.screenRoute,
                 onClick = {
                     navController.navigate(item.screenRoute) {
+                        backgroundColor = if (item.screenRoute == "setting") {
+                            Gray100
+                        } else {
+                            Color.White
+                        }
                         navController.graph.startDestinationRoute?.let { screenRoute ->
                             popUpTo(screenRoute) {
                                 saveState = true
