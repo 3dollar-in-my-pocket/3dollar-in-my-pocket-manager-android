@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 import app.threedollars.common.ui.Pink
 
 @Composable
-fun SignTitleTextContent(titleText: String, explanationText: String = "", isExplanationText: Boolean) {
+fun SignTitleTextContent(titleText: String, explanationText: String = "", isExplanationText: Boolean, isRequired: Boolean = true) {
     val explanationState by remember { mutableStateOf(isExplanationText) }
 
     Row(
@@ -37,7 +37,7 @@ fun SignTitleTextContent(titleText: String, explanationText: String = "", isExpl
                 color = Color.Black,
                 fontSize = 14.sp,
             )
-            Canvas(modifier = Modifier.size(4.dp), onDraw = { drawCircle(color = Pink) })
+            if (isRequired) Canvas(modifier = Modifier.size(4.dp), onDraw = { drawCircle(color = Pink) })
         }
 
         if (explanationState) {

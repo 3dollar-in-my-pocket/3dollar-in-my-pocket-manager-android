@@ -1,13 +1,20 @@
 package app.threedollars.manager.sign.ui
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -18,7 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import app.threedollars.common.ui.*
+import app.threedollars.common.ext.getResourceUri
+import app.threedollars.common.ui.FlowRow
+import app.threedollars.common.ui.Gray5
+import app.threedollars.common.ui.Green
 import app.threedollars.manager.R
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.sign.ui.content.SignCategoryButtonContent
@@ -176,8 +186,9 @@ fun CategoryGrid(viewModel: SignViewModel) {
 
 @Composable
 fun InitCertificationPhoto(onChangeUri: (RequestBody) -> Unit) {
+    val context = LocalContext.current
     SignTitleTextContent(titleText = "가게 인증 사진", isExplanationText = false)
-    SignCertificationPhoto(onChangeUri)
+    SignCertificationPhoto(R.drawable.ic_certification_photo.getResourceUri(context), onChangeUri)
 }
 
 @Composable
