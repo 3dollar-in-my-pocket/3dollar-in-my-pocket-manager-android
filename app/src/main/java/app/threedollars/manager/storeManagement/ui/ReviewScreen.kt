@@ -312,24 +312,27 @@ private fun SpecificDateColumn(index: Int, data: ContentsDto) {
 
 @Composable
 private fun EmptySpecificDate() {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(68.dp)
-            .padding(horizontal = 24.dp, vertical = 28.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(start = 24.dp, end = 24.dp, top = 28.dp)
+            .background(Color.White, shape = RoundedCornerShape(16.dp))
     )
     {
         Text(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 24.dp, bottom = 24.dp)
+                .align(Alignment.CenterStart),
             text = stringResource(id = R.string.empty_specific_feedback),
             fontWeight = FontWeight.Bold,
             color = Color.Black,
             textAlign = TextAlign.Center,
-            fontSize = 14.sp
+            fontSize = 14.sp,
         )
-        Spacer(modifier = Modifier.weight(1f))
         Text(
             modifier = Modifier
+                .padding(end = 16.dp, top = 24.dp, bottom = 24.dp)
+                .align(Alignment.CenterEnd)
                 .border(1.dp, Gray30, RoundedCornerShape(32.dp))
                 .padding(vertical = 4.dp, horizontal = 8.dp),
             text = stringResource(R.string.units, 0),
