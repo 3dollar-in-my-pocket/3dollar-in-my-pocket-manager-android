@@ -1,8 +1,6 @@
 package app.threedollars.manager.storeManagement.ui
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -37,14 +35,15 @@ import coil.compose.AsyncImage
 
 @Composable
 fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
+    val scrollState = rememberScrollState()
     val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(1f).verticalScroll(scrollState)
     ) {
         bossStore.value?.let {
             val introduction = it.introduction.ifEmpty { "손님들에게 감동을 드릴 한마디를 적어주세요!ex) 오전에 오시면 서비스가 있습니다!" }
-            displayProfileInfo(Profile(it.imageUrl, it.name, it.categories.map { it.category.toString() }, it.snsUrl))
+            displayProfileInfo(Profile(it.imageUrl, it.name, it.categories.map { it.name.toStringDefault() }, it.snsUrl))
             Spacer(modifier = Modifier.height(44.dp))
             Column(
                 modifier = Modifier
@@ -72,7 +71,7 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                 })
                 Spacer(modifier = Modifier.height(40.dp))
                 TitleContents(bottomPadding = 16.dp, Title("영업 일정", "일정 관리") {})
-                BusinessScheduleContents(it.appearanceDays.map { dto -> dto.toBusinessSchedule() })
+//                BusinessScheduleContents(it.appearanceDays.map { dto -> dto.toBusinessSchedule() })
             }
         }
     }
