@@ -23,11 +23,11 @@ class BossStoreUseCaseImpl @Inject constructor(private val storeRepository: Stor
 
     override fun patchBossStore(
         bossStoreId: String,
-        appearanceDays: List<AppearanceDaysRequestDto>,
-        categoriesIds: List<String>,
+        appearanceDays: List<AppearanceDaysRequestDto>?,
+        categoriesIds: List<String>?,
         imageUrl: String?,
         introduction: String?,
-        menus: List<MenusDto>,
+        menus: List<MenusDto>?,
         name: String?,
         snsUrl: String?
     ): Flow<Resource<String>> =

@@ -24,11 +24,11 @@ interface StoreRepository {
 
     fun patchBossStore(
         bossStoreId: String,
-        appearanceDays: List<AppearanceDaysRequestDto> = listOf(),
-        categoriesIds: List<String> = listOf(),
+        appearanceDays: List<AppearanceDaysRequestDto>? = null,
+        categoriesIds: List<String>? = null,
         imageUrl: String? = null,
         introduction: String? = null,
-        menus: List<MenusDto> = listOf(),
+        menus: List<MenusDto>? = null,
         name: String? = null,
         snsUrl: String? = null
     ): Flow<Resource<String>>
