@@ -9,6 +9,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.threedollars.common.ui.Gray100
+import app.threedollars.common.ui.Gray50
 import app.threedollars.manager.BottomNavItem
 import app.threedollars.manager.R
 
@@ -31,7 +32,7 @@ fun BottomNavigation(navController: NavController) {
             BottomNavigationItem(
                 icon = { Icon(painterResource(id = item.icon), contentDescription = null) },
                 selectedContentColor = colorResource(id = R.color.green500),
-                unselectedContentColor = Color.Black.copy(0.4f),
+                unselectedContentColor = Gray50,
                 alwaysShowLabel = true,
                 selected = currentRoute == item.screenRoute,
                 onClick = {
