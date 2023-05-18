@@ -54,18 +54,18 @@ class StoreRepositoryImpl @Inject constructor(
 
     override fun patchBossStore(
         bossStoreId: String,
-        appearanceDays: List<AppearanceDaysRequestDto>,
-        categoriesIds: List<String>,
+        appearanceDays: List<AppearanceDaysRequestDto>?,
+        categoriesIds: List<String>?,
         imageUrl: String?,
         introduction: String?,
-        menus: List<MenusDto>,
+        menus: List<MenusDto>?,
         name: String?,
         snsUrl: String?
     ): Flow<Resource<String>> {
-        val appearanceDaysModel = appearanceDays.map {
+        val appearanceDaysModel = appearanceDays?.map {
             AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
         }
-        val menusModel = menus.map {
+        val menusModel = menus?.map {
             MenusModel(it.imageUrl, it.name, it.price)
         }
         val bossStoreRequest = BossStoreRequest(
