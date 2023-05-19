@@ -11,7 +11,7 @@ data class BossStoreRetrieveVo(
     val imageUrl: String,
     val introduction: String,
     val location: LocationVo,
-    val menus: List<MenusVo>,
+    val menus: List<MenusVo> = listOf(),
     val name: String,
     val openStatus: OpenStatusVo,
     val snsUrl: String,
