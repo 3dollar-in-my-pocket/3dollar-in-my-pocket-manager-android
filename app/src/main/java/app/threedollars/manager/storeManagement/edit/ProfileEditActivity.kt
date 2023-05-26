@@ -3,7 +3,6 @@ package app.threedollars.manager.storeManagement.edit
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Green
@@ -43,33 +44,49 @@ import okhttp3.RequestBody
 @AndroidEntryPoint
 class ProfileEditActivity : AppCompatActivity() {
 
-    private val viewModel: ProfileEditViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ProfileEditScreen(viewModel)
+            ProfileEditScreen()
         }
     }
 
 }
 
 @Composable
-fun ProfileEditScreen(viewModel: ProfileEditViewModel) {
+fun ProfileEditScreen(viewModel: ProfileEditViewModel = hiltViewModel()) {
+    val bossStore by viewModel.bossStoreRetrieveMe.collectAsStateWithLifecycle(null)
     var isEnable by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf("") }
+    var name by remember(bossStore) { mutableStateOf(bossStore?.name.toStringDefault()) }
     var imageRequestBody by remember { mutableStateOf<RequestBody?>(null) }
-    var sns by remember { mutableStateOf("") }
-    val selectedCategory by viewModel.selectedItems.collectAsState()
+    var sns by remember(bossStore) { mutableStateOf(bossStore?.snsUrl.toStringDefault()) }
+    val imageUrl by remember(bossStore) { mutableStateOf(bossStore?.imageUrl.toStringDefault()) }
+    isEnable = name.isNotEmpty() && viewModel.selectedItems.isNotEmpty()
     Column(
         modifier = Modifier
             .fillMaxSize(1f)
             .background(Gray0)
     ) {
         ProfileEditTop()
-        ProfileEditContents(viewModel, onChangeName = { name = it }, onChangeUri = { imageRequestBody = it }, onChangeSNS = { sns = it })
-        ProfileEditBottom(isEnable) {
-
+        ProfileEditContents(
+            Modifier
+                .fillMaxSize()
+                .weight(1f)
+                .background(Color.White, shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)),
+            viewModel,
+            name,
+            imageUrl,
+            sns,
+            onChangeName = { name = it },
+            onChangeUri = { imageRequestBody = it },
+            onChangeSNS = { sns = it })
+        ProfileEditBottom(
+            Modifier
+                .fillMaxWidth()
+                .height(64.dp), isEnable
+        ) {
+            viewModel.patchBossStore(bossStore?.bossStoreId.toStringDefault(), name, sns, imageRequestBody)
         }
     }
 }
@@ -102,48 +119,50 @@ fun ProfileEditTop() {
 
 @Preview
 @Composable
-fun ProfileEditBottom(isEnable: Boolean = false, onClick: () -> Unit = {}) {
+fun ProfileEditBottom(modifier: Modifier = Modifier, isEnable: Boolean = false, onClick: () -> Unit = {}) {
     Button(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         contentPadding = PaddingValues(vertical = 21.5.dp),
         onClick = { if (isEnable) onClick() },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
             backgroundColor = if (isEnable) Green else Gray30
         ),
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = " 저장하기",
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center
-        )
-    }
+        content = {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = " 저장하기",
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    )
 }
 
 
 @Composable
 fun ProfileEditContents(
+    modifier: Modifier = Modifier,
     viewModel: ProfileEditViewModel,
+    name: String,
+    image: String,
+    sns: String,
     onChangeName: (String) -> Unit,
     onChangeUri: (RequestBody) -> Unit,
     onChangeSNS: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    var storeName by remember { mutableStateOf("") }
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White, shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-            .verticalScroll(scrollState)
+        modifier = modifier.verticalScroll(scrollState)
     ) {
-        StoreNameTextFieldContent("", onChangeText = onChangeName)
+        StoreNameTextFieldContent(name, onChangeText = onChangeName)
         SignTitleTextContent(titleText = "카테고리 선택", explanationText = "최대 3개", isExplanationText = true)
         CategoryGrid(viewModel)
         SignTitleTextContent(titleText = "가게 인증 사진", isExplanationText = false)
-        SignCertificationPhoto(Uri.parse(""), onChangeUri)
+        SignCertificationPhoto(Uri.parse(image), onChangeUri)
         SignTitleTextContent(titleText = "SNS", isExplanationText = false, isRequired = false)
-        DefaultTextFieldContent("", "SNS를 입력해 주세요.", onChangeText = onChangeSNS)
+        DefaultTextFieldContent(sns, "SNS를 입력해 주세요.", onChangeText = onChangeSNS)
+        Spacer(modifier = Modifier.height(44.dp))
     }
 }
 

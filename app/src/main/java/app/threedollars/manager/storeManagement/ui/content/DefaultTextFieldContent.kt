@@ -10,6 +10,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -28,12 +29,14 @@ fun DefaultTextFieldContent(
     onChangeText: (String) -> Unit = {}
 ) {
     var text by remember { mutableStateOf(TextFieldValue(default)) }
+    LaunchedEffect(default) {
+        text = TextFieldValue(text = default, selection = TextRange(default.length))
+    }
     TextField(
         value = text,
         onValueChange = { newText ->
             if (newText.text.length <= 20) {
                 onChangeText(newText.text)
-                text = newText
             }
         },
         modifier = Modifier

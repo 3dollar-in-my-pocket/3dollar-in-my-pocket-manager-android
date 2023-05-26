@@ -3,14 +3,17 @@ package app.threedollars.manager.storeManagement.viewModel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
+import app.threedollars.common.EventFlow
+import app.threedollars.common.MutableEventFlow
+import app.threedollars.common.ext.toStringDefault
+import app.threedollars.domain.usecase.BossStoreRetrieveUseCase
 import app.threedollars.domain.usecase.BossStoreUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
 import app.threedollars.manager.util.dtoToVo
+import app.threedollars.manager.vo.BossStoreRetrieveVo
 import app.threedollars.manager.vo.StoreCategoriesVo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -19,16 +22,19 @@ import javax.inject.Inject
 class ProfileEditViewModel @Inject constructor(
     private val platformStoreCategoryUseCase: PlatformStoreCategoryUseCase,
     private val bossStoreUseCase: BossStoreUseCase,
+    private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
     private val imageUploadUseCase: ImageUploadUseCase
 ) : BaseViewModel() {
 
     init {
+        getBossStoreRetrieveMe()
         getCategory()
     }
 
     val categoryItemState = mutableStateListOf<StoreCategoriesVo>()
-    private val _selectedItems = MutableStateFlow<List<StoreCategoriesVo>>(listOf())
-    val selectedItems: StateFlow<List<StoreCategoriesVo>> get() = _selectedItems
+    private val _bossStoreRetrieveMe = MutableEventFlow<BossStoreRetrieveVo>()
+    val bossStoreRetrieveMe: EventFlow<BossStoreRetrieveVo> get() = _bossStoreRetrieveMe
+    val selectedItems = mutableListOf<String>()
 
     private fun getCategory() {
         viewModelScope.launch(exceptionHandler) {
@@ -36,7 +42,7 @@ class ProfileEditViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { categoriesDtoList ->
                         val categoriesVo = categoriesDtoList.map { storeCategoriesDto ->
-                            storeCategoriesDto.dtoToVo()
+                            storeCategoriesDto.dtoToVo().copy(isSelected = selectedItems.indexOf(storeCategoriesDto.categoryId) > -1)
                         }
                         categoryItemState.addAll(categoriesVo)
                     }
@@ -45,14 +51,48 @@ class ProfileEditViewModel @Inject constructor(
         }
     }
 
-    fun patchBossStore(
-        name: String? = null,
-        sns: String? = null,
-        imageRequestBody: RequestBody? = null,
-        category: List<StoreCategoriesVo> = listOf()
-    ) {
-
+    private fun getBossStoreRetrieveMe() {
+        viewModelScope.launch(exceptionHandler) {
+            bossStoreRetrieveUseCase.getBossStoreRetrieveMe().collect {
+                if (it.code.toString() == "200") {
+                    it.data?.let { data ->
+                        _bossStoreRetrieveMe.emit(data.dtoToVo())
+                        selectedItems.addAll(data.categories.map { it.categoryId.toStringDefault() })
+                    }
+                }
+            }
+        }
     }
+
+    fun patchBossStore(
+        id: String,
+        name: String,
+        sns: String,
+        imageRequestBody: RequestBody? = null
+    ) {
+        viewModelScope.launch(exceptionHandler) {
+            if (imageRequestBody == null) {
+                bossStoreUseCase.patchBossStore(bossStoreId = id, name = name, snsUrl = sns, categoriesIds = selectedItems).collect {
+
+                }
+            } else {
+                imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", imageRequestBody).collect { it ->
+                    if (it.code == "200") {
+                        bossStoreUseCase.patchBossStore(
+                            bossStoreId = "",
+                            name = name,
+                            snsUrl = sns,
+                            categoriesIds = selectedItems,
+                            imageUrl = it.data?.imageUrl.toStringDefault()
+                        ).collect {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     fun categorySelection(index: Int) {
         val item = categoryItemState[index]
@@ -60,10 +100,10 @@ class ProfileEditViewModel @Inject constructor(
 
         if (isSelected) {
             categoryItemState[index] = item.copy(isSelected = false)
-            _selectedItems.value = categoryItemState.filter { !it.isSelected }
-        } else if (_selectedItems.value.size < 3) {
+            selectedItems.remove(categoryItemState[index].categoryId)
+        } else if (selectedItems.size < 3) {
             categoryItemState[index] = item.copy(isSelected = true)
-            _selectedItems.value = categoryItemState.filter { it.isSelected }
+            selectedItems.add(categoryItemState[index].categoryId)
         }
     }
 }

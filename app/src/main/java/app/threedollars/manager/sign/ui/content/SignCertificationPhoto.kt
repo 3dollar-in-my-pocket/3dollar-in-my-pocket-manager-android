@@ -31,7 +31,7 @@ import okhttp3.RequestBody
 @Composable
 fun SignCertificationPhoto(defaultImage: Uri, onChangeUri: (RequestBody) -> Unit) {
     val context = LocalContext.current
-    var selectImage by remember {
+    var selectImage by remember(defaultImage) {
         mutableStateOf(defaultImage)
     }
     val galleryLauncher =
@@ -66,9 +66,9 @@ fun SignCertificationPhoto(defaultImage: Uri, onChangeUri: (RequestBody) -> Unit
                     .build(),
                 placeholder = painterResource(R.drawable.ic_certification_photo),
                 contentDescription = "",
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(310.dp)
+                    .fillMaxWidth()
                     .height(150.dp)
                     .background(color = Color.Transparent, shape = RoundedCornerShape(8.dp))
                     .padding(top = 14.dp, start = 12.dp, end = 12.dp)
