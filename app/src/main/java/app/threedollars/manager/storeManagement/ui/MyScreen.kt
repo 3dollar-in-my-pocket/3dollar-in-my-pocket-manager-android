@@ -2,6 +2,12 @@ package app.threedollars.manager.storeManagement.ui
 
 import android.content.Intent
 import androidx.compose.foundation.*
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -30,9 +36,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.threedollars.common.ext.toIntDefault
 import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.*
+import app.threedollars.manager.MainActivity
 import app.threedollars.manager.R
 import app.threedollars.manager.storeManagement.edit.ProfileEditActivity
 import app.threedollars.manager.storeManagement.viewModel.MyViewModel
+import app.threedollars.manager.util.findActivity
 import app.threedollars.manager.vo.AppearanceDaysVo
 import coil.compose.AsyncImage
 
@@ -42,6 +50,15 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
     val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        when (it.resultCode) {
+            AppCompatActivity.RESULT_OK -> {
+                viewModel.getBossStoreRetrieveMe()
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize(1f)
@@ -58,7 +75,9 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
             ) {
-                TitleContents(bottomPadding = 12.dp, Title("사장님 한마디", "정보수정") {})
+                TitleContents(bottomPadding = 12.dp, Title("사장님 한마디", "정보수정") {
+                    launcher.launch(Intent(context, BossCommentActivity::class.java))
+                })
                 Text(
                     text = introduction,
                     modifier = Modifier

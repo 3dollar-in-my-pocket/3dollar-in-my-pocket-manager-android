@@ -8,15 +8,15 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class BossStoreRequest(
     @Json(name = "appearanceDays")
-    val appearanceDays: List<AppearanceDaysRequestModel> = listOf(),
+    val appearanceDays: List<AppearanceDaysRequestModel>? = null,
     @Json(name = "categoriesIds")
-    val categoriesIds: List<String> = listOf(),
+    val categoriesIds: List<String>? = null,
     @Json(name = "imageUrl")
     val imageUrl: String? = null,
     @Json(name = "introduction")
     val introduction: String? = null,
     @Json(name = "menus")
-    val menus: List<MenusModel> = listOf(),
+    val menus: List<MenusModel>? = null,
     @Json(name = "name")
     val name: String? = null,
     @Json(name = "snsUrl")
