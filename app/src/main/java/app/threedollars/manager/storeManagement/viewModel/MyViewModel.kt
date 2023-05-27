@@ -16,14 +16,10 @@ class MyViewModel @Inject constructor(
     private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
 ) : BaseViewModel() {
 
-    init {
-        getBossStoreRetrieveMe()
-    }
-
     private val _bossStoreRetrieveMe = MutableEventFlow<BossStoreRetrieveVo>()
     val bossStoreRetrieveMe: EventFlow<BossStoreRetrieveVo> get() = _bossStoreRetrieveMe
 
-    private fun getBossStoreRetrieveMe() {
+    fun getBossStoreRetrieveMe() {
         viewModelScope.launch {
             bossStoreRetrieveUseCase.getBossStoreRetrieveMe().collect {
                 if (it.code.toString() == "200") {

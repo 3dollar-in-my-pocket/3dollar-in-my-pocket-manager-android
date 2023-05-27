@@ -28,15 +28,12 @@ fun DefaultTextFieldContent(
     imeAction: ImeAction = ImeAction.Done,
     onChangeText: (String) -> Unit = {}
 ) {
-    var text by remember { mutableStateOf(TextFieldValue(default)) }
-    LaunchedEffect(default) {
-        text = TextFieldValue(text = default, selection = TextRange(default.length))
-    }
+    var text by remember(default) { mutableStateOf(default) }
     TextField(
         value = text,
         onValueChange = { newText ->
-            if (newText.text.length <= 20) {
-                onChangeText(newText.text)
+            if (newText.length <= 20) {
+                onChangeText(newText)
             }
         },
         modifier = Modifier

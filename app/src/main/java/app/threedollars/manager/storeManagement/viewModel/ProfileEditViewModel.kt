@@ -10,10 +10,13 @@ import app.threedollars.domain.usecase.BossStoreRetrieveUseCase
 import app.threedollars.domain.usecase.BossStoreUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
+import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.util.dtoToVo
 import app.threedollars.manager.vo.BossStoreRetrieveVo
 import app.threedollars.manager.vo.StoreCategoriesVo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -28,21 +31,22 @@ class ProfileEditViewModel @Inject constructor(
 
     init {
         getBossStoreRetrieveMe()
-        getCategory()
     }
 
     val categoryItemState = mutableStateListOf<StoreCategoriesVo>()
     private val _bossStoreRetrieveMe = MutableEventFlow<BossStoreRetrieveVo>()
     val bossStoreRetrieveMe: EventFlow<BossStoreRetrieveVo> get() = _bossStoreRetrieveMe
-    val selectedItems = mutableListOf<String>()
-
+    private val _selectedItems = MutableStateFlow<List<String>>(emptyList())
+    val selectedItems: StateFlow<List<String>> = _selectedItems
+    private val _editComplete = MutableEventFlow<Boolean>()
+    val editComplete: EventFlow<Boolean> get() = _editComplete
     private fun getCategory() {
         viewModelScope.launch(exceptionHandler) {
             platformStoreCategoryUseCase.getStoreCategories("BOSS_STORE").collect {
                 if (it.code.toString() == "200") {
                     it.data?.let { categoriesDtoList ->
                         val categoriesVo = categoriesDtoList.map { storeCategoriesDto ->
-                            storeCategoriesDto.dtoToVo().copy(isSelected = selectedItems.indexOf(storeCategoriesDto.categoryId) > -1)
+                            storeCategoriesDto.dtoToVo().copy(isSelected = _selectedItems.value.indexOf(storeCategoriesDto.categoryId) > -1)
                         }
                         categoryItemState.addAll(categoriesVo)
                     }
@@ -57,7 +61,8 @@ class ProfileEditViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _bossStoreRetrieveMe.emit(data.dtoToVo())
-                        selectedItems.addAll(data.categories.map { it.categoryId.toStringDefault() })
+                        _selectedItems.value = data.categories.map { it.categoryId.toStringDefault() }
+                        getCategory()
                     }
                 }
             }
@@ -72,20 +77,20 @@ class ProfileEditViewModel @Inject constructor(
     ) {
         viewModelScope.launch(exceptionHandler) {
             if (imageRequestBody == null) {
-                bossStoreUseCase.patchBossStore(bossStoreId = id, name = name, snsUrl = sns, categoriesIds = selectedItems).collect {
-
+                bossStoreUseCase.patchBossStore(bossStoreId = id, name = name, snsUrl = sns, categoriesIds = selectedItems.value).collect {
+                    if(it.code == "200") _editComplete.emit(true)
                 }
             } else {
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", imageRequestBody).collect { it ->
                     if (it.code == "200") {
                         bossStoreUseCase.patchBossStore(
-                            bossStoreId = "",
+                            bossStoreId = id,
                             name = name,
                             snsUrl = sns,
-                            categoriesIds = selectedItems,
+                            categoriesIds = selectedItems.value,
                             imageUrl = it.data?.imageUrl.toStringDefault()
                         ).collect {
-
+                            if(it.code == "200") _editComplete.emit(true)
                         }
                     }
                 }
@@ -100,10 +105,9 @@ class ProfileEditViewModel @Inject constructor(
 
         if (isSelected) {
             categoryItemState[index] = item.copy(isSelected = false)
-            selectedItems.remove(categoryItemState[index].categoryId)
-        } else if (selectedItems.size < 3) {
+        } else if (selectedItems.value.size < 3) {
             categoryItemState[index] = item.copy(isSelected = true)
-            selectedItems.add(categoryItemState[index].categoryId)
         }
+        _selectedItems.value = categoryItemState.filter { it.isSelected }.map { it.categoryId.toStringDefault() }
     }
 }

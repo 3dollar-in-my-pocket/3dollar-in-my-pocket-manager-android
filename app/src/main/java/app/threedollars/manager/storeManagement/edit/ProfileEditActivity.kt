@@ -56,13 +56,19 @@ class ProfileEditActivity : AppCompatActivity() {
 
 @Composable
 fun ProfileEditScreen(viewModel: ProfileEditViewModel = hiltViewModel()) {
+    val context = LocalContext.current
     val bossStore by viewModel.bossStoreRetrieveMe.collectAsStateWithLifecycle(null)
+    val selectedList by viewModel.selectedItems.collectAsStateWithLifecycle()
+    val editComplete by viewModel.editComplete.collectAsStateWithLifecycle(initialValue = false)
     var isEnable by remember { mutableStateOf(false) }
     var name by remember(bossStore) { mutableStateOf(bossStore?.name.toStringDefault()) }
     var imageRequestBody by remember { mutableStateOf<RequestBody?>(null) }
     var sns by remember(bossStore) { mutableStateOf(bossStore?.snsUrl.toStringDefault()) }
     val imageUrl by remember(bossStore) { mutableStateOf(bossStore?.imageUrl.toStringDefault()) }
-    isEnable = name.isNotEmpty() && viewModel.selectedItems.isNotEmpty()
+    isEnable = (name.isNotEmpty() && name != bossStore?.name) || selectedList.isNotEmpty()
+    LaunchedEffect(editComplete) {
+        if (editComplete) context.findActivity().finish()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize(1f)

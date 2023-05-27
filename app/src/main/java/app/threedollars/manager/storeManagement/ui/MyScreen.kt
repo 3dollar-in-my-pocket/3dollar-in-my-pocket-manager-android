@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
+    viewModel.getBossStoreRetrieveMe()
     val scrollState = rememberScrollState()
     val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
     val context = LocalContext.current
