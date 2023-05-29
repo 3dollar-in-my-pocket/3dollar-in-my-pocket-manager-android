@@ -1,15 +1,11 @@
 package app.threedollars.manager.storeManagement.ui
 
 import android.content.Intent
-import androidx.compose.foundation.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,11 +32,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import app.threedollars.common.ext.toIntDefault
 import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.*
-import app.threedollars.manager.MainActivity
 import app.threedollars.manager.R
-import app.threedollars.manager.storeManagement.edit.ProfileEditActivity
+import app.threedollars.manager.storeManagement.ui.businessschedule.BusinessScheduleEditActivity
+import app.threedollars.manager.storeManagement.ui.profile.ProfileEditActivity
 import app.threedollars.manager.storeManagement.viewModel.MyViewModel
-import app.threedollars.manager.util.findActivity
 import app.threedollars.manager.vo.AppearanceDaysVo
 import coil.compose.AsyncImage
 
@@ -97,8 +92,15 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                     )
                 })
                 Spacer(modifier = Modifier.height(40.dp))
-                TitleContents(bottomPadding = 16.dp, Title("영업 일정", "일정 관리") {})
-//                BusinessScheduleContents(it.appearanceDays.map { dto -> dto.toBusinessSchedule() })
+                TitleContents(bottomPadding = 16.dp, Title("영업 일정", "일정 관리") {
+                    launcher.launch(Intent(context, BusinessScheduleEditActivity::class.java))
+                })
+                it.appearanceDays.map { dto -> dto.toBusinessSchedule() }.forEach { businessSchedules ->
+                    val index = emptyBusinessSchedules.indexOfFirst { it.dayOfTheWeek == businessSchedules.dayOfTheWeek }
+                    emptyBusinessSchedules[index] = businessSchedules
+                }
+                BusinessScheduleContents(emptyBusinessSchedules)
+                Spacer(modifier = Modifier.height(64.dp))
             }
         }
     }
@@ -197,10 +199,8 @@ fun TitleContents(bottomPadding: Dp = 16.dp, title: Title = emptyTitle) {
 fun MenuContents(menus: List<Menu> = listOf()) {
     if (menus.isEmpty()) MenuEmptyItem()
     else {
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(menus) {
-                MenuItem(it)
-            }
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            menus.forEach { MenuItem(it) }
         }
     }
 
@@ -246,8 +246,8 @@ fun MenuEmptyItem() {
 @Preview
 @Composable
 fun BusinessScheduleContents(businessSchedules: List<BusinessSchedule> = emptyBusinessSchedules) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(businessSchedules) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        businessSchedules.forEach {
             BusinessScheduleItem(it)
         }
     }
@@ -285,13 +285,13 @@ data class BusinessSchedule(
     val isWeekend: Boolean
 )
 
-val emptyBusinessSchedules = listOf(
-    BusinessSchedule("월요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = false),
-    BusinessSchedule("화요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = false),
+val emptyBusinessSchedules = mutableListOf(
+    BusinessSchedule("월요일", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("화요일", "-", "휴무", false, isWeekend = false),
     BusinessSchedule("수요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("목요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = false),
+    BusinessSchedule("목요일", "-", "휴무", false, isWeekend = false),
     BusinessSchedule("금요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("토요일", "서울 특별시 강남역 1번 출구", "15:00 - 20:00", true, isWeekend = true),
+    BusinessSchedule("토요일", "-", "휴무", false, isWeekend = true),
     BusinessSchedule("일요일", "-", "휴무", false, isWeekend = true)
 )
 

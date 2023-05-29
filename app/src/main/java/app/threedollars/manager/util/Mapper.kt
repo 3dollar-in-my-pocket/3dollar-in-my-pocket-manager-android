@@ -8,9 +8,9 @@ import app.threedollars.domain.dto.*
 import app.threedollars.manager.vo.*
 
 fun AppearanceDaysDto.dtoToVo() = AppearanceDaysVo(
-    dayOfTheWeek = dayOfTheWeek,
-    openingHours = openingHours?.dtoToVo(),
-    locationDescription = locationDescription
+    dayOfTheWeek = dayOfTheWeek.toStringDefault(),
+    openingHours = openingHours.dtoToVo(),
+    locationDescription = locationDescription.toStringDefault()
 )
 
 fun BossAccountInfoDto.dtoToVo() = BossAccountInfoVo(
@@ -59,21 +59,21 @@ fun BossStoreRetrieveAroundDto.dtoToVo() = BossStoreRetrieveAroundVo(
     updatedAt = updatedAt
 )
 
-fun BossStoreRetrieveDto.dtoToVo() = BossStoreRetrieveVo(
-    appearanceDays = appearanceDays.map { it.dtoToVo() },
-    bossStoreId = bossStoreId.toStringDefault(),
-    categories = categories.map { it.dtoToVo() },
-    createdAt = createdAt.toStringDefault(),
-    distance = distance.toIntDefault(),
-    favorite = favorite.dtoToVo(),
-    imageUrl = imageUrl.toStringDefault(),
-    introduction = introduction.toStringDefault(),
-    location = location.dtoToVo(),
-    menus = menus.map { it.dtoToVo() },
-    name = name.toStringDefault(),
-    openStatus = openStatus.dtoToVo(),
-    snsUrl = snsUrl.toStringDefault(),
-    updatedAt = updatedAt.toStringDefault()
+fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
+    appearanceDays = this?.appearanceDays.orEmpty().map { it.dtoToVo() },
+    bossStoreId = this?.bossStoreId.toStringDefault(),
+    categories = this?.categories.orEmpty().map { it.dtoToVo() },
+    createdAt = this?.createdAt.toStringDefault(),
+    distance = this?.distance.toIntDefault(),
+    favorite = this?.favorite.dtoToVo(),
+    imageUrl = this?.imageUrl.toStringDefault(),
+    introduction = this?.introduction.toStringDefault(),
+    location = this?.location.dtoToVo(),
+    menus = this?.menus.orEmpty().map { it.dtoToVo() },
+    name = this?.name.toStringDefault(),
+    openStatus = this?.openStatus.dtoToVo(),
+    snsUrl = this?.snsUrl.toStringDefault(),
+    updatedAt = this?.updatedAt.toStringDefault()
 )
 
 fun CategoriesDto.dtoToVo() = CategoriesVo(
@@ -165,9 +165,9 @@ fun MenusDto.dtoToVo() = MenusVo(
     price = price
 )
 
-fun OpeningHoursDto.dtoToVo() = OpeningHoursVo(
-    startTime = startTime,
-    endTime = endTime
+fun OpeningHoursDto?.dtoToVo() = OpeningHoursVo(
+    startTime = this?.startTime.toStringDefault(),
+    endTime = this?.endTime.toStringDefault()
 )
 
 fun OpenStatusDto?.dtoToVo() = OpenStatusVo(
