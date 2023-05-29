@@ -21,10 +21,6 @@ class MyViewModel @Inject constructor(
     private val bossStoreUseCase: BossStoreUseCase
 ) : BaseViewModel() {
 
-    init {
-        getBossStoreRetrieveMe()
-    }
-
     private val _bossStoreRetrieveMe = MutableEventFlow<BossStoreRetrieveVo>()
     val bossStoreRetrieveMe: EventFlow<BossStoreRetrieveVo> get() = _bossStoreRetrieveMe
 

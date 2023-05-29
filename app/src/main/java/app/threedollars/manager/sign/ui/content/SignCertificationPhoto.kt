@@ -1,11 +1,9 @@
 package app.threedollars.manager.sign.ui.content
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,20 +19,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import app.threedollars.common.ext.getResourceUri
-import app.threedollars.common.ui.*
+import app.threedollars.common.ui.Gray5
+import app.threedollars.common.ui.Gray50
+import app.threedollars.common.ui.Green
 import app.threedollars.manager.R
 import app.threedollars.manager.util.ContentUriToRequestBody
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import okhttp3.RequestBody
-import java.io.File
 
 @Composable
-fun SignCertificationPhoto(onChangeUri: (RequestBody) -> Unit) {
+fun SignCertificationPhoto(defaultImage: Uri, onChangeUri: (RequestBody) -> Unit) {
     val context = LocalContext.current
-    var selectImage by remember {
-        mutableStateOf(R.drawable.ic_certification_photo.getResourceUri(context))
+    var selectImage by remember(defaultImage) {
+        mutableStateOf(defaultImage)
     }
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -68,9 +66,9 @@ fun SignCertificationPhoto(onChangeUri: (RequestBody) -> Unit) {
                     .build(),
                 placeholder = painterResource(R.drawable.ic_certification_photo),
                 contentDescription = "",
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(310.dp)
+                    .fillMaxWidth()
                     .height(150.dp)
                     .background(color = Color.Transparent, shape = RoundedCornerShape(8.dp))
                     .padding(top = 14.dp, start = 12.dp, end = 12.dp)

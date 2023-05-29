@@ -40,6 +40,8 @@
                     android:scheme="kakao${kakao_key}" />
             </intent-filter>
         </activity>
+        <activity android:name="app.threedollars.manager.storeManagement.edit.ProfileEditActivity" />
+
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="${naver_map_client_id}" />

@@ -1,6 +1,7 @@
 package app.threedollars.manager.storeManagement.ui
 
 import android.content.Intent
+import androidx.compose.foundation.*
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +38,7 @@ import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.*
 import app.threedollars.manager.MainActivity
 import app.threedollars.manager.R
+import app.threedollars.manager.storeManagement.edit.ProfileEditActivity
 import app.threedollars.manager.storeManagement.viewModel.MyViewModel
 import app.threedollars.manager.util.findActivity
 import app.threedollars.manager.vo.AppearanceDaysVo
@@ -44,9 +46,10 @@ import coil.compose.AsyncImage
 
 @Composable
 fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
+    viewModel.getBossStoreRetrieveMe()
+    val scrollState = rememberScrollState()
     val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
     val context = LocalContext.current
-
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -57,11 +60,15 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
         }
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .verticalScroll(scrollState)
     ) {
         bossStore.value?.let {
             val introduction = it.introduction.ifEmpty { "손님들에게 감동을 드릴 한마디를 적어주세요!ex) 오전에 오시면 서비스가 있습니다!" }
-            displayProfileInfo(Profile(it.imageUrl, it.name, it.categories.map { it.category.toString() }, it.snsUrl))
+            displayProfileInfo(Profile(it.imageUrl, it.name, it.categories.map { it.name.toStringDefault() }, it.snsUrl)) {
+                context.startActivity(Intent(context, ProfileEditActivity::class.java))
+            }
             Spacer(modifier = Modifier.height(44.dp))
             Column(
                 modifier = Modifier
@@ -91,7 +98,7 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                 })
                 Spacer(modifier = Modifier.height(40.dp))
                 TitleContents(bottomPadding = 16.dp, Title("영업 일정", "일정 관리") {})
-                BusinessScheduleContents(it.appearanceDays.map { dto -> dto.toBusinessSchedule() })
+//                BusinessScheduleContents(it.appearanceDays.map { dto -> dto.toBusinessSchedule() })
             }
         }
     }
@@ -99,7 +106,7 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
 
 @Preview
 @Composable
-fun displayProfileInfo(profile: Profile = emptyProfile) {
+fun displayProfileInfo(profile: Profile = emptyProfile, editClick: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
             model = profile.image,
@@ -108,13 +115,13 @@ fun displayProfileInfo(profile: Profile = emptyProfile) {
                 .fillMaxWidth()
                 .height(240.dp), contentScale = ContentScale.Crop
         )
-        ProfileContents(profile)
+        ProfileContents(profile, editClick)
     }
 }
 
 
 @Composable
-fun ProfileContents(profile: Profile) {
+fun ProfileContents(profile: Profile, editClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -153,7 +160,8 @@ fun ProfileContents(profile: Profile) {
                 .fillMaxWidth()
                 .height(48.dp)
                 .background(colorResource(id = R.color.green500), shape = RoundedCornerShape(8.dp))
-                .wrapContentHeight(Alignment.CenterVertically),
+                .wrapContentHeight(Alignment.CenterVertically)
+                .clickable { editClick() },
         )
     }
 }
