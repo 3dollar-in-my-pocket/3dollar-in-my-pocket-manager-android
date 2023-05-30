@@ -13,6 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import app.threedollars.manager.R
 import com.naver.maps.geometry.LatLng
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 fun Context.getCurrentLocationName(location: LatLng?): String {
@@ -50,5 +57,22 @@ inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier =
     clickable(indication = null,
         interactionSource = remember { MutableInteractionSource() }) {
         onClick()
+    }
+}
+
+suspend fun convertImageUrlToRequestBody(imageUrl: String): RequestBody? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(imageUrl)
+                .build()
+            val response = client.newCall(request).execute()
+            val body = response.body?.bytes()
+            body?.toRequestBody("image/*".toMediaTypeOrNull())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }
