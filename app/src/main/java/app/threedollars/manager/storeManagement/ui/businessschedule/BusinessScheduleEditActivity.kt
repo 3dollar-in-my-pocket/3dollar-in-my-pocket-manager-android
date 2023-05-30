@@ -9,8 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +47,10 @@ class BusinessScheduleEditActivity : AppCompatActivity() {
 fun BusinessScheduleEditScreen(viewModel: BusinessScheduleEditViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val bossStore by viewModel.bossStoreRetrieveMe.collectAsStateWithLifecycle(null)
+    val editComplete by viewModel.editComplete.collectAsStateWithLifecycle(initialValue = false)
+    LaunchedEffect(editComplete) {
+        if (editComplete) context.findActivity().finish()
+    }
     bossStore?.appearanceDays?.forEach {
         it.dayOfTheWeek
     }
@@ -112,11 +115,11 @@ fun BusinessScheduleContents(modifier: Modifier = Modifier, viewModel: BusinessS
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             scheduleDays.forEach {
                 if (it.isSelected) BusinessScheduleDayDetail(it, { startTime ->
-
+                    viewModel.editDaysStartTime(it.dayOfTheWeek, startTime)
                 }, { endTime ->
-
+                    viewModel.editDaysEndTime(it.dayOfTheWeek, endTime)
                 }, { locationDescription ->
-
+                    viewModel.editDaysLocationDescription(it.dayOfTheWeek, locationDescription)
                 })
             }
         }
@@ -201,6 +204,9 @@ fun BusinessScheduleDayDetail(
     endTimeChanged: (String) -> Unit = {},
     locationDescriptionChanged: (String) -> Unit = {}
 ) {
+    var startTime by remember { mutableStateOf("") }
+    var endTime by remember { mutableStateOf("") }
+    var locationDescription by remember { mutableStateOf("") }
     Row(
         modifier = Modifier
             .background(color = White, shape = RoundedCornerShape(16.dp))
@@ -226,12 +232,15 @@ fun BusinessScheduleDayDetail(
             Spacer(modifier = Modifier.height(4.dp))
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 TextField(
-                    value = "",
+                    value = startTime,
                     placeholder = { Text("시작시간") },
                     modifier = Modifier
                         .background(color = Gray5, shape = RoundedCornerShape(8.dp))
                         .weight(1f),
-                    onValueChange = startTimeChanged,
+                    onValueChange = {
+                        startTime = it
+                        startTimeChanged(it)
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
@@ -249,12 +258,15 @@ fun BusinessScheduleDayDetail(
                 Text(text = "~", fontSize = 14.sp, color = Black)
                 Spacer(modifier = Modifier.width(14.dp))
                 TextField(
-                    value = "",
+                    value = endTime,
                     placeholder = { Text("종료시간") },
                     modifier = Modifier
                         .background(color = Gray5, shape = RoundedCornerShape(8.dp))
                         .weight(1f),
-                    onValueChange = endTimeChanged,
+                    onValueChange = {
+                        endTime = it
+                        endTimeChanged(it)
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
@@ -285,12 +297,15 @@ fun BusinessScheduleDayDetail(
             }
             Spacer(modifier = Modifier.height(4.dp))
             TextField(
-                value = "",
+                value = locationDescription,
                 placeholder = { Text("영업 장소") },
                 modifier = Modifier
                     .background(color = Gray5, shape = RoundedCornerShape(8.dp))
                     .fillMaxWidth(),
-                onValueChange = locationDescriptionChanged,
+                onValueChange = {
+                    locationDescription = it
+                    locationDescriptionChanged(it)
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(
