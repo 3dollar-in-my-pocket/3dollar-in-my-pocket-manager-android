@@ -118,7 +118,7 @@ interface NetworkService {
     @POST("v1/upload/{fileType}/bulk")
     suspend fun postImageUploadBulk(
         @Path("fileType") fileType: String,
-        @Part fileList: List<MultipartBody.Part>
+        @Part files: List<MultipartBody.Part>
     ): Response<BaseResponse<List<ImageUploadResponse>>>
 
     // platform-store-category-controller

@@ -140,7 +140,7 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
         flow {
             val multipartBodyList = requestBodyList.mapIndexed { index, requestBody ->
                 MultipartBody.Part.createFormData(
-                    name = "file",
+                    name = "files",
                     filename = "file$index.jpeg",
                     body = requestBody
                 )
