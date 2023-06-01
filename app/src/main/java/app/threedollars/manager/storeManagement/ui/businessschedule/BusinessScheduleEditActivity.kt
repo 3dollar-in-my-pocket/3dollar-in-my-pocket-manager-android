@@ -31,6 +31,9 @@ import app.threedollars.manager.R
 import app.threedollars.manager.storeManagement.viewModel.BusinessScheduleEditViewModel
 import app.threedollars.manager.storeManagement.viewModel.defaultScheduleDays
 import app.threedollars.manager.util.findActivity
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -204,9 +207,33 @@ fun BusinessScheduleDayDetail(
     endTimeChanged: (String) -> Unit = {},
     locationDescriptionChanged: (String) -> Unit = {}
 ) {
-    var startTime by remember { mutableStateOf("") }
-    var endTime by remember { mutableStateOf("") }
+    var startTime by remember { mutableStateOf("시작시간") }
+    var endTime by remember { mutableStateOf("종료시간") }
     var locationDescription by remember { mutableStateOf("") }
+    val startTimeDialogState = rememberMaterialDialogState()
+    MaterialDialog(
+        dialogState = startTimeDialogState,
+        buttons = {
+            positiveButton("확인")
+            negativeButton("취소")
+        }
+    ) {
+        timepicker(is24HourClock = true, title = "시작시간") {
+            startTime = it.toString()
+        }
+    }
+    val endTimeDialogState = rememberMaterialDialogState()
+    MaterialDialog(
+        dialogState = endTimeDialogState,
+        buttons = {
+            positiveButton("확인")
+            negativeButton("취소")
+        }
+    ) {
+        timepicker(is24HourClock = true, title = "종료시간") {
+            endTime = it.toString()
+        }
+    }
     Row(
         modifier = Modifier
             .background(color = White, shape = RoundedCornerShape(16.dp))
@@ -231,54 +258,30 @@ fun BusinessScheduleDayDetail(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                TextField(
-                    value = startTime,
-                    placeholder = { Text("시작시간") },
+                Text(
+                    text = startTime,
                     modifier = Modifier
                         .background(color = Gray5, shape = RoundedCornerShape(8.dp))
-                        .weight(1f),
-                    onValueChange = {
-                        startTime = it
-                        startTimeChanged(it)
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-                    singleLine = true,
-                    colors = TextFieldDefaults.textFieldColors(
-                        placeholderColor = Gray30,
-                        backgroundColor = Gray5,
-                        cursorColor = Gray30,
-                        disabledTextColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        textColor = Gray100
-                    )
+                        .weight(1f)
+                        .padding(horizontal = 12.dp, vertical = 15.dp)
+                        .clickable {
+                            startTimeDialogState.show()
+                        },
+                    maxLines = 1,
                 )
                 Spacer(modifier = Modifier.width(14.dp))
                 Text(text = "~", fontSize = 14.sp, color = Black)
                 Spacer(modifier = Modifier.width(14.dp))
-                TextField(
-                    value = endTime,
-                    placeholder = { Text("종료시간") },
+                Text(
+                    text = endTime,
                     modifier = Modifier
                         .background(color = Gray5, shape = RoundedCornerShape(8.dp))
-                        .weight(1f),
-                    onValueChange = {
-                        endTime = it
-                        endTimeChanged(it)
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-                    singleLine = true,
-                    colors = TextFieldDefaults.textFieldColors(
-                        placeholderColor = Gray30,
-                        backgroundColor = Gray5,
-                        cursorColor = Gray30,
-                        disabledTextColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        textColor = Gray100
-                    )
+                        .weight(1f)
+                        .padding(horizontal = 12.dp, vertical = 15.dp)
+                        .clickable {
+                            endTimeDialogState.show()
+                        },
+                    maxLines = 1,
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))

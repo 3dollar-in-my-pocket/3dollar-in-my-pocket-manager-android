@@ -33,6 +33,8 @@ class BusinessScheduleEditViewModel @Inject constructor(
     private val _scheduleDays = MutableStateFlow(defaultScheduleDays)
     val scheduleDays: StateFlow<List<ScheduleDay>> = _scheduleDays
     private var appearanceDays = hashMapOf<String, AppearanceDaysVo>()
+    private val _enableComplete = MutableEventFlow<Boolean>()
+    val enableComplete: EventFlow<Boolean> get() = _enableComplete
     private val _editComplete = MutableEventFlow<Boolean>()
     val editComplete: EventFlow<Boolean> get() = _editComplete
 
@@ -107,6 +109,18 @@ class BusinessScheduleEditViewModel @Inject constructor(
     fun editDaysLocationDescription(day: String, locationDescription: String) {
         val appearanceDaysVo = appearanceDays[day] ?: return
         appearanceDays[day] = appearanceDaysVo.copy(locationDescription = locationDescription)
+    }
+
+    private fun isEditEnable(){
+        viewModelScope.launch(exceptionHandler) {
+            appearanceDays.values.forEach {
+                if (it.openingHours.startTime.isEmpty() || it.openingHours.endTime.isEmpty() || it.locationDescription.isEmpty()) {
+                    _enableComplete.emit(false)
+                    return@launch
+                }
+            }
+            
+        }
     }
 
 }

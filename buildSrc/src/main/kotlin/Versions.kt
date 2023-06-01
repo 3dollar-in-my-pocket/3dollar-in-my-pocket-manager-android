@@ -43,4 +43,6 @@ object Versions {
 
     const val NAVER_MAP_COMPOSE = "1.3.1"
     const val LOTTIE_COMPOSE = "5.2.0"
+
+    const val DIALOG_COMPOSE = "0.9.0"
 }
