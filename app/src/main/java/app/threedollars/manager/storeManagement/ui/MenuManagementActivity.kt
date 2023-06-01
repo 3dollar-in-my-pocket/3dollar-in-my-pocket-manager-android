@@ -14,9 +14,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,11 +25,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -73,6 +73,7 @@ import app.threedollars.common.ui.Red
 import app.threedollars.manager.R
 import app.threedollars.manager.storeManagement.data.MenuModel
 import app.threedollars.manager.storeManagement.viewModel.MyViewModel
+import app.threedollars.manager.util.CircleProgressBar
 import app.threedollars.manager.util.ContentUriToRequestBody
 import app.threedollars.manager.util.convertImageUrlToRequestBody
 import coil.compose.AsyncImage
@@ -97,12 +98,19 @@ class MenuManagementActivity : AppCompatActivity() {
         val isSuccess = viewModel.isSuccess.collectAsState(null)
         val context = LocalContext.current
         var menuList by remember { mutableStateOf(listOf(MenuModel())) }
+        var isLoading by remember { mutableStateOf(true) }
 
         LaunchedEffect(isSuccess.value) {
+            isLoading = false
             if (isSuccess.value == true) {
                 setResult(RESULT_OK)
                 finish()
                 context.toast("수정 완료")
+            } else {
+                menuList = menuList.map {
+                    val boolean = it.name.isNullOrEmpty() || it.price == null || it.imageRequestBody == null
+                    it.copy(isEmpty = boolean)
+                }
             }
         }
         LaunchedEffect(bossStore.value) {
@@ -125,22 +133,7 @@ class MenuManagementActivity : AppCompatActivity() {
             var isClickDeleteButton by remember { mutableStateOf(false) }
             var isAllDeleteClicked by remember { mutableStateOf(false) }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, top = 24.dp)
-            ) {
-                Image(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable {
-                            finish()
-                        }, painter = painterResource(id = R.drawable.ic_back), contentDescription = ""
-                )
-                Text(
-                    modifier = Modifier.align(Alignment.Center), text = "메뉴 관리", fontSize = 16.sp, color = Color.Black
-                )
-            }
+            TopBar()
 
             Box(
                 modifier = Modifier
@@ -177,7 +170,7 @@ class MenuManagementActivity : AppCompatActivity() {
                         .weight(1f)
                         .padding(bottom = 24.dp)
                 ) {
-                    Box() {
+                    Box {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                         ) {
@@ -188,13 +181,20 @@ class MenuManagementActivity : AppCompatActivity() {
                                     Box(
                                         modifier = Modifier
                                             .width(if (isClickDeleteButton) 303.dp else 327.dp)
-                                            .height(164.dp)
+                                            .wrapContentHeight()
                                             .padding(start = 24.dp, top = 16.dp, bottom = 8.dp)
                                             .background(Color.White, RoundedCornerShape(16.dp))
+                                            .border(
+                                                width = 1.dp,
+                                                color = if (menuList[index].isEmpty) Red else Color.White,
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
                                             .padding(12.dp)
                                     ) {
                                         MenuPhoto(
-                                            modifier = Modifier.align(Alignment.CenterStart),
+                                            modifier = Modifier
+                                                .padding(bottom = if(menuList[index].isEmpty)24.dp else 0.dp)
+                                                .align(Alignment.TopStart),
                                             defaultImage = if (menuList[index].imageUrl.isNullOrEmpty()) R.drawable.ic_menu_default.getResourceUri(
                                                 context
                                             )
@@ -202,67 +202,80 @@ class MenuManagementActivity : AppCompatActivity() {
                                         ) {
                                             menuList[index].imageRequestBody = it
                                         }
-                                        TextField(
-                                            value = menuName,
-                                            onValueChange = { newText ->
-                                                if (newText.text.length <= 10) {
-                                                    menuName = newText
-                                                    menuList[index].name = newText.text.ifEmpty { null } ?: ""
-                                                }
-                                            },
+                                        Column(
                                             modifier = Modifier
-                                                .fillMaxWidth(if (isClickDeleteButton) 0.6f else 0.65f)
-                                                .padding(start = 12.dp)
-                                                .align(Alignment.TopEnd),
-                                            placeholder = { Text("메뉴를 입력해 주세요", fontSize = 14.sp, fontWeight = FontWeight.W400) },
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                                            shape = RoundedCornerShape(8.dp),
-                                            colors = TextFieldDefaults.textFieldColors(
-                                                placeholderColor = Gray30,
-                                                backgroundColor = Gray5,
-                                                cursorColor = Gray30,
-                                                disabledTextColor = Color.Transparent,
-                                                focusedIndicatorColor = Color.Transparent,
-                                                unfocusedIndicatorColor = Color.Transparent,
-                                                disabledIndicatorColor = Color.Transparent
-                                            ),
-                                            textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400)
-                                        )
-                                        TextField(
-                                            value = price,
-                                            onValueChange = { newText ->
-                                                if (newText.text.length <= 10) {
-                                                    val newPrice: String = newText.text.replace(",", "").replace("원", "")
-                                                    val formatter = DecimalFormat("###,###")
-                                                    val result =
-                                                        if (newPrice.isEmpty()) {
-                                                            newPrice
-                                                        } else {
-                                                            "${formatter.format(newPrice.toInt())}원"
-                                                        }
-                                                    price = newText.copy(result)
-                                                    menuList[index].price = if (newPrice.isEmpty()) null else newPrice.toInt()
-                                                }
-                                            },
-                                            modifier = Modifier
-                                                .fillMaxWidth(if (isClickDeleteButton) 0.6f else 0.65f)
-                                                .padding(start = 12.dp, top = 8.dp)
-                                                .align(Alignment.BottomEnd),
-                                            placeholder = { Text("가격을 입력해 주세요", fontSize = 14.sp, fontWeight = FontWeight.W400) },
-                                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                                            shape = RoundedCornerShape(8.dp),
-                                            colors = TextFieldDefaults.textFieldColors(
-                                                placeholderColor = Gray30,
-                                                backgroundColor = Gray5,
-                                                cursorColor = Gray30,
-                                                disabledTextColor = Color.Transparent,
-                                                focusedIndicatorColor = Color.Transparent,
-                                                unfocusedIndicatorColor = Color.Transparent,
-                                                disabledIndicatorColor = Color.Transparent
-                                            ),
-                                            textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400)
-                                        )
-//                                        Text(text = "* 메뉴명, 가격, 사진을 모두 등록해주세요.", fontSize = 12.sp, fontWeight = FontWeight.W400, color = Red)
+                                                .fillMaxWidth(if (isClickDeleteButton) 0.5f else 0.6f)
+                                                .padding(start = 12.dp, bottom = if(menuList[index].isEmpty)24.dp else 0.dp)
+                                                .align(Alignment.TopEnd)
+                                        ) {
+                                            TextField(
+                                                value = menuName,
+                                                onValueChange = { newText ->
+                                                    if (newText.text.length <= 10) {
+                                                        menuName = newText
+                                                        menuList[index].name = newText.text.ifEmpty { null } ?: ""
+                                                    }
+                                                },
+                                                singleLine = true,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                placeholder = { Text("메뉴를 입력해 주세요", fontSize = 14.sp, fontWeight = FontWeight.W400) },
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                                                shape = RoundedCornerShape(8.dp),
+                                                colors = TextFieldDefaults.textFieldColors(
+                                                    placeholderColor = Gray30,
+                                                    backgroundColor = Gray5,
+                                                    cursorColor = Gray30,
+                                                    disabledTextColor = Color.Transparent,
+                                                    focusedIndicatorColor = Color.Transparent,
+                                                    unfocusedIndicatorColor = Color.Transparent,
+                                                    disabledIndicatorColor = Color.Transparent
+                                                ),
+                                                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400)
+                                            )
+                                            TextField(
+                                                value = price,
+                                                onValueChange = { newText ->
+                                                    if (newText.text.length <= 10) {
+                                                        val newPrice: String = newText.text.replace(",", "").replace("원", "")
+                                                        val formatter = DecimalFormat("###,###")
+                                                        val result =
+                                                            if (newPrice.isEmpty()) {
+                                                                newPrice
+                                                            } else {
+                                                                "${formatter.format(newPrice.toInt())}원"
+                                                            }
+                                                        price = newText.copy(result)
+                                                        menuList[index].price = if (newPrice.isEmpty()) null else newPrice.toInt()
+                                                    }
+                                                },
+                                                singleLine = true,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(top = 8.dp),
+                                                placeholder = { Text("가격을 입력해 주세요", fontSize = 14.sp, fontWeight = FontWeight.W400) },
+                                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                                                shape = RoundedCornerShape(8.dp),
+                                                colors = TextFieldDefaults.textFieldColors(
+                                                    placeholderColor = Gray30,
+                                                    backgroundColor = Gray5,
+                                                    cursorColor = Gray30,
+                                                    disabledTextColor = Color.Transparent,
+                                                    focusedIndicatorColor = Color.Transparent,
+                                                    unfocusedIndicatorColor = Color.Transparent,
+                                                    disabledIndicatorColor = Color.Transparent
+                                                ),
+                                                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400)
+                                            )
+                                        }
+                                        if (menuList[index].isEmpty) {
+                                            Text(
+                                                modifier = Modifier
+                                                    .padding(top = 16.dp)
+                                                    .align(Alignment.BottomStart),
+                                                text = "* 메뉴명, 가격, 사진을 모두 등록해주세요.",
+                                                fontSize = 12.sp, fontWeight = FontWeight.W400, color = Red
+                                            )
+                                        }
                                     }
                                     if (isClickDeleteButton) {
                                         Image(
@@ -272,14 +285,13 @@ class MenuManagementActivity : AppCompatActivity() {
                                                     menuList = menuList
                                                         .filterIndexed { i, _ -> index != i }
                                                         .toMutableList()
-                                                    menuName = TextFieldValue(menuList[index].name ?: "")
                                                 }, painter = painterResource(id = R.drawable.ic_delete_circle), contentDescription = ""
                                         )
                                     }
                                 }
                             }
-                            item {
-                                if (menuList.size < 20) {
+                            if (menuList.size < 20) {
+                                item {
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -306,6 +318,9 @@ class MenuManagementActivity : AppCompatActivity() {
                                 }
                             }
                         }
+                        if (isLoading) {
+                            CircleProgressBar(modifier = Modifier.align(Alignment.Center))
+                        }
                         if (isAllDeleteClicked) {
                             DeleteDialog(modifier = Modifier.align(Alignment.Center), onCancelListener = {
                                 isAllDeleteClicked = false
@@ -326,11 +341,32 @@ class MenuManagementActivity : AppCompatActivity() {
                             isClickDeleteButton = false
                         } else {
                             viewModel.patchMenu(bossStoreId = bossStore.value?.bossStoreId, fileType = "BOSS_STORE_MENU_IMAGE", menuList)
+                            isLoading = true
                         }
                     }) {
                     Text(text = if (isClickDeleteButton) "삭제 완료" else "저장하기", fontSize = 16.sp, fontWeight = FontWeight.W500)
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun TopBar() {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+        ) {
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .clickable {
+                        finish()
+                    }, painter = painterResource(id = R.drawable.ic_back), contentDescription = ""
+            )
+            Text(
+                modifier = Modifier.align(Alignment.Center), text = "메뉴 관리", fontSize = 16.sp, color = Color.Black
+            )
         }
     }
 
@@ -356,8 +392,8 @@ class MenuManagementActivity : AppCompatActivity() {
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = modifier
-                .width(104.dp)
-                .height(104.dp)
+                .width(118.dp)
+                .height(118.dp)
                 .clip(shape = RoundedCornerShape(16.dp))
                 .clickable {
                     galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
