@@ -1,24 +1,30 @@
 package app.threedollars.manager.storeManagement.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
+import app.threedollars.domain.dto.MenusDto
 import app.threedollars.domain.usecase.BossStoreRetrieveUseCase
 import app.threedollars.domain.usecase.BossStoreUseCase
+import app.threedollars.domain.usecase.ImageUploadUseCase
+import app.threedollars.manager.storeManagement.data.MenuModel
 import app.threedollars.manager.util.dtoToVo
 import app.threedollars.manager.vo.BossStoreRetrieveVo
+import app.threedollars.manager.vo.ImageUploadVo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
+import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
     private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
-    private val bossStoreUseCase: BossStoreUseCase
+    private val bossStoreUseCase: BossStoreUseCase,
+    private val imageUploadUseCase: ImageUploadUseCase
 ) : BaseViewModel() {
 
     private val _bossStoreRetrieveMe = MutableEventFlow<BossStoreRetrieveVo>()
@@ -49,4 +55,31 @@ class MyViewModel @Inject constructor(
         }
     }
 
+    fun patchMenu(bossStoreId: String?, fileType: String, menuModelList: List<MenuModel>) {
+        val list = menuModelList.filter { it.imageRequestBody != null }.map {
+            it.imageRequestBody as RequestBody
+        }
+        viewModelScope.launch {
+            imageUploadUseCase.postImageUploadBulk(fileType, list).collect { resource ->
+                if (resource.code == "200") {
+                    resource.data?.let { dtoList ->
+                        dtoList.mapIndexed { index, imageUploadDto ->
+                            menuModelList[index].imageUrl = imageUploadDto.imageUrl
+                            val menus = menuModelList.map { menuModel ->
+                                MenusDto(
+                                    imageUrl = menuModel.imageUrl,
+                                    name = menuModel.name,
+                                    price = menuModel.price
+                                )
+                            }
+                            bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = menus).collect {
+                                _isSuccess.emit(it.data == "OK")
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
 }

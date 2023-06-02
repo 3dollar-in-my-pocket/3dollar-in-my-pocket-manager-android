@@ -88,7 +88,9 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                     color = if (it.introduction.isEmpty()) Gray40 else Gray95
                 )
                 Spacer(modifier = Modifier.height(37.dp))
-                TitleContents(bottomPadding = 16.dp, Title("메뉴 정보", "메뉴 관리") {})
+                TitleContents(bottomPadding = 16.dp, Title("메뉴 정보", "메뉴 관리") {
+                    launcher.launch(Intent(context, MenuManagementActivity::class.java))
+                })
                 MenuContents(it.menus.map { menu ->
                     Menu(
                         menu.name.toStringDefault(),

@@ -15,6 +15,7 @@
         android:theme="@style/Theme.ThreeDollarsManager">
         <activity android:name=".MainActivity" />
         <activity android:name=".storeManagement.ui.BossCommentActivity" />
+        <activity android:name=".storeManagement.ui.MenuManagementActivity" />
 
         <activity
             android:name=".LoginActivity"
