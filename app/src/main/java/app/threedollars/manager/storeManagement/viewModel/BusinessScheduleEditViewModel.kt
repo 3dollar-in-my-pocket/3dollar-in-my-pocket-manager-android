@@ -85,12 +85,17 @@ class BusinessScheduleEditViewModel @Inject constructor(
             list[index] = scheduleDay
             _scheduleDays.emit(list)
             _scheduleDays.value.forEach {
-                appearanceDays[it.dayOfTheWeek] = AppearanceDaysVo(
-                    it.dayOfTheWeek,
-                    OpeningHoursVo(it.startTime, it.endTime),
-                    it.locationDescription
-                )
+                if (it.isSelected) {
+                    appearanceDays[it.dayOfTheWeek] = AppearanceDaysVo(
+                        it.dayOfTheWeek,
+                        OpeningHoursVo(it.startTime, it.endTime),
+                        it.locationDescription
+                    )
+                } else {
+                    appearanceDays.remove(it.dayOfTheWeek)
+                }
             }
+            isEditEnable()
         }
     }
 
@@ -98,20 +103,23 @@ class BusinessScheduleEditViewModel @Inject constructor(
         val appearanceDaysVo = appearanceDays[day] ?: return
         val openingHours = appearanceDaysVo.openingHours.copy(startTime = time)
         appearanceDays[day] = appearanceDaysVo.copy(openingHours = openingHours)
+        isEditEnable()
     }
 
     fun editDaysEndTime(day: String, time: String) {
         val appearanceDaysVo = appearanceDays[day] ?: return
         val openingHours = appearanceDaysVo.openingHours.copy(endTime = time)
         appearanceDays[day] = appearanceDaysVo.copy(openingHours = openingHours)
+        isEditEnable()
     }
 
     fun editDaysLocationDescription(day: String, locationDescription: String) {
         val appearanceDaysVo = appearanceDays[day] ?: return
         appearanceDays[day] = appearanceDaysVo.copy(locationDescription = locationDescription)
+        isEditEnable()
     }
 
-    private fun isEditEnable(){
+    private fun isEditEnable() {
         viewModelScope.launch(exceptionHandler) {
             appearanceDays.values.forEach {
                 if (it.openingHours.startTime.isEmpty() || it.openingHours.endTime.isEmpty() || it.locationDescription.isEmpty()) {
@@ -119,7 +127,7 @@ class BusinessScheduleEditViewModel @Inject constructor(
                     return@launch
                 }
             }
-            
+            _enableComplete.emit(true)
         }
     }
 

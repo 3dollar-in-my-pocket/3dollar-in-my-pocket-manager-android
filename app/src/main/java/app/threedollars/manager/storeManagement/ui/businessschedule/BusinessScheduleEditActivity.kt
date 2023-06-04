@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.*
 import app.threedollars.manager.R
 import app.threedollars.manager.storeManagement.viewModel.BusinessScheduleEditViewModel
@@ -51,6 +52,7 @@ fun BusinessScheduleEditScreen(viewModel: BusinessScheduleEditViewModel = hiltVi
     val context = LocalContext.current
     val bossStore by viewModel.bossStoreRetrieveMe.collectAsStateWithLifecycle(null)
     val editComplete by viewModel.editComplete.collectAsStateWithLifecycle(initialValue = false)
+    val isEnable by viewModel.enableComplete.collectAsStateWithLifecycle(initialValue = false)
     LaunchedEffect(editComplete) {
         if (editComplete) context.findActivity().finish()
     }
@@ -71,8 +73,11 @@ fun BusinessScheduleEditScreen(viewModel: BusinessScheduleEditViewModel = hiltVi
         BusinessScheduleBottom(
             Modifier
                 .fillMaxWidth()
-                .height(64.dp)
-        )
+                .height(64.dp),
+            isEnable
+        ){
+            viewModel.patchBossStore(bossStore?.bossStoreId.toStringDefault())
+        }
     }
 }
 
@@ -220,6 +225,7 @@ fun BusinessScheduleDayDetail(
     ) {
         timepicker(is24HourClock = true, title = "시작시간") {
             startTime = it.toString()
+            startTimeChanged(startTime)
         }
     }
     val endTimeDialogState = rememberMaterialDialogState()
@@ -232,6 +238,7 @@ fun BusinessScheduleDayDetail(
     ) {
         timepicker(is24HourClock = true, title = "종료시간") {
             endTime = it.toString()
+            endTimeChanged(endTime)
         }
     }
     Row(
@@ -309,7 +316,7 @@ fun BusinessScheduleDayDetail(
                     locationDescription = it
                     locationDescriptionChanged(it)
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(
                     placeholderColor = Gray30,

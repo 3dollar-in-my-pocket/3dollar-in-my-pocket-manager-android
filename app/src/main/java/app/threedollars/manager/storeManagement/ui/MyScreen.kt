@@ -331,9 +331,9 @@ fun Int.toWon(): String {
 }
 
 private fun AppearanceDaysVo.toBusinessSchedule(): BusinessSchedule {
-    val openingHours = openingHours?.let {
+    val openingHours = openingHours.let {
         "${it.startTime.toStringDefault()} - ${it.endTime.toStringDefault()}"
-    } ?: "휴무"
+    }
     val dayOfTheWeek = dayOfTheWeek.toStringDefault()
     val isWeekend = dayOfTheWeek == "일요일" || dayOfTheWeek == "토요일"
     return BusinessSchedule(dayOfTheWeek, locationDescription.toStringDefault(), openingHours, openingHours != "휴무", isWeekend)
