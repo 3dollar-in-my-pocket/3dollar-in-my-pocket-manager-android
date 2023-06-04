@@ -263,7 +263,7 @@ fun BusinessScheduleItem(businessSchedule: BusinessSchedule = emptyBusinessSched
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = businessSchedule.dayOfTheWeek, fontSize = 14.sp, color = if (businessSchedule.isWeekend) Red else Gray95)
+        Text(text = businessSchedule.dayOfTWeek, fontSize = 14.sp, color = if (businessSchedule.isWeekend) Red else Gray95)
         Column(horizontalAlignment = Alignment.End) {
             Text(
                 text = businessSchedule.openingHours,
@@ -278,6 +278,7 @@ fun BusinessScheduleItem(businessSchedule: BusinessSchedule = emptyBusinessSched
 }
 
 data class BusinessSchedule(
+    val dayOfTWeek: String,
     val dayOfTheWeek: String,
     val locationDescription: String,
     val openingHours: String,
@@ -286,13 +287,13 @@ data class BusinessSchedule(
 )
 
 val emptyBusinessSchedules = mutableListOf(
-    BusinessSchedule("월요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("화요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("수요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("목요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("금요일", "-", "휴무", false, isWeekend = false),
-    BusinessSchedule("토요일", "-", "휴무", false, isWeekend = true),
-    BusinessSchedule("일요일", "-", "휴무", false, isWeekend = true)
+    BusinessSchedule("월요일", "MONDAY", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("화요일", "TUESDAY", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("수요일", "WEDNESDAY", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("목요일", "THURSDAY", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("금요일", "FRIDAY", "-", "휴무", false, isWeekend = false),
+    BusinessSchedule("토요일", "SATURDAY", "-", "휴무", false, isWeekend = true),
+    BusinessSchedule("일요일", "SUNDAY", "-", "휴무", false, isWeekend = true)
 )
 
 class Menu(
@@ -335,6 +336,7 @@ private fun AppearanceDaysVo.toBusinessSchedule(): BusinessSchedule {
         "${it.startTime.toStringDefault()} - ${it.endTime.toStringDefault()}"
     }
     val dayOfTheWeek = dayOfTheWeek.toStringDefault()
-    val isWeekend = dayOfTheWeek == "일요일" || dayOfTheWeek == "토요일"
-    return BusinessSchedule(dayOfTheWeek, locationDescription.toStringDefault(), openingHours, openingHours != "휴무", isWeekend)
+    val dayOfTWeek = emptyBusinessSchedules.find { it.dayOfTheWeek == dayOfTheWeek }?.dayOfTWeek.toStringDefault()
+    val isWeekend = dayOfTWeek == "일요일" || dayOfTWeek == "토요일"
+    return BusinessSchedule(dayOfTWeek, dayOfTheWeek, locationDescription.toStringDefault(), openingHours, openingHours != "휴무", isWeekend)
 }
