@@ -83,6 +83,11 @@ object Dependencies {
         const val LOTTIE_COMPOSE = "com.airbnb.android:lottie-compose:${Versions.LOTTIE_COMPOSE}"
     }
 
+    object Other {
+        const val DIALOG_COMPOSE = "io.github.vanpra.compose-material-dialogs:core:${Versions.DIALOG_COMPOSE}"
+        const val DIALOG_TIME_COMPOSE = "io.github.vanpra.compose-material-dialogs:datetime:${Versions.DIALOG_COMPOSE}"
+    }
+
     object Test {
         const val JUNIT = "junit:junit:${Versions.JUNIT}"
         const val ANDROIDX_JUNIT = "androidx.test.ext:junit:${Versions.ANDROIDX_JUNIT}"
@@ -132,6 +137,8 @@ object Dependencies {
         implementation(Login.KAKAO_LOGIN)
         implementation(Naver.NAVER_MAP_COMPOSE)
         implementation(LOTTIE.LOTTIE_COMPOSE)
+        implementation(Other.DIALOG_COMPOSE)
+        implementation(Other.DIALOG_TIME_COMPOSE)
     }
 
     fun DependencyHandler.implementation(dependency: Any) {

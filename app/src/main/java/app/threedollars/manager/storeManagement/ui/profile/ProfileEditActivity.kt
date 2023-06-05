@@ -1,4 +1,4 @@
-package app.threedollars.manager.storeManagement.edit
+package app.threedollars.manager.storeManagement.ui.profile
 
 import android.net.Uri
 import android.os.Bundle
@@ -137,7 +137,7 @@ fun ProfileEditBottom(modifier: Modifier = Modifier, isEnable: Boolean = false, 
         content = {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = " 저장하기",
+                text = "저장하기",
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center
             )

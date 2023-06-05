@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
 data class AppearanceDaysModel(
     @Json(name = "dayOfTheWeek")
     val dayOfTheWeek: String? = null,
-    @Json(name = "endTime")
+    @Json(name = "openingHours")
     val openingHours: OpeningHoursModel? = null,
     @Json(name = "locationDescription")
     val locationDescription: String? = null
