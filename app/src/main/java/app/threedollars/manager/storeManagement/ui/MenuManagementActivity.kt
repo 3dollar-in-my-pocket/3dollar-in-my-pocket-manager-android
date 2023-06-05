@@ -94,6 +94,7 @@ class MenuManagementActivity : AppCompatActivity() {
 
     @Composable
     fun MenuManagementScreen(viewModel: MyViewModel = hiltViewModel()) {
+        viewModel.getBossStoreRetrieveMe()
         val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
         val isSuccess = viewModel.isSuccess.collectAsState(null)
         val context = LocalContext.current
@@ -193,7 +194,7 @@ class MenuManagementActivity : AppCompatActivity() {
                                     ) {
                                         MenuPhoto(
                                             modifier = Modifier
-                                                .padding(bottom = if(menuList[index].isEmpty)24.dp else 0.dp)
+                                                .padding(bottom = if (menuList[index].isEmpty) 24.dp else 0.dp)
                                                 .align(Alignment.TopStart),
                                             defaultImage = if (menuList[index].imageUrl.isNullOrEmpty()) R.drawable.ic_menu_default.getResourceUri(
                                                 context
@@ -205,7 +206,7 @@ class MenuManagementActivity : AppCompatActivity() {
                                         Column(
                                             modifier = Modifier
                                                 .fillMaxWidth(if (isClickDeleteButton) 0.5f else 0.6f)
-                                                .padding(start = 12.dp, bottom = if(menuList[index].isEmpty)24.dp else 0.dp)
+                                                .padding(start = 12.dp, bottom = if (menuList[index].isEmpty) 24.dp else 0.dp)
                                                 .align(Alignment.TopEnd)
                                         ) {
                                             TextField(
@@ -322,6 +323,11 @@ class MenuManagementActivity : AppCompatActivity() {
                             CircleProgressBar(modifier = Modifier.align(Alignment.Center))
                         }
                         if (isAllDeleteClicked) {
+                            Spacer(
+                                modifier = Modifier
+                                    .matchParentSize()
+                                    .background(color = Color.Gray.copy(alpha = .1f))
+                            )
                             DeleteDialog(modifier = Modifier.align(Alignment.Center), onCancelListener = {
                                 isAllDeleteClicked = false
                             }, onAgreeListener = {
