@@ -14,6 +14,14 @@ plugins {
 android {
 
     compileSdk = 33
+    signingConfigs {
+        create("release") {
+            storeFile = file("ThreeDollarsManager.jks")
+            storePassword = "ThreeDollarsManager"
+            keyAlias = "ThreeDollarsManager"
+            keyPassword = "ThreeDollarsManager"
+        }
+    }
 
     defaultConfig {
         applicationId = "app.threedollars.manager"
@@ -30,6 +38,7 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             applicationIdSuffix = ""
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
