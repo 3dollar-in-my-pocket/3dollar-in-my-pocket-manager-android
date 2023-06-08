@@ -37,6 +37,7 @@ object Dependencies {
         const val FIREBASE_CRASHLYTICS = "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS}"
         const val FIREBASE_CRASHLYTICS_KTX = "com.google.firebase:firebase-crashlytics-ktx"
         const val FIREBASE_DISTRIBUTION = "com.google.firebase:firebase-appdistribution-gradle:${Versions.FIREBASE_DISTRIBUTION}"
+        const val FIREBASE_MESSAGING_KTX = "com.google.firebase:firebase-messaging-ktx:${Versions.FIREBASE_MESSAGING}"
     }
 
     object Compose {
@@ -100,6 +101,7 @@ object Dependencies {
         implementation(Firebase.FIREBASE_ANALYTICS)
         implementation(Firebase.FIREBASE_ANALYTICS_KTX)
         implementation(Firebase.FIREBASE_CRASHLYTICS_KTX)
+        implementation(Firebase.FIREBASE_MESSAGING_KTX)
         implementation(Kotlin.KOTLIN)
         kapt(Kotlin.KOTLIN_METADATA)
         implementation(Android.CORE_KTX)

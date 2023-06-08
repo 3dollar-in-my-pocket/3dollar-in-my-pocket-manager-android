@@ -13,6 +13,24 @@
         android:roundIcon="@drawable/ic_app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.ThreeDollarsManager">
+
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_app_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/green500" />
+
+        <service
+            android:name=".util.ThreedollarsManagerMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+
         <activity android:name=".MainActivity" />
         <activity android:name=".storeManagement.ui.BossCommentActivity" />
         <activity android:name=".storeManagement.ui.MenuManagementActivity" />
