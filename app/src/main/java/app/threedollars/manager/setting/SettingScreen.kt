@@ -8,16 +8,24 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -36,6 +44,7 @@ import app.threedollars.manager.R
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.sign.viewmodel.SettingViewModel
 import app.threedollars.manager.util.findActivity
+import com.google.firebase.messaging.FirebaseMessaging
 
 @Composable
 fun SettingScreen(
@@ -55,6 +64,11 @@ fun SettingScreen(
 
         val bossAccountInfo by viewModel.bossAccountInfo.collectAsStateWithLifecycle(null)
         val isSuccess by viewModel.isSuccess.collectAsStateWithLifecycle(false)
+        var switchOn by remember { mutableStateOf(false) }
+
+        LaunchedEffect(bossAccountInfo) {
+            switchOn = bossAccountInfo?.isSetupNotification == true
+        }
 
         Text(
             text = stringResource(R.string.setting),
@@ -66,7 +80,6 @@ fun SettingScreen(
             textAlign = TextAlign.Center,
             fontSize = 16.sp
         )
-
         Text(
             text = stringResource(R.string.boss_name, bossAccountInfo?.name.toString()),
             fontWeight = FontWeight.Bold,
@@ -89,6 +102,38 @@ fun SettingScreen(
             rightTextColor = R.color.gray30,
             modifier = Modifier.padding(top = 20.dp)
         )
+        Box(
+            modifier = Modifier
+                .padding(start = 24.dp, end = 24.dp, top = 8.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(colorResource(id = R.color.gray90))
+                .padding(vertical = 5.dp, horizontal = 16.dp)
+        ) {
+            Text(
+                modifier = Modifier.align(Alignment.CenterStart),
+                text = "푸시알림",
+                fontWeight = FontWeight.W600,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp
+            )
+
+            Switch(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                checked = switchOn,
+                onCheckedChange = { isSwitch ->
+                    switchOn = isSwitch
+                    if (isSwitch) {
+                        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                            viewModel.putBossDevice(it.result)
+                        }
+                    } else {
+                        viewModel.deleteBossDevice()
+                    }
+                }
+            )
+        }
         SettingCategoryContent(
             leftText = stringResource(R.string.call), rightImage = R.drawable.ic_right_arrow,
             modifier = Modifier.padding(top = 8.dp),
