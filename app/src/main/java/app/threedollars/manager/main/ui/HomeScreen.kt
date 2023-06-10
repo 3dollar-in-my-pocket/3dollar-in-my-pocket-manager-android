@@ -1,5 +1,9 @@
 package app.threedollars.manager.main.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,8 +23,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.threedollars.common.ext.toStringDefault
 import app.threedollars.manager.R
 import app.threedollars.manager.main.viewmodel.HomeViewModel
 import app.threedollars.manager.util.getCurrentLocationName
@@ -35,14 +41,26 @@ import java.util.*
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    var isLocationPermission by remember { mutableStateOf(false) }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(), onResult = {
+        isLocationPermission = it
+    })
+    when (PackageManager.PERMISSION_GRANTED) {
+        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) -> isLocationPermission = true
+        else -> SideEffect { launcher.launch(Manifest.permission.ACCESS_COARSE_LOCATION) }
+    }
     val bossStoreRetrieveMe = viewModel.bossStoreRetrieveMe.collectAsStateWithLifecycle(null)
-    var address by remember { mutableStateOf("") }
-    rememberFusedLocationSource().activate {
-        address = it?.let { context.getCurrentLocationName(LatLng(it)) } ?: ""
+    var location by remember { mutableStateOf(LatLng(0.0, 0.0)) }
+    var address by remember(location) { mutableStateOf(context.getCurrentLocationName(location)) }
+    if (isLocationPermission) {
+        rememberFusedLocationSource().activate {
+            it?.let { location = LatLng(it) }
+        }
+    } else {
+        address = "위치권한을 허락해주세요."
     }
     var isFoodTruckCheck by remember { mutableStateOf(false) }
-    var isOpen by remember { mutableStateOf(false) }
-    var isOpenServer = viewModel.storeOpen.collectAsStateWithLifecycle(false)
+    val isOpenServer by viewModel.storeOpen.collectAsStateWithLifecycle(false)
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
@@ -85,14 +103,19 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_location),
                     contentDescription = "내 위치 아이콘",
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable {
+
+                    }
                 )
             }
         }
-        if (isOpen) HomeBottomOn(Modifier.align(Alignment.BottomStart), bossStoreRetrieveMe.value?.openStatus?.openStartDateTime ?: "") {
-            isOpen = !isOpen
+        if (isOpenServer) HomeBottomOn(Modifier.align(Alignment.BottomStart), bossStoreRetrieveMe.value?.openStatus?.openStartDateTime ?: "") {
+            viewModel.storeStop(bossStoreRetrieveMe.value?.bossStoreId.toStringDefault())
         }
-        else HomeBottomOff(Modifier.align(Alignment.BottomStart)) { isOpen = !isOpen }
+        else HomeBottomOff(Modifier.align(Alignment.BottomStart)) {
+            if (location.latitude != 0.0)
+                viewModel.storeOpen(bossStoreRetrieveMe.value?.bossStoreId.toStringDefault(), location)
+        }
     }
 }
 
@@ -183,7 +206,7 @@ fun MapView(modifier: Modifier) {
     NaverMap(
         modifier = modifier,
         locationSource = rememberFusedLocationSource(),
-        properties = MapProperties(locationTrackingMode = LocationTrackingMode.Follow),
+        properties = MapProperties(locationTrackingMode = LocationTrackingMode.None),
         uiSettings = MapUiSettings(isZoomControlEnabled = false, isLocationButtonEnabled = false),
         onLocationChange = {
 
