@@ -41,7 +41,7 @@ object Versions {
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
 
-    const val NAVER_MAP_COMPOSE = "1.3.1"
+    const val NAVER_MAP_COMPOSE = "1.3.3"
     const val LOTTIE_COMPOSE = "5.2.0"
 
     const val DIALOG_COMPOSE = "0.9.0"
