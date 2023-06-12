@@ -6,6 +6,7 @@ import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
+import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.FaqUseCase
 import app.threedollars.manager.util.dtoToVo
 import app.threedollars.manager.vo.BossAccountInfoVo
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val bossAccountUseCase: BossAccountUseCase,
-    private val faqUseCase: FaqUseCase
+    private val faqUseCase: FaqUseCase,
+    private val bossDeviceUseCase: BossDeviceUseCase
 ) : BaseViewModel() {
 
     private val _bossAccountInfo = MutableEventFlow<BossAccountInfoVo>()
@@ -87,6 +89,22 @@ class SettingViewModel @Inject constructor(
                     }
                     _isSuccess.emit(true)
                 }
+            }
+        }
+    }
+
+    fun putBossDevice(token: String) {
+        viewModelScope.launch {
+            bossDeviceUseCase.putBossDevice("FCM", token).collect {
+                // TODO: 푸시 알림 설정 완료 / 실패 핸들링
+            }
+        }
+    }
+
+    fun deleteBossDevice() {
+        viewModelScope.launch {
+            bossDeviceUseCase.deleteBossDevice().collect {
+                // TODO: 푸시 알림 해제 완료 / 실패 핸들링
             }
         }
     }

@@ -35,6 +35,7 @@ object Versions {
     const val FIREBASE_CRASHLYTICS = "2.9.2"
     const val FIREBASE_BOM = "31.2.0"
     const val FIREBASE_DISTRIBUTION = "3.2.0"
+    const val FIREBASE_MESSAGING = "23.1.2"
 
     const val RETROFIT = "2.9.0"
     const val MOSHI = "1.13.0"

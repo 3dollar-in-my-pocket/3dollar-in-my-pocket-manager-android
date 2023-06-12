@@ -6,14 +6,19 @@ import app.threedollars.common.BaseViewModel
 import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
 import app.threedollars.domain.usecase.AuthUseCase
+import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.util.dtoToVo
 import app.threedollars.manager.vo.StoreCategoriesVo
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import okhttp3.RequestBody
 import javax.inject.Inject
 
@@ -22,7 +27,8 @@ import javax.inject.Inject
 class SignViewModel @Inject constructor(
     private val platformStoreCategoryUseCase: PlatformStoreCategoryUseCase,
     private val authUseCase: AuthUseCase,
-    private val imageUploadUseCase: ImageUploadUseCase
+    private val imageUploadUseCase: ImageUploadUseCase,
+    private val bossDeviceUseCase: BossDeviceUseCase
 ) : BaseViewModel() {
 
     val categoryItemState = mutableStateListOf<StoreCategoriesVo>()
@@ -84,9 +90,13 @@ class SignViewModel @Inject constructor(
                         ).collect { result ->
                             val token = result.data?.token
                             if (!token.isNullOrEmpty()) {
-                                authUseCase.saveAccessToken(token).collect {
-                                    _loginNavItem.emit(LoginNavItem.Waiting)
-                                }
+                                val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
+                                val deferredList = listOf(
+                                    async { bossDeviceUseCase.putBossDevice("FCM", firebaseToken.await()) },
+                                    async { authUseCase.saveAccessToken(token) }
+                                )
+                                deferredList.awaitAll()
+                                _loginNavItem.emit(LoginNavItem.Waiting)
                             } else {
                                 // TODO: 토큰이 비어있거나 Null일때
                             }
@@ -95,9 +105,9 @@ class SignViewModel @Inject constructor(
                     }
                 }
             }
-
         }
     }
+
     fun categorySelection(index: Int) {
         val item = categoryItemState[index]
         val isSelected = item.isSelected
