@@ -1,5 +1,6 @@
 package app.threedollars.manager.storeManagement.ui.businessschedule
 
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -54,7 +55,10 @@ fun BusinessScheduleEditScreen(viewModel: BusinessScheduleEditViewModel = hiltVi
     val editComplete by viewModel.editComplete.collectAsStateWithLifecycle(initialValue = false)
     val isEnable by viewModel.enableComplete.collectAsStateWithLifecycle(initialValue = false)
     LaunchedEffect(editComplete) {
-        if (editComplete) context.findActivity().finish()
+        if (editComplete) {
+            context.findActivity().setResult(RESULT_OK)
+            context.findActivity().finish()
+        }
     }
     bossStore?.appearanceDays?.forEach {
         it.dayOfTheWeek
@@ -212,9 +216,9 @@ fun BusinessScheduleDayDetail(
     endTimeChanged: (String) -> Unit = {},
     locationDescriptionChanged: (String) -> Unit = {}
 ) {
-    var startTime by remember { mutableStateOf("시작시간") }
-    var endTime by remember { mutableStateOf("종료시간") }
-    var locationDescription by remember { mutableStateOf("") }
+    var startTime by remember(scheduleDay) { mutableStateOf(scheduleDay.startTime.ifEmpty { "시작시간" }) }
+    var endTime by remember(scheduleDay) { mutableStateOf(scheduleDay.endTime.ifEmpty { "종료시간" }) }
+    var locationDescription by remember(scheduleDay) { mutableStateOf(scheduleDay.locationDescription) }
     val startTimeDialogState = rememberMaterialDialogState()
     MaterialDialog(
         dialogState = startTimeDialogState,

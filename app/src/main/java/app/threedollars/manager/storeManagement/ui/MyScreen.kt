@@ -62,7 +62,7 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
         bossStore.value?.let {
             val introduction = it.introduction.ifEmpty { "손님들에게 감동을 드릴 한마디를 적어주세요!ex) 오전에 오시면 서비스가 있습니다!" }
             displayProfileInfo(Profile(it.imageUrl, it.name, it.categories.map { it.name.toStringDefault() }, it.snsUrl)) {
-                context.startActivity(Intent(context, ProfileEditActivity::class.java))
+                launcher.launch(Intent(context, ProfileEditActivity::class.java))
             }
             Spacer(modifier = Modifier.height(44.dp))
             Column(
@@ -97,11 +97,13 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                 TitleContents(bottomPadding = 16.dp, Title("영업 일정", "일정 관리") {
                     launcher.launch(Intent(context, BusinessScheduleEditActivity::class.java))
                 })
-                it.appearanceDays.map { dto -> dto.toBusinessSchedule() }.forEach { businessSchedules ->
-                    val index = emptyBusinessSchedules.indexOfFirst { it.dayOfTheWeek == businessSchedules.dayOfTheWeek }
-                    emptyBusinessSchedules[index] = businessSchedules
+                val businessSchedules = mutableListOf<BusinessSchedule>()
+                businessSchedules.addAll(emptyBusinessSchedules)
+                it.appearanceDays.map { dto -> dto.toBusinessSchedule() }.forEach { businessSchedule ->
+                    val index = businessSchedules.indexOfFirst { it.dayOfTheWeek == businessSchedule.dayOfTheWeek }
+                    businessSchedules[index] = businessSchedule
                 }
-                BusinessScheduleContents(emptyBusinessSchedules)
+                BusinessScheduleContents(businessSchedules)
                 Spacer(modifier = Modifier.height(64.dp))
             }
         }
@@ -288,7 +290,7 @@ data class BusinessSchedule(
     val isWeekend: Boolean
 )
 
-val emptyBusinessSchedules = mutableListOf(
+val emptyBusinessSchedules = listOf(
     BusinessSchedule("월요일", "MONDAY", "-", "휴무", false, isWeekend = false),
     BusinessSchedule("화요일", "TUESDAY", "-", "휴무", false, isWeekend = false),
     BusinessSchedule("수요일", "WEDNESDAY", "-", "휴무", false, isWeekend = false),

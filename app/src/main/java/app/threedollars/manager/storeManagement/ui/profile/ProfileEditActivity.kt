@@ -1,5 +1,7 @@
 package app.threedollars.manager.storeManagement.ui.profile
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -67,7 +69,10 @@ fun ProfileEditScreen(viewModel: ProfileEditViewModel = hiltViewModel()) {
     val imageUrl by remember(bossStore) { mutableStateOf(bossStore?.imageUrl.toStringDefault()) }
     isEnable = (name.isNotEmpty() && name != bossStore?.name) || selectedList.isNotEmpty()
     LaunchedEffect(editComplete) {
-        if (editComplete) context.findActivity().finish()
+        if (editComplete) {
+            context.findActivity().setResult(RESULT_OK)
+            context.findActivity().finish()
+        }
     }
     Column(
         modifier = Modifier
