@@ -1,9 +1,12 @@
 package app.threedollars.di
 
+import android.os.Build
 import app.threedollars.data.BuildConfig
 import app.threedollars.db.DataStoreManager
 import app.threedollars.network.NetworkService
 import app.threedollars.source.LocalDataSourceImpl.Companion.ACCESS_TOKEN
+import app.threedollars.source.LocalDataSourceImpl.Companion.APPLICATION_ID
+import app.threedollars.source.LocalDataSourceImpl.Companion.VERSION_NAME
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,18 +35,27 @@ object NetworkModule {
         httpLoggingInterceptor: HttpLoggingInterceptor,
         dataStoreManager: DataStoreManager
     ): OkHttpClient {
-        var token = ""
-
-        runBlocking { token = dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: "" }
+        var token: String
+        var versionName: String
+        var applicationId: String
+        runBlocking { token = dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: ""
+            versionName = dataStoreManager.getStringData(VERSION_NAME).firstOrNull() ?: ""
+            applicationId = dataStoreManager.getStringData(APPLICATION_ID).firstOrNull() ?: ""
+        }
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor {
                 val request = it.request().newBuilder()
+                    .removeHeader("User-Agent")
+                    .addHeader(
+                        "User-Agent",
+                        versionName + " (${applicationId}); " + Build.VERSION.SDK_INT
+                    )
                     .addHeader(
                         "Authorization",
                         "Bearer $token"
                     )
-                    .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_0.0.0")
+                    .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_" + versionName)
                     .build()
                 it.proceed(request)
             }
