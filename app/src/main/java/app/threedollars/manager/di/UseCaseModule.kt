@@ -55,4 +55,8 @@ abstract class UseCaseModule {
     @ViewModelScoped
     @Binds
     abstract fun bindPlatformStoreCategoryUseCase(impl: PlatformStoreCategoryUseCaseImpl): PlatformStoreCategoryUseCase
+
+    @ViewModelScoped
+    @Binds
+    abstract fun bindAppConfigUseCase(impl: AppConfigUseCaseImpl): AppConfigUseCase
 }

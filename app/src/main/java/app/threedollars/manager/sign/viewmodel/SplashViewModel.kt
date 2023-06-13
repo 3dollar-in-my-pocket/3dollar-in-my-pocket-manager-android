@@ -4,9 +4,11 @@ import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.common.EventFlow
 import app.threedollars.common.MutableEventFlow
+import app.threedollars.domain.usecase.AppConfigUseCase
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
+import app.threedollars.manager.BuildConfig
 import app.threedollars.manager.sign.LoginNavItem
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.AuthApiClient
@@ -24,14 +26,23 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val bossAccountUseCase: BossAccountUseCase,
-    private val bossDeviceUseCase: BossDeviceUseCase
+    private val bossDeviceUseCase: BossDeviceUseCase,
+    private val appConfigUseCase: AppConfigUseCase
 ) : BaseViewModel() {
 
     private val _loginNavItem = MutableEventFlow<LoginNavItem>()
     val loginNavItem: EventFlow<LoginNavItem> get() = _loginNavItem
 
     init {
+        saveAppConfig()
         autoLogin()
+    }
+
+    private fun saveAppConfig() {
+        viewModelScope.launch {
+            appConfigUseCase.saveApplicationId(BuildConfig.APPLICATION_ID).collect()
+            appConfigUseCase.saveVersionName(BuildConfig.VERSION_NAME).collect()
+        }
     }
 
     private fun login(accessToken: String) {
