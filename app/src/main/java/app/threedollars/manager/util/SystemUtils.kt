@@ -3,6 +3,7 @@ package app.threedollars.manager.util
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.core.app.ActivityCompat
 import app.threedollars.manager.R
 import com.naver.maps.geometry.LatLng
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +60,10 @@ inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier =
         interactionSource = remember { MutableInteractionSource() }) {
         onClick()
     }
+}
+
+fun Context.hasPermissions(permissions: List<String>): Boolean = permissions.all {
+    ActivityCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
 }
 
 suspend fun convertImageUrlToRequestBody(imageUrl: String): RequestBody? {

@@ -22,6 +22,7 @@ object Versions {
     const val COMPOSE_NAVIGATION = "2.5.3"
     const val COMPOSE_LIFECYCLE = "2.6.0-alpha04"
     const val COMPOSE_COIL = "2.3.0"
+    const val COMPOSE_PERMISSIONS = "0.31.3-beta"
 
     const val PAGING = "3.1.1"
     const val PAGING_COMPOSE = "1.0.0-alpha18"

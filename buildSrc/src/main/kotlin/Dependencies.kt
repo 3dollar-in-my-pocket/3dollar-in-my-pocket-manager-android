@@ -55,6 +55,7 @@ object Dependencies {
             "androidx.navigation:navigation-compose:${Versions.COMPOSE_NAVIGATION}"
         const val COMPOSE_LIFECYCLE = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.COMPOSE_LIFECYCLE}"
         const val COMPOSE_COIL = "io.coil-kt:coil-compose:${Versions.COMPOSE_COIL}"
+        const val COMPOSE_PERMISSIONS = "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_PERMISSIONS}"
     }
 
     object Paging {
@@ -121,6 +122,7 @@ object Dependencies {
         implementation(Compose.COMPOSE_VIEWMODEL)
         implementation(Compose.COMPOSE_NAVIGATION)
         implementation(Compose.COMPOSE_LIFECYCLE)
+        implementation(Compose.COMPOSE_PERMISSIONS)
         implementation(Paging.PAGING)
         implementation(Paging.PAGING_COMPOSE)
         kapt(Hilt.HILT_COMPILER)
