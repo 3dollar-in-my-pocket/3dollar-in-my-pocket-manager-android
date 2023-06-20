@@ -17,12 +17,10 @@ class BossStoreRetrieveUseCaseImpl @Inject constructor(private val storeReposito
     override fun getBossStoreRetrieveAround(
         categoryId: String,
         distanceKm: Int,
-        latitude: Double,
-        longitude: Double,
         mapLatitude: Double,
         mapLongitude: Double,
         orderType: String,
         size: Int
     ): Flow<Resource<List<BossStoreRetrieveAroundDto>>> =
-        storeRepository.getBossStoreRetrieveAround(categoryId, distanceKm, latitude, longitude, mapLatitude, mapLongitude, orderType, size)
+        storeRepository.getBossStoreRetrieveAround(categoryId, distanceKm, mapLatitude, mapLongitude, orderType, size)
 }

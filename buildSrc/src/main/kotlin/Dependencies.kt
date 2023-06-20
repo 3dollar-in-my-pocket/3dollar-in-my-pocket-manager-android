@@ -109,6 +109,7 @@ object Dependencies {
         implementation(Android.LIFECYCLE_KTX)
         implementation(Android.FRAGMENT_KTX)
         implementation(Android.DATASTORE)
+        implementation(Android.GOOGLE_LOCATION)
         implementation(Android.ANDROIDX_APPCOMPAT)
         implementation(Android.ANDROID_MATERIAL)
         implementation(Android.CONSTRAINT_LAYOUT)

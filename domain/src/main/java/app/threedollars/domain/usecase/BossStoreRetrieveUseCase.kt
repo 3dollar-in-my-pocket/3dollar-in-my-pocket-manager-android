@@ -11,14 +11,12 @@ interface BossStoreRetrieveUseCase {
     fun getBossStoreRetrieveMe(): Flow<Resource<BossStoreRetrieveDto>>
 
     fun getBossStoreRetrieveAround(
-        categoryId: String,
-        distanceKm: Int,
-        latitude: Double,
-        longitude: Double,
+        categoryId: String = "",
+        distanceKm: Int = 1,
         mapLatitude: Double,
         mapLongitude: Double,
-        orderType: String,
-        size: Int
+        orderType: String = "DISTANCE_ASC",
+        size: Int = 30
     ): Flow<Resource<List<BossStoreRetrieveAroundDto>>>
 
 }

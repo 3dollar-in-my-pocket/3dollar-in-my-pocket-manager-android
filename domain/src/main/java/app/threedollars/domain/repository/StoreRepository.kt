@@ -46,8 +46,6 @@ interface StoreRepository {
     fun getBossStoreRetrieveAround(
         categoryId: String,
         distanceKm: Int,
-        latitude: Double,
-        longitude: Double,
         mapLatitude: Double,
         mapLongitude: Double,
         orderType: String,
