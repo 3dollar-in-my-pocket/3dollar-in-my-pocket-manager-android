@@ -63,9 +63,11 @@ class BossCommentActivity : AppCompatActivity() {
 
     @Composable
     fun BossCommentScreen(viewModel: MyViewModel = hiltViewModel()) {
+        viewModel.getBossStoreRetrieveMe()
         val bossStore = viewModel.bossStoreRetrieveMe.collectAsState(null)
         val isSuccess = viewModel.isSuccess.collectAsState(null)
         val context = LocalContext.current
+        var comment by remember { mutableStateOf(TextFieldValue(bossStore.value?.introduction ?: "")) }
 
         LaunchedEffect(isSuccess.value) {
             if (isSuccess.value == true) {
@@ -75,13 +77,15 @@ class BossCommentActivity : AppCompatActivity() {
             }
         }
 
+        LaunchedEffect(bossStore.value) {
+            comment = TextFieldValue(bossStore.value?.introduction.toString())
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.White)
         ) {
-            var comment by remember { mutableStateOf(TextFieldValue(bossStore.value?.introduction ?: "")) }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,7 +145,9 @@ class BossCommentActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .height(64.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.White),
-                onClick = { viewModel.patchIntroduction(bossStoreId = bossStore.value?.bossStoreId, introduction = comment.text) }) {
+                onClick = {
+                    viewModel.patchIntroduction(bossStoreId = bossStore.value?.bossStoreId, introduction = comment.text)
+                }) {
                 Text(text = "저장하기", fontSize = 16.sp, fontWeight = FontWeight.W500)
             }
         }
