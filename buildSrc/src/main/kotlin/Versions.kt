@@ -40,6 +40,7 @@ object Versions {
 
     const val RETROFIT = "2.9.0"
     const val MOSHI = "1.13.0"
+    const val GSON = "2.8.8"
     const val MOSHI_CONVERTER = "2.4.0"
     const val OKHTTP = "4.9.1"
 
