@@ -20,23 +20,24 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val bossAccountUseCase: BossAccountUseCase,
-    private val bossDeviceUseCase: BossDeviceUseCase
+    private val bossDeviceUseCase: BossDeviceUseCase,
 ) : BaseViewModel() {
 
     private val _loginNavItem = MutableEventFlow<LoginNavItem>()
     val loginNavItem: EventFlow<LoginNavItem> get() = _loginNavItem
     fun login(accessToken: String) {
         viewModelScope.launch(exceptionHandler) {
-            authUseCase.login("KAKAO", accessToken).collect {
-                authUseCase.saveSocialAccessToken(accessToken).collect()
-                if (it.code.toString() == "200") {
-                    it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token).collect {
-                            checkMyInfo()
+            authUseCase.login("KAKAO", accessToken).collect { loginDto ->
+                authUseCase.saveSocialAccessToken(accessToken).collect {
+                    if (loginDto.code.toString() == "200") {
+                        loginDto.data?.token?.let { token ->
+                            authUseCase.saveAccessToken(token).collect {
+                                checkMyInfo()
+                            }
                         }
+                    } else if (loginDto.code.toString() == "404") {
+                        _loginNavItem.emit(LoginNavItem.Sign)
                     }
-                } else if (it.code.toString() == "404") {
-                    _loginNavItem.emit(LoginNavItem.Sign)
                 }
             }
         }
