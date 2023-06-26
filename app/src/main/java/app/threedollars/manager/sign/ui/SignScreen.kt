@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import app.threedollars.common.BaseDialog
 import app.threedollars.common.ext.getResourceUri
 import app.threedollars.common.ui.FlowRow
 import app.threedollars.common.ui.Gray5
@@ -42,7 +43,12 @@ import okhttp3.RequestBody
 fun SignScreen(navController: NavHostController, viewModel: SignViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val navItem by viewModel.loginNavItem.collectAsStateWithLifecycle(null)
+    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle(null)
+    var isErrorDialog by remember { mutableStateOf(false) }
 
+    if (isErrorDialog) {
+        BaseDialog(title = "Error", message = errorMessage.toString(), confirmText = "확인", onConfirm = { isErrorDialog = false })
+    }
     Column(
         modifier = Modifier
             .fillMaxSize(1f)
@@ -56,6 +62,11 @@ fun SignScreen(navController: NavHostController, viewModel: SignViewModel = hilt
         navItem?.let {
             navController.popBackStack()
             navController.navigate(it.screenRoute)
+        }
+    }
+    LaunchedEffect(errorMessage) {
+        if (!errorMessage.isNullOrEmpty()) {
+            isErrorDialog = true
         }
     }
 }
@@ -128,7 +139,7 @@ private fun SignBottom(viewModel: SignViewModel) {
 private fun InitTextField(
     onChangeBossNameText: (String) -> Unit,
     onChangeStoreNameText: (String) -> Unit,
-    onChangeBusinessNumberText: (String) -> Unit
+    onChangeBusinessNumberText: (String) -> Unit,
 ) {
     SignTextFieldContent(
         titleText = "사장님 성함",
