@@ -10,7 +10,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import app.threedollars.common.ui.Gray70
 import app.threedollars.common.ui.Green
@@ -26,10 +29,15 @@ fun BaseDialog(
     onDismiss: (() -> Unit)? = null,
 ) {
     Row() {
+        val annotatedMessage = buildAnnotatedString {
+            withStyle(style = SpanStyle()) {
+                append(message)
+            }
+        }
         AlertDialog(
             onDismissRequest = { onDismiss },
             title = { Text(modifier = Modifier.fillMaxWidth(), text = title, textAlign = TextAlign.Center) },
-            text = { Text(modifier = Modifier.fillMaxWidth(), text = message, textAlign = TextAlign.Center) },
+            text = { Text(modifier = Modifier.fillMaxWidth(), text = annotatedMessage, textAlign = TextAlign.Center) },
             buttons = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -40,7 +48,7 @@ fun BaseDialog(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
-                                .padding(4.dp), onClick = onDismiss,
+                                .padding(8.dp), onClick = onDismiss,
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = White,
                                 backgroundColor = Gray70
@@ -56,7 +64,7 @@ fun BaseDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(4.dp),
+                            .padding(8.dp),
                         colors = ButtonDefaults.buttonColors(
                             contentColor = White,
                             backgroundColor = Green
