@@ -79,6 +79,7 @@ object Dependencies {
         const val MOSHI_KOTLIN = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
         const val MOSHI_CONVERTER = "com.squareup.retrofit2:converter-moshi:${Versions.MOSHI_CONVERTER}"
         const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
+        const val GSON= "com.google.code.gson:gson:${Versions.GSON}"
     }
 
     object LOTTIE {

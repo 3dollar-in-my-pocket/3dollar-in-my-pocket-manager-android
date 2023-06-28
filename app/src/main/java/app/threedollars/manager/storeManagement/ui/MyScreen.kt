@@ -8,12 +8,14 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -227,7 +229,16 @@ fun MenuItem(menu: Menu = emptyMenu) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = menu.menuPrice, fontSize = 14.sp, color = Gray95)
         }
-        AsyncImage(model = menu.menuImage, contentDescription = "메뉴 이미지", placeholder = painterResource(id = R.drawable.ic_empty_menu))
+        AsyncImage(
+            modifier = Modifier
+                .width(40.dp)
+                .height(40.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.FillBounds,
+            model = menu.menuImage,
+            contentDescription = "메뉴 이미지",
+            placeholder = painterResource(id = R.drawable.ic_empty_menu)
+        )
     }
 }
 
@@ -287,7 +298,7 @@ data class BusinessSchedule(
     val locationDescription: String,
     val openingHours: String,
     val isOpen: Boolean,
-    val isWeekend: Boolean
+    val isWeekend: Boolean,
 )
 
 val emptyBusinessSchedules = listOf(
@@ -303,7 +314,7 @@ val emptyBusinessSchedules = listOf(
 class Menu(
     val menuName: String,
     val menuImage: String,
-    val menuPrice: String
+    val menuPrice: String,
 )
 
 val emptyMenu = Menu("아저씨 못난이 핫도그", "", "5,000원")
@@ -311,7 +322,7 @@ val emptyMenu = Menu("아저씨 못난이 핫도그", "", "5,000원")
 data class Title(
     val title: String,
     val buttonName: String,
-    val buttonClick: () -> Unit
+    val buttonClick: () -> Unit,
 )
 
 val emptyTitle = Title("사장님 한마디", "정보 수정") {}
@@ -320,7 +331,7 @@ data class Profile(
     val image: String,
     val name: String,
     val category: List<String>,
-    val snsLink: String
+    val snsLink: String,
 )
 
 val emptyProfile = Profile(

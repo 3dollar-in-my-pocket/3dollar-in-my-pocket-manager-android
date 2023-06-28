@@ -28,7 +28,7 @@ class SignViewModel @Inject constructor(
     private val platformStoreCategoryUseCase: PlatformStoreCategoryUseCase,
     private val authUseCase: AuthUseCase,
     private val imageUploadUseCase: ImageUploadUseCase,
-    private val bossDeviceUseCase: BossDeviceUseCase
+    private val bossDeviceUseCase: BossDeviceUseCase,
 ) : BaseViewModel() {
 
     val categoryItemState = mutableStateListOf<StoreCategoriesVo>()
@@ -62,15 +62,7 @@ class SignViewModel @Inject constructor(
             if (certificationPhotoRequestBody != null) {
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", certificationPhotoRequestBody).collect { it ->
                     if (it.code == "200") {
-                        val accessToken = TokenManager.instance.getToken()?.accessToken
-                        if (accessToken == null) {
-                            // TODO: 토큰이 없을때 처리
-                            return@collect
-                        }
-                        if (businessNumber.length != 10) {
-                            return@collect
-                            // TODO: 사업자 등록 번호 이상할 때
-                        }
+                        val accessToken = TokenManager.instance.getToken()?.accessToken ?: return@collect
                         var businessNumberHyphen = ""
                         businessNumber.forEachIndexed { index, c ->
                             businessNumberHyphen += c
@@ -97,10 +89,10 @@ class SignViewModel @Inject constructor(
                                 )
                                 deferredList.awaitAll()
                                 _loginNavItem.emit(LoginNavItem.Waiting)
-                            } else {
-                                // TODO: 토큰이 비어있거나 Null일때
                             }
-                            // TODO: 에러 메시지 처리 result.errorMessage
+                            if (!result.errorMessage.isNullOrEmpty()) {
+                                setErrorMessage(result.errorMessage.toString())
+                            }
                         }
                     }
                 }

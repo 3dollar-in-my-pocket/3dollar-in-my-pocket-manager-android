@@ -70,7 +70,7 @@ fun FaqScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 32.dp, bottom = 32.dp)
+                .padding(top = 16.dp, bottom = 16.dp)
         ) {
             val categorySet = mutableSetOf<String>()
 

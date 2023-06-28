@@ -1,8 +1,8 @@
 package app.threedollars.common
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
@@ -15,8 +15,8 @@ open class BaseViewModel : ViewModel() {
     private val _isLoading: MutableEventFlow<Boolean> = MutableEventFlow()
     val isLoading: EventFlow<Boolean> = _isLoading
 
-    private val _toastMsg: MutableEventFlow<Int> = MutableEventFlow()
-    val toastMsg: EventFlow<Int> = _toastMsg
+    private val _errorMessage: MutableEventFlow<String> = MutableEventFlow()
+    val errorMessage: EventFlow<String> = _errorMessage.asEventFlow()
 
     fun setLoading(value: Boolean) {
         viewModelScope.launch {
@@ -24,9 +24,12 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
-    fun setToastMsg(@StringRes resId: Int) {
+    fun setErrorMessage(text: String) {
         viewModelScope.launch {
-            _toastMsg.emit(resId)
+            val gson = Gson()
+            val responseData = gson.fromJson(text, ErrorResponse::class.java)
+            val message = responseData.message
+            _errorMessage.emit(message)
         }
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import app.threedollars.common.BaseDialog
 import app.threedollars.manager.LoginActivity
 import app.threedollars.manager.MainActivity
 import app.threedollars.manager.R
@@ -49,9 +50,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 @Composable
 fun SettingScreen(
     navController: NavHostController,
-    viewModel: SettingViewModel = hiltViewModel()
+    viewModel: SettingViewModel = hiltViewModel(),
 ) {
     val openWebPage = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result -> }
+
 
     Column(
         modifier = Modifier
@@ -64,12 +66,24 @@ fun SettingScreen(
 
         val bossAccountInfo by viewModel.bossAccountInfo.collectAsStateWithLifecycle(null)
         val isSuccess by viewModel.isSuccess.collectAsStateWithLifecycle(false)
+        var isSignOutDialog by remember { mutableStateOf(false) }
         var switchOn by remember { mutableStateOf(false) }
 
         LaunchedEffect(bossAccountInfo) {
             switchOn = bossAccountInfo?.isSetupNotification == true
         }
 
+        if (isSignOutDialog) {
+            BaseDialog(
+                title = "회원탈퇴",
+                message = "회원 탈퇴 시, 그동안의 데이터가\n모두 삭제됩니다.\n회원탈퇴하시겠습니까?",
+                confirmText = "탈퇴",
+                dismissText = "취소",
+                onConfirm = {
+                    viewModel.signOut()
+                },
+                onDismiss = { isSignOutDialog = false })
+        }
         Text(
             text = stringResource(R.string.setting),
             fontWeight = FontWeight.W600,
@@ -171,9 +185,7 @@ fun SettingScreen(
         Row(
             Modifier
                 .padding(start = 24.dp, top = 24.dp)
-                .clickable {
-                    viewModel.signOut()
-                },
+                .clickable { isSignOutDialog = true },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(

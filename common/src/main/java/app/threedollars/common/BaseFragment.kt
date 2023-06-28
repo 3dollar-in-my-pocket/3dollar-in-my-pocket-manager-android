@@ -31,11 +31,6 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
     open fun observeData() {
         viewLifecycleOwner.repeatOnCreated {
             launch {
-                viewModel.toastMsg.collect {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                }
-            }
-            launch {
                 viewModel.isLoading.collect {
                     initLoadingEvent(it)
                 }
