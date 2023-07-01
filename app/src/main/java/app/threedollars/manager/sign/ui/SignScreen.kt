@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import app.threedollars.common.BaseDialog
+import app.threedollars.common.ValueWrapper
 import app.threedollars.common.ext.getResourceUri
 import app.threedollars.common.ui.FlowRow
 import app.threedollars.common.ui.Gray5
@@ -43,11 +44,11 @@ import okhttp3.RequestBody
 fun SignScreen(navController: NavHostController, viewModel: SignViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val navItem by viewModel.loginNavItem.collectAsStateWithLifecycle(null)
-    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle(null)
+    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle(ValueWrapper(""))
     var isErrorDialog by remember { mutableStateOf(false) }
 
     if (isErrorDialog) {
-        BaseDialog(title = "Error", message = errorMessage.toString(), confirmText = "확인", onConfirm = { isErrorDialog = false })
+        BaseDialog(title = "Error", message = errorMessage.value, confirmText = "확인", onConfirm = { isErrorDialog = false })
     }
     Column(
         modifier = Modifier
@@ -65,7 +66,7 @@ fun SignScreen(navController: NavHostController, viewModel: SignViewModel = hilt
         }
     }
     LaunchedEffect(errorMessage) {
-        if (!errorMessage.isNullOrEmpty()) {
+        if (errorMessage.value.isNotEmpty()) {
             isErrorDialog = true
         }
     }

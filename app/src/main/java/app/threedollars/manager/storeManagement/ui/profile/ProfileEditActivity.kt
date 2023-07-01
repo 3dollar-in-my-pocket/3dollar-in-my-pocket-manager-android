@@ -1,6 +1,5 @@
 package app.threedollars.manager.storeManagement.ui.profile
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.net.Uri
 import android.os.Bundle
@@ -29,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.threedollars.common.BaseDialog
+import app.threedollars.common.ValueWrapper
 import app.threedollars.common.ext.toStringDefault
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
@@ -67,7 +68,17 @@ fun ProfileEditScreen(viewModel: ProfileEditViewModel = hiltViewModel()) {
     var imageRequestBody by remember { mutableStateOf<RequestBody?>(null) }
     var sns by remember(bossStore) { mutableStateOf(bossStore?.snsUrl.toStringDefault()) }
     val imageUrl by remember(bossStore) { mutableStateOf(bossStore?.imageUrl.toStringDefault()) }
-    isEnable = (name.isNotEmpty() && name != bossStore?.name) || selectedList.isNotEmpty()
+    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle(ValueWrapper(""))
+    var isErrorDialog by remember { mutableStateOf(false) }
+    if (isErrorDialog) {
+        BaseDialog(title = "Error", message = errorMessage.value, confirmText = "확인", onConfirm = { isErrorDialog = false })
+    }
+    LaunchedEffect(errorMessage) {
+        if (errorMessage.value.isNotEmpty()) {
+            isErrorDialog = true
+        }
+    }
+    isEnable = (name.isNotEmpty() && name != bossStore?.name) || (selectedList.isNotEmpty() && selectedList != bossStore?.categories?.map { it.categoryId })
     LaunchedEffect(editComplete) {
         if (editComplete) {
             context.findActivity().setResult(RESULT_OK)

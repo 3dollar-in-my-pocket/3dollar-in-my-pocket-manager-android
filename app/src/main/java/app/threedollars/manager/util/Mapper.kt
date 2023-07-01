@@ -77,12 +77,12 @@ fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
 )
 
 fun CategoriesDto.dtoToVo() = CategoriesVo(
-    category = category,
-    categoryId = categoryId,
-    description = description,
-    imageUrl = imageUrl,
-    isNew = isNew,
-    name = name
+    category = category.toStringDefault(),
+    categoryId = categoryId.toStringDefault(),
+    description = description.toStringDefault(),
+    imageUrl = imageUrl.toStringDefault(),
+    isNew = isNew ?: false,
+    name = name.toStringDefault()
 )
 
 fun CategoryInfoDto.dtoToVo() = CategoryInfoVo(

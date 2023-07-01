@@ -51,6 +51,9 @@ class ProfileEditViewModel @Inject constructor(
                         categoryItemState.addAll(categoriesVo)
                     }
                 }
+                if (!it.errorMessage.isNullOrEmpty()) {
+                    setErrorMessage(it.errorMessage.toString())
+                }
             }
         }
     }
@@ -64,6 +67,9 @@ class ProfileEditViewModel @Inject constructor(
                         _selectedItems.value = data.categories.map { it.categoryId.toStringDefault() }
                         getCategory()
                     }
+                }
+                if (!it.errorMessage.isNullOrEmpty()) {
+                    setErrorMessage(it.errorMessage.toString())
                 }
             }
         }
@@ -79,6 +85,9 @@ class ProfileEditViewModel @Inject constructor(
             if (imageRequestBody == null) {
                 bossStoreUseCase.patchBossStore(bossStoreId = id, name = name, snsUrl = sns, categoriesIds = selectedItems.value).collect {
                     if(it.code == "200") _editComplete.emit(true)
+                    if (!it.errorMessage.isNullOrEmpty()) {
+                        setErrorMessage(it.errorMessage.toString())
+                    }
                 }
             } else {
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", imageRequestBody).collect { it ->
@@ -92,6 +101,9 @@ class ProfileEditViewModel @Inject constructor(
                         ).collect {
                             if(it.code == "200") _editComplete.emit(true)
                         }
+                    }
+                    if (!it.errorMessage.isNullOrEmpty()) {
+                        setErrorMessage(it.errorMessage.toString())
                     }
                 }
             }
