@@ -55,12 +55,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
     )
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val notificationPermissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
-        if (!notificationPermissionState.status.isGranted) {
-            SideEffect { notificationPermissionState.launchPermissionRequest() }
-        }
-    }
+    val cameraPositionState = rememberCameraPositionState()
     val bossStoreRetrieveMe by viewModel.bossStoreRetrieveMe.collectAsState(null)
     var location by remember { mutableStateOf(com.naver.maps.map.NaverMap.DEFAULT_CAMERA_POSITION.target) }
     val currentLocation by remember(location) { mutableStateOf(location) }
@@ -68,6 +63,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val getCurrentLocation = {
         currentLocationState(context, fusedLocationClient) {
             location = it
+            cameraPositionState.position = CameraPosition(location, cameraPositionState.position.zoom)
             viewModel.getBossStoreAround(it)
         }
     }
@@ -85,7 +81,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 .fillMaxWidth()
                 .fillMaxHeight(0.77f)
         ) {
-            MapView(modifier = Modifier, viewModel, currentLocation, isFoodTruckCheck)
+            MapView(modifier = Modifier, viewModel, cameraPositionState, currentLocation, isFoodTruckCheck)
             Text(
                 text = address,
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.Black),
@@ -223,12 +219,8 @@ fun HomeBottomOff(modifier: Modifier, click: () -> Unit) {
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-fun MapView(modifier: Modifier, viewModel: HomeViewModel, location: LatLng, isFoodTruckCheck: Boolean) {
-    val cameraPositionState = rememberCameraPositionState()
+fun MapView(modifier: Modifier, viewModel: HomeViewModel, cameraPositionState: CameraPositionState, location: LatLng, isFoodTruckCheck: Boolean) {
     val bossStoreAround by viewModel.bossStoreAround.collectAsStateWithLifecycle()
-    LaunchedEffect(location) {
-        cameraPositionState.position = CameraPosition(location, cameraPositionState.position.zoom)
-    }
     NaverMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
@@ -250,10 +242,12 @@ fun MapView(modifier: Modifier, viewModel: HomeViewModel, location: LatLng, isFo
 
 fun currentLocationState(context: Context, fusedLocationClient: FusedLocationProviderClient, onCurrentLocation: (LatLng) -> Unit) {
     val permissionCheck =
-        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     if (permissionCheck) {
-        onCurrentLocation(LatLng(fusedLocationClient.lastLocation.result.latitude, fusedLocationClient.lastLocation.result.longitude))
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            onCurrentLocation(LatLng(it.latitude, it.longitude))
+        }
     }
 }
 

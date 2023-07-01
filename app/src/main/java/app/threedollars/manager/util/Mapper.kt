@@ -150,8 +150,8 @@ fun ImageUploadDto.dtoToVo() = ImageUploadVo(
 )
 
 fun LocationDto?.dtoToVo() = LocationVo(
-    latitude = this?.latitude?.toDoubleDefault(),
-    longitude = this?.longitude?.toDoubleDefault()
+    latitude = this?.latitude.toDoubleDefault(),
+    longitude = this?.longitude.toDoubleDefault()
 )
 
 fun LoginDto.dtoToVo() = LoginVo(

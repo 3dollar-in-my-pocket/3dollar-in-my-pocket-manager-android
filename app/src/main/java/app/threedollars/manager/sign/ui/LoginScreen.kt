@@ -1,6 +1,8 @@
 package app.threedollars.manager.sign.ui
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,7 +30,11 @@ import app.threedollars.manager.R
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.sign.viewmodel.LoginViewModel
 import app.threedollars.manager.util.findActivity
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController,
@@ -37,7 +43,12 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val navItem by viewModel.loginNavItem.collectAsStateWithLifecycle(null)
-
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val notificationPermissionState = rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+        if (!notificationPermissionState.status.isGranted) {
+            SideEffect { notificationPermissionState.launchPermissionRequest() }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxHeight()
