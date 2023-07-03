@@ -112,14 +112,12 @@ class StoreRepositoryImpl @Inject constructor(
     override fun getBossStoreRetrieveAround(
         categoryId: String,
         distanceKm: Int,
-        latitude: Double,
-        longitude: Double,
         mapLatitude: Double,
         mapLongitude: Double,
         orderType: String,
         size: Int
     ): Flow<Resource<List<BossStoreRetrieveAroundDto>>> {
-        return remoteDataSource.getBossStoreRetrieveAround(categoryId, distanceKm, latitude, longitude, mapLatitude, mapLongitude, orderType, size)
+        return remoteDataSource.getBossStoreRetrieveAround(categoryId, distanceKm, mapLatitude, mapLongitude, orderType, size)
             .map {
                 if (it.data != null) {
                     Resource.Success(data = it.data!!.toDto(), code = it.code)

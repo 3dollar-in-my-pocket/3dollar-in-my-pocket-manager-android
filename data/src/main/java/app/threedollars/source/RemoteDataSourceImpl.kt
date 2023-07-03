@@ -82,8 +82,6 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
     override fun getBossStoreRetrieveAround(
         categoryId: String,
         distanceKm: Int,
-        latitude: Double,
-        longitude: Double,
         mapLatitude: Double,
         mapLongitude: Double,
         orderType: String,
@@ -94,8 +92,6 @@ class RemoteDataSourceImpl @Inject constructor(private val networkService: Netwo
                 networkService.getBossStoreRetrieveAround(
                     categoryId,
                     distanceKm,
-                    latitude,
-                    longitude,
                     mapLatitude,
                     mapLongitude,
                     orderType,

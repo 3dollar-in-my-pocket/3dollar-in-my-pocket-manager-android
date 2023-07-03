@@ -47,16 +47,16 @@ fun BossEnumsDto.dtoToVo() = BossEnumsVo(
 )
 
 fun BossStoreRetrieveAroundDto.dtoToVo() = BossStoreRetrieveAroundVo(
-    bossStoreId = bossStoreId,
+    bossStoreId = bossStoreId.toStringDefault(),
     categories = categories.map { it.dtoToVo() },
-    createdAt = createdAt,
-    distance = distance,
-    location = location?.dtoToVo(),
+    createdAt = createdAt.toStringDefault(),
+    distance = distance.toIntDefault(),
+    location = location?.dtoToVo() ?: LocationVo(),
     menus = menus.map { it.dtoToVo() },
-    name = name,
+    name = name.toStringDefault(),
     openStatus = openStatus.dtoToVo(),
-    totalFeedbacksCounts = totalFeedbacksCounts,
-    updatedAt = updatedAt
+    totalFeedbacksCounts = totalFeedbacksCounts.toIntDefault(),
+    updatedAt = updatedAt.toStringDefault()
 )
 
 fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
@@ -150,8 +150,8 @@ fun ImageUploadDto.dtoToVo() = ImageUploadVo(
 )
 
 fun LocationDto?.dtoToVo() = LocationVo(
-    latitude = this?.latitude?.toDoubleDefault(),
-    longitude = this?.longitude?.toDoubleDefault()
+    latitude = this?.latitude.toDoubleDefault(),
+    longitude = this?.longitude.toDoubleDefault()
 )
 
 fun LoginDto.dtoToVo() = LoginVo(

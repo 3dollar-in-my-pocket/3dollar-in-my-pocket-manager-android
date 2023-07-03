@@ -2,14 +2,14 @@ package app.threedollars.manager.vo
 
 
 data class BossStoreRetrieveAroundVo(
-    val bossStoreId: String? = null,
+    val bossStoreId: String,
     val categories: List<CategoriesVo> = listOf(),
-    val createdAt: String? = null,
-    val distance: Int? = null,
-    val location: LocationVo? = null,
+    val createdAt: String,
+    val distance: Int,
+    val location: LocationVo,
     val menus: List<MenusVo> = listOf(),
-    val name: String? = null,
+    val name: String,
     val openStatus: OpenStatusVo,
-    val totalFeedbacksCounts: Int? = null,
-    val updatedAt: String? = null
+    val totalFeedbacksCounts: Int,
+    val updatedAt: String
 )

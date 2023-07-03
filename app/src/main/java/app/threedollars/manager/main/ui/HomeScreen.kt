@@ -1,6 +1,9 @@
 package app.threedollars.manager.main.ui
 
 import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,39 +24,51 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.threedollars.common.ext.toStringDefault
+import app.threedollars.common.ui.Pink_OP20
 import app.threedollars.manager.R
 import app.threedollars.manager.main.viewmodel.HomeViewModel
 import app.threedollars.manager.util.getCurrentLocationName
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
+import com.naver.maps.map.overlay.OverlayImage
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 
-@OptIn(ExperimentalNaverMapApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
     val locationPermissionsState = rememberMultiplePermissionsState(
         listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
     )
+    val cameraPositionState = rememberCameraPositionState()
     val bossStoreRetrieveMe by viewModel.bossStoreRetrieveMe.collectAsState(null)
     var location by remember { mutableStateOf(com.naver.maps.map.NaverMap.DEFAULT_CAMERA_POSITION.target) }
-    var currentLocation by remember(location) { mutableStateOf(location) }
+    val currentLocation by remember(location) { mutableStateOf(location) }
     var address by remember(location) { mutableStateOf(context.getCurrentLocationName(location)) }
-    if (locationPermissionsState.allPermissionsGranted) {
-        rememberFusedLocationSource().activate {
-            it?.let { location = LatLng(it) }
+    val getCurrentLocation = {
+        currentLocationState(context, fusedLocationClient) {
+            location = it
+            cameraPositionState.position = CameraPosition(location, cameraPositionState.position.zoom)
+            viewModel.getBossStoreAround(it)
         }
+    }
+    if (locationPermissionsState.allPermissionsGranted) {
+        getCurrentLocation()
     } else {
         SideEffect { locationPermissionsState.launchMultiplePermissionRequest() }
         address = "위치권한을 허락해주세요."
@@ -66,7 +81,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                 .fillMaxWidth()
                 .fillMaxHeight(0.77f)
         ) {
-            MapView(modifier = Modifier, currentLocation)
+            MapView(modifier = Modifier, viewModel, cameraPositionState, currentLocation, isFoodTruckCheck)
             Text(
                 text = address,
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.Black),
@@ -99,7 +114,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "다른 푸드트럭 보기", fontSize = 14.sp, color = colorResource(id = R.color.gray100))
                 }
-                IconButton(onClick = { currentLocation = LatLng(location.latitude, location.longitude) }) {
+                IconButton(onClick = { getCurrentLocation() }) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_location),
                         contentDescription = "내 위치 아이콘"
@@ -204,20 +219,35 @@ fun HomeBottomOff(modifier: Modifier, click: () -> Unit) {
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-fun MapView(modifier: Modifier, location: LatLng) {
-    val cameraPositionState = rememberCameraPositionState()
-    LaunchedEffect(location) {
-        cameraPositionState.position = CameraPosition(location, cameraPositionState.position.zoom)
-    }
+fun MapView(modifier: Modifier, viewModel: HomeViewModel, cameraPositionState: CameraPositionState, location: LatLng, isFoodTruckCheck: Boolean) {
+    val bossStoreAround by viewModel.bossStoreAround.collectAsStateWithLifecycle()
     NaverMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
         properties = MapProperties(locationTrackingMode = LocationTrackingMode.None),
         uiSettings = MapUiSettings(isZoomControlEnabled = false, isLocationButtonEnabled = false),
-        onLocationChange = {
-
-        },
     ) {
+        Marker(state = MarkerState(location), icon = OverlayImage.fromResource(R.drawable.ic_marker))
+        CircleOverlay(center = location, color = Pink_OP20, radius = 148.dp.value.toDouble())
+        if (isFoodTruckCheck) {
+            bossStoreAround.forEach {
+                Marker(
+                    state = MarkerState(LatLng(it.location.latitude, it.location.longitude)),
+                    icon = OverlayImage.fromResource(R.drawable.ic_marker_disable)
+                )
+            }
+        }
+    }
+}
+
+fun currentLocationState(context: Context, fusedLocationClient: FusedLocationProviderClient, onCurrentLocation: (LatLng) -> Unit) {
+    val permissionCheck =
+        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    if (permissionCheck) {
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            onCurrentLocation(LatLng(it.latitude, it.longitude))
+        }
     }
 }
 

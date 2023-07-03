@@ -68,12 +68,10 @@ interface NetworkService {
     @GET("v1/boss/store/me")
     suspend fun getBossStoreRetrieveMe(): Response<BaseResponse<BossStoreRetrieveResponse>>
 
-    @GET("v1/boss/store/around")
+    @GET("v1/boss/stores/around")
     suspend fun getBossStoreRetrieveAround(
         @Query("categoryId") categoryId: String = "",
         @Query("distanceKm") distanceKm: Int = 1,
-        @Query("latitude") latitude: Double,
-        @Query("longitude") longitude: Double,
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
         @Query("orderType") orderType: String = "DISTANCE_ASC",
