@@ -62,37 +62,36 @@ class SignViewModel @Inject constructor(
             if (certificationPhotoRequestBody != null) {
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", certificationPhotoRequestBody).collect { it ->
                     if (it.code == "200") {
-                        val accessToken = TokenManager.instance.getToken()?.accessToken ?: return@collect
-                        var businessNumberHyphen = ""
-                        businessNumber.forEachIndexed { index, c ->
-                            businessNumberHyphen += c
-                            if (index == 2 || index == 4) {
-                                businessNumberHyphen += "-"
-                            }
+                val accessToken = TokenManager.instance.getToken()?.accessToken ?: ""
+                var businessNumberHyphen = ""
+                businessNumber.forEachIndexed { index, c ->
+                    businessNumberHyphen += c
+                    if (index == 2 || index == 4) {
+                        businessNumberHyphen += "-"
+                    }
 
-                        }
-                        authUseCase.signUp(
-                            bossName = bossName,
-                            businessNumber = businessNumberHyphen,
-                            certificationPhotoUrl = it.data?.imageUrl.toString(),
-                            socialType = "KAKAO",
-                            storeCategoriesIds = selectedItems.map { selectedItem -> selectedItem.categoryId },
-                            storeName = storeName,
-                            token = accessToken
-                        ).collect { result ->
-                            val token = result.data?.token
-                            if (!token.isNullOrEmpty()) {
-                                val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
-                                val deferredList = listOf(
-                                    async { bossDeviceUseCase.putBossDevice("FCM", firebaseToken.await()) },
-                                    async { authUseCase.saveAccessToken(token) }
-                                )
-                                deferredList.awaitAll()
+                }
+                authUseCase.signUp(
+                    bossName = bossName,
+                    businessNumber = businessNumberHyphen,
+                    certificationPhotoUrl = it.data?.imageUrl.toString(),
+                    socialType = "KAKAO",
+                    storeCategoriesIds = selectedItems.map { selectedItem -> selectedItem.categoryId },
+                    storeName = storeName,
+                    token = accessToken
+                ).collect { result ->
+                    val token = result.data?.token
+                    if (!token.isNullOrEmpty()) {
+                        val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
+                            authUseCase.saveAccessToken(token).collect{
+                                bossDeviceUseCase.putBossDevice("FCM", firebaseToken.await()).collect{
                                 _loginNavItem.emit(LoginNavItem.Waiting)
                             }
-                            if (!result.errorMessage.isNullOrEmpty()) {
-                                setErrorMessage(result.errorMessage.toString())
-                            }
+                        }
+                    }
+                    if (!result.errorMessage.isNullOrEmpty()) {
+                        setErrorMessage(result.errorMessage.toString())
+                    }
                         }
                     }
                 }
