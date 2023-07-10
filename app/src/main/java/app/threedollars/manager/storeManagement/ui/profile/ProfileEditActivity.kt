@@ -78,7 +78,7 @@ fun ProfileEditScreen(viewModel: ProfileEditViewModel = hiltViewModel()) {
             isErrorDialog = true
         }
     }
-    isEnable = (name.isNotEmpty() && name != bossStore?.name) || (selectedList.isNotEmpty() && selectedList != bossStore?.categories?.map { it.categoryId })
+    isEnable = (name.isNotEmpty() && name != bossStore?.name) || (selectedList.isNotEmpty() && selectedList != bossStore?.categories?.map { it.categoryId }) || sns != bossStore?.snsUrl
     LaunchedEffect(editComplete) {
         if (editComplete) {
             context.findActivity().setResult(RESULT_OK)
@@ -143,8 +143,7 @@ fun ProfileEditTop() {
 @Composable
 fun ProfileEditBottom(modifier: Modifier = Modifier, isEnable: Boolean = false, onClick: () -> Unit = {}) {
     Button(
-        modifier = modifier,
-        contentPadding = PaddingValues(vertical = 21.5.dp),
+        modifier = modifier.height(64.dp),
         onClick = { if (isEnable) onClick() },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,

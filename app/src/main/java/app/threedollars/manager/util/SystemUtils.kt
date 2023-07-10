@@ -38,7 +38,8 @@ fun Context.getCurrentLocationName(location: LatLng?): String {
             notFindMsg
         } else {
             with(addresses[0]) {
-                "$adminArea $subLocality"
+                val locality = subLocality ?: locality
+                "$adminArea $locality"
             }
         }
     } catch (e: Exception) {
