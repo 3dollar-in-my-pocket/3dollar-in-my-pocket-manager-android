@@ -4,9 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
@@ -139,6 +137,7 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
 @Composable
 fun HomeBottomOn(modifier: Modifier, openDate: String, click: () -> Unit) {
     var openTime by remember { mutableStateOf("") }
+    val scroll = rememberScrollState()
     LaunchedEffect(Unit) {
         while (true) {
             openTime = openDate.getTodayOpenTime()
@@ -151,6 +150,7 @@ fun HomeBottomOn(modifier: Modifier, openDate: String, click: () -> Unit) {
             .fillMaxWidth()
             .fillMaxHeight(0.25f)
             .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+            .verticalScroll(scroll)
     ) {
         Row(modifier = Modifier.padding(start = 2.dp)) {
             Text(
@@ -190,12 +190,14 @@ fun HomeBottomOn(modifier: Modifier, openDate: String, click: () -> Unit) {
 
 @Composable
 fun HomeBottomOff(modifier: Modifier, click: () -> Unit) {
+    val scroll = rememberScrollState()
     Column(
         modifier
             .background(Color.White, shape = RoundedCornerShape(topEnd = 20.dp, topStart = 20.dp))
             .fillMaxWidth()
             .fillMaxHeight(0.25f)
             .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+            .verticalScroll(scroll)
     ) {
         Text(
             text = "지금 계신 위치에서 영업을 시작할까요?",

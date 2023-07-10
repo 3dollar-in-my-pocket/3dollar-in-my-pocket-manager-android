@@ -156,7 +156,7 @@ fun ProfileContents(profile: Profile, editClick: () -> Unit) {
                 .background(Gray0, shape = RoundedCornerShape(12.dp))
                 .padding(12.dp)
         ) {
-            Text(text = "SNS", modifier = Modifier.width(44.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(text = "SNS", modifier = Modifier.defaultMinSize(44.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.width(41.dp))
             Text(text = profile.snsLink, color = Gray50, fontSize = 12.sp, textAlign = TextAlign.End)
         }
