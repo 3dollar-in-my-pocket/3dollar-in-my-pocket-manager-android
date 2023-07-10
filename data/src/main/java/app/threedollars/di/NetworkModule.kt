@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
@@ -33,28 +34,19 @@ object NetworkModule {
     @Singleton
     fun provideHeaderInterceptor(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        dataStoreManager: DataStoreManager
+        dataStoreManager: DataStoreManager,
     ): OkHttpClient {
-        var token: String
-        var versionName: String
-        var applicationId: String
-        runBlocking { token = dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: ""
-            versionName = dataStoreManager.getStringData(VERSION_NAME).firstOrNull() ?: ""
-            applicationId = dataStoreManager.getStringData(APPLICATION_ID).firstOrNull() ?: ""
-        }
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor {
+                val token = runBlocking { dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: "" }
+                val versionName = runBlocking { dataStoreManager.getStringData(VERSION_NAME).firstOrNull() ?: "" }
+                val applicationId = runBlocking { dataStoreManager.getStringData(APPLICATION_ID).firstOrNull() ?: "" }
+
                 val request = it.request().newBuilder()
                     .removeHeader("User-Agent")
-                    .addHeader(
-                        "User-Agent",
-                        versionName + " (${applicationId}); " + Build.VERSION.SDK_INT
-                    )
-                    .addHeader(
-                        "Authorization",
-                        "Bearer $token"
-                    )
+                    .addHeader("User-Agent", versionName + " (${applicationId}); " + Build.VERSION.SDK_INT)
+                    .addHeader("Authorization", "Bearer $token")
                     .addHeader("X-ANDROID-SERVICE-VERSION", BuildConfig.BUILD_TYPE + "_" + versionName)
                     .build()
                 it.proceed(request)

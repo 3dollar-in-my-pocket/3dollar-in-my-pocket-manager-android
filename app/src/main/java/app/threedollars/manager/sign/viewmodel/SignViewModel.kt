@@ -62,7 +62,7 @@ class SignViewModel @Inject constructor(
             if (certificationPhotoRequestBody != null) {
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", certificationPhotoRequestBody).collect { it ->
                     if (it.code == "200") {
-                        val accessToken = TokenManager.instance.getToken()?.accessToken ?: return@collect
+                        val accessToken = TokenManager.instance.getToken()?.accessToken ?: ""
                         var businessNumberHyphen = ""
                         businessNumber.forEachIndexed { index, c ->
                             businessNumberHyphen += c
@@ -83,12 +83,10 @@ class SignViewModel @Inject constructor(
                             val token = result.data?.token
                             if (!token.isNullOrEmpty()) {
                                 val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
-                                val deferredList = listOf(
-                                    async { bossDeviceUseCase.putBossDevice("FCM", firebaseToken.await()) },
-                                    async { authUseCase.saveAccessToken(token) }
-                                )
-                                deferredList.awaitAll()
-                                _loginNavItem.emit(LoginNavItem.Waiting)
+                                authUseCase.saveAccessToken(token).collect {
+                                    bossDeviceUseCase.putBossDevice("FCM", firebaseToken.await()).collect {}
+                                    _loginNavItem.emit(LoginNavItem.Waiting)
+                                }
                             }
                             if (!result.errorMessage.isNullOrEmpty()) {
                                 setErrorMessage(result.errorMessage.toString())
