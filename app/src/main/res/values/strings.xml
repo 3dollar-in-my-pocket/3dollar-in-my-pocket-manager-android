@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">ThreeDollarsManager</string>
+    <string name="faq">FAQ</string>
+    <string name="faq_title">어떤 점이 궁금하셨나요?</string>
+    <string name="q">Q.</string>
+    <string name="setting">설정</string>
+    <string name="business_number">사업자 번호</string>
+    <string name="call">가슴속 삼천원팀에 연락하기</string>
+    <string name="privacy_policy">개인정보 처리방침</string>
+    <string name="logout">로그아웃</string>
+    <string name="signout">회원탈퇴</string>
+    <string name="kakao_account_member">카카오 계정 회원</string>
+    <string name="naver_account_member">네이버 계정 회원</string>
+    <string name="setting_title">오늘도 적게 일하고 많이 버세요!</string>
 </resources>

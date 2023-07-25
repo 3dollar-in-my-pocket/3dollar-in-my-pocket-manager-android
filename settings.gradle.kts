@@ -1,2 +1,2 @@
 rootProject.name = "ThreeDollarsManager"
-include(":app", ":data", "common")
+include(":app", ":data", "common", ":domain")
