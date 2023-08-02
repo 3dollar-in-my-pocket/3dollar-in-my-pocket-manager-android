@@ -27,7 +27,7 @@ android {
         applicationId = "app.threedollars.manager"
         minSdk = 23
         targetSdk = 33
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -46,7 +46,7 @@ android {
             )
             buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
             buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_release"] as? String ?: "")
-            manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_release"] as String
+            manifestPlaceholders["kakao_key"] = (gradleLocalProperties(rootDir)["kakao_key_release"] as String).replace("\"","")
             manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
         getByName("debug") {
@@ -64,7 +64,7 @@ android {
             }
             buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
             buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_dev"] as? String ?: "")
-            manifestPlaceholders["kakao_key"] = gradleLocalProperties(rootDir)["kakao_key_dev"] as String
+            manifestPlaceholders["kakao_key"] = (gradleLocalProperties(rootDir)["kakao_key_dev"] as String).replace("\"","")
             manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
         }
     }
