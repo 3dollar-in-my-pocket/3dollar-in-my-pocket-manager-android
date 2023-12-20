@@ -4,13 +4,59 @@ import app.threedollars.common.ext.toBooleanDefault
 import app.threedollars.common.ext.toDoubleDefault
 import app.threedollars.common.ext.toIntDefault
 import app.threedollars.common.ext.toStringDefault
-import app.threedollars.domain.dto.*
-import app.threedollars.manager.vo.*
+import app.threedollars.domain.dto.AppearanceDaysDto
+import app.threedollars.domain.dto.BossAccountInfoDto
+import app.threedollars.domain.dto.BossEnumsDto
+import app.threedollars.domain.dto.BossStoreRetrieveAroundDto
+import app.threedollars.domain.dto.BossStoreRetrieveDto
+import app.threedollars.domain.dto.CategoriesDto
+import app.threedollars.domain.dto.CategoryInfoDto
+import app.threedollars.domain.dto.ContentsDto
+import app.threedollars.domain.dto.CursorDto
+import app.threedollars.domain.dto.EnumsDto
+import app.threedollars.domain.dto.FaqCategoriesDto
+import app.threedollars.domain.dto.FaqDto
+import app.threedollars.domain.dto.FavoriteDto
+import app.threedollars.domain.dto.FeedbackFullDto
+import app.threedollars.domain.dto.FeedbackSpecificDto
+import app.threedollars.domain.dto.FeedbackTypesDto
+import app.threedollars.domain.dto.FeedbacksDto
+import app.threedollars.domain.dto.ImageUploadDto
+import app.threedollars.domain.dto.LocationDto
+import app.threedollars.domain.dto.LoginDto
+import app.threedollars.domain.dto.MenusDto
+import app.threedollars.domain.dto.OpenStatusDto
+import app.threedollars.domain.dto.OpeningHoursDto
+import app.threedollars.domain.dto.StoreCategoriesDto
+import app.threedollars.manager.vo.AppearanceDaysVo
+import app.threedollars.manager.vo.BossAccountInfoVo
+import app.threedollars.manager.vo.BossEnumsVo
+import app.threedollars.manager.vo.BossStoreRetrieveAroundVo
+import app.threedollars.manager.vo.BossStoreRetrieveVo
+import app.threedollars.manager.vo.CategoriesVo
+import app.threedollars.manager.vo.CategoryInfoVo
+import app.threedollars.manager.vo.ContentsVo
+import app.threedollars.manager.vo.CursorVo
+import app.threedollars.manager.vo.EnumsVo
+import app.threedollars.manager.vo.FaqCategoriesVo
+import app.threedollars.manager.vo.FaqVo
+import app.threedollars.manager.vo.FavoriteVo
+import app.threedollars.manager.vo.FeedbackFullVo
+import app.threedollars.manager.vo.FeedbackSpecificVo
+import app.threedollars.manager.vo.FeedbackTypesVo
+import app.threedollars.manager.vo.FeedbacksVo
+import app.threedollars.manager.vo.ImageUploadVo
+import app.threedollars.manager.vo.LocationVo
+import app.threedollars.manager.vo.LoginVo
+import app.threedollars.manager.vo.MenusVo
+import app.threedollars.manager.vo.OpenStatusVo
+import app.threedollars.manager.vo.OpeningHoursVo
+import app.threedollars.manager.vo.StoreCategoriesVo
 
 fun AppearanceDaysDto.dtoToVo() = AppearanceDaysVo(
     dayOfTheWeek = dayOfTheWeek.toStringDefault(),
     openingHours = openingHours.dtoToVo(),
-    locationDescription = locationDescription.toStringDefault()
+    locationDescription = locationDescription.toStringDefault(),
 )
 
 fun BossAccountInfoDto.dtoToVo() = BossAccountInfoVo(
@@ -20,7 +66,7 @@ fun BossAccountInfoDto.dtoToVo() = BossAccountInfoVo(
     isSetupNotification = isSetupNotification,
     name = name,
     socialType = socialType,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
 )
 
 fun BossEnumsDto.dtoToVo() = BossEnumsVo(
@@ -43,7 +89,8 @@ fun BossEnumsDto.dtoToVo() = BossEnumsVo(
     faqCategory = faqCategory.map { it.dtoToVo() },
     storeSalesType = storeSalesType.map { it.dtoToVo() },
     userSocialType = userSocialType.map { it.dtoToVo() },
-    feedbackEmojiType = feedbackEmojiType.map { it.dtoToVo() }
+    feedbackEmojiType = feedbackEmojiType.map { it.dtoToVo() },
+    bankType = bankType.map { it.dtoToVo() },
 )
 
 fun BossStoreRetrieveAroundDto.dtoToVo() = BossStoreRetrieveAroundVo(
@@ -56,7 +103,7 @@ fun BossStoreRetrieveAroundDto.dtoToVo() = BossStoreRetrieveAroundVo(
     name = name.toStringDefault(),
     openStatus = openStatus.dtoToVo(),
     totalFeedbacksCounts = totalFeedbacksCounts.toIntDefault(),
-    updatedAt = updatedAt.toStringDefault()
+    updatedAt = updatedAt.toStringDefault(),
 )
 
 fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
@@ -73,7 +120,7 @@ fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
     name = this?.name.toStringDefault(),
     openStatus = this?.openStatus.dtoToVo(),
     snsUrl = this?.snsUrl.toStringDefault(),
-    updatedAt = this?.updatedAt.toStringDefault()
+    updatedAt = this?.updatedAt.toStringDefault(),
 )
 
 fun CategoriesDto.dtoToVo() = CategoriesVo(
@@ -82,51 +129,50 @@ fun CategoriesDto.dtoToVo() = CategoriesVo(
     description = description.toStringDefault(),
     imageUrl = imageUrl.toStringDefault(),
     isNew = isNew ?: false,
-    name = name.toStringDefault()
+    name = name.toStringDefault(),
 )
 
 fun CategoryInfoDto.dtoToVo() = CategoryInfoVo(
     category = category,
     description = description,
-    displayOrder = displayOrder
+    displayOrder = displayOrder,
 )
 
 fun ContentsDto.dtoToVo() = ContentsVo(
     date = date,
-    feedbacks = feedbacks.map { it.dtoToVo() }
+    feedbacks = feedbacks.map { it.dtoToVo() },
 )
 
 fun CursorDto.dtoToVo() = CursorVo(
     hasMore = hasMore,
-    nextCursor = nextCursor
+    nextCursor = nextCursor,
 )
 
 fun EnumsDto.dtoToVo() = EnumsVo(
-    category = category,
+    key = key,
     description = description,
-    displayOrder = displayOrder
 )
 
 fun FaqCategoriesDto.dtoToVo() = FaqCategoriesVo(
     category = category,
     description = description,
-    displayOrder = displayOrder
+    displayOrder = displayOrder,
 )
 
 fun FaqDto.dtoToVo() = FaqVo(
     answer = answer,
     categoryInfo = categoryInfo.dtoToVo(),
-    question = question
+    question = question,
 )
 
 fun FavoriteDto?.dtoToVo() = FavoriteVo(
-    isFavorite = this?.isFavorite?.toBooleanDefault() ?: false
+    isFavorite = this?.isFavorite?.toBooleanDefault() ?: false,
 )
 
 fun FeedbackFullDto.dtoToVo() = FeedbackFullVo(
     count = count,
     feedbackType = feedbackType,
-    ratio = ratio
+    ratio = ratio,
 )
 
 fun FeedbackSpecificDto.dtoToVo() = FeedbackSpecificVo(
@@ -136,38 +182,38 @@ fun FeedbackSpecificDto.dtoToVo() = FeedbackSpecificVo(
 
 fun FeedbacksDto.dtoToVo() = FeedbacksVo(
     count = count,
-    feedbackType = feedbackType
+    feedbackType = feedbackType,
 )
 
 fun FeedbackTypesDto.dtoToVo() = FeedbackTypesVo(
     description = description,
     emoji = emoji,
-    feedbackType = feedbackType
+    feedbackType = feedbackType,
 )
 
 fun ImageUploadDto.dtoToVo() = ImageUploadVo(
-    imageUrl = imageUrl
+    imageUrl = imageUrl,
 )
 
 fun LocationDto?.dtoToVo() = LocationVo(
     latitude = this?.latitude.toDoubleDefault(),
-    longitude = this?.longitude.toDoubleDefault()
+    longitude = this?.longitude.toDoubleDefault(),
 )
 
 fun LoginDto.dtoToVo() = LoginVo(
     bossId = bossId,
-    token = token
+    token = token,
 )
 
 fun MenusDto.dtoToVo() = MenusVo(
     imageUrl = imageUrl,
     name = name,
-    price = price
+    price = price,
 )
 
 fun OpeningHoursDto?.dtoToVo() = OpeningHoursVo(
     startTime = this?.startTime.toStringDefault(),
-    endTime = this?.endTime.toStringDefault()
+    endTime = this?.endTime.toStringDefault(),
 )
 
 fun OpenStatusDto?.dtoToVo() = OpenStatusVo(
@@ -181,5 +227,5 @@ fun StoreCategoriesDto.dtoToVo() = StoreCategoriesVo(
     description = description,
     imageUrl = imageUrl,
     isNew = isNew,
-    name = name
+    name = name,
 )
