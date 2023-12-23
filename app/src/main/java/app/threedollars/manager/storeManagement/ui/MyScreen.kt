@@ -60,9 +60,11 @@ import app.threedollars.common.ui.Green_OP10
 import app.threedollars.common.ui.Red
 import app.threedollars.common.ui.White
 import app.threedollars.manager.R
+import app.threedollars.manager.storeManagement.ui.account.AccountActivity
 import app.threedollars.manager.storeManagement.ui.businessschedule.BusinessScheduleEditActivity
 import app.threedollars.manager.storeManagement.ui.profile.ProfileEditActivity
 import app.threedollars.manager.storeManagement.viewModel.MyViewModel
+import app.threedollars.manager.vo.AccountNumbersVo
 import app.threedollars.manager.vo.AppearanceDaysVo
 import coil.compose.AsyncImage
 
@@ -132,10 +134,10 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
                 TitleContents(
                     bottomPadding = 12.dp,
                     Title("계좌정보", "정보 수정") {
-                        launcher.launch(Intent(context, MenuManagementActivity::class.java))
+                        launcher.launch(Intent(context, AccountActivity::class.java))
                     },
                 )
-                AccountContents()
+                AccountContents(bossStore.value?.accountNumbers?.firstOrNull() ?: AccountNumbersVo())
                 Spacer(modifier = Modifier.height(36.dp))
                 TitleContents(
                     bottomPadding = 16.dp,
@@ -157,7 +159,7 @@ fun MyScreen(viewModel: MyViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun AccountContents() {
+fun AccountContents(accountNumber: AccountNumbersVo?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -165,14 +167,14 @@ fun AccountContents() {
             .padding(16.dp),
     ) {
         Text(
-            text = "계좌번호",
+            text = "${accountNumber?.bankVo?.description} ${accountNumber?.accountNumber}",
             modifier = Modifier
                 .wrapContentSize(),
             fontSize = 14.sp,
             color = Gray95,
         )
         Text(
-            text = "김땡땡",
+            text = " ${accountNumber?.accountHolder}",
             modifier = Modifier
                 .wrapContentSize(),
             fontSize = 14.sp,
