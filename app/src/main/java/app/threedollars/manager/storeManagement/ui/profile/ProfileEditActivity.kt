@@ -78,7 +78,10 @@ fun ProfileEditScreen(viewModel: ProfileEditViewModel = hiltViewModel()) {
             isErrorDialog = true
         }
     }
-    isEnable = (name.isNotEmpty() && name != bossStore?.name) || (selectedList.isNotEmpty() && selectedList != bossStore?.categories?.map { it.categoryId }) || sns != bossStore?.snsUrl
+    isEnable = (name.isNotEmpty() && name != bossStore?.name) ||
+            (selectedList.isNotEmpty() && selectedList != bossStore?.categories?.map { it.categoryId }) ||
+            imageRequestBody != null ||
+            sns != bossStore?.snsUrl
     LaunchedEffect(editComplete) {
         if (editComplete) {
             context.findActivity().setResult(RESULT_OK)
@@ -182,7 +185,7 @@ fun ProfileEditContents(
         SignTitleTextContent(titleText = "가게 인증 사진", isExplanationText = false)
         SignCertificationPhoto(Uri.parse(image), onChangeUri)
         SignTitleTextContent(titleText = "SNS", isExplanationText = false, isRequired = false)
-        DefaultTextFieldContent(sns, "SNS를 입력해 주세요.", maxLength = 50,onChangeText = onChangeSNS)
+        DefaultTextFieldContent(sns, "SNS를 입력해 주세요.", maxLength = 50, onChangeText = onChangeSNS)
         Spacer(modifier = Modifier.height(44.dp))
     }
 }
