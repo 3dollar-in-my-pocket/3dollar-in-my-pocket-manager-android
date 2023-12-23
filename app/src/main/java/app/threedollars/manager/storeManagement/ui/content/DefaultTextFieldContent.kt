@@ -24,6 +24,7 @@ import app.threedollars.common.ui.Gray5
 fun DefaultTextFieldContent(
     default: String = "",
     hint: String = "가게 이름을 입력해주세요.",
+    maxLength: Int = 20,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     onChangeText: (String) -> Unit = {}
@@ -32,7 +33,7 @@ fun DefaultTextFieldContent(
     TextField(
         value = text,
         onValueChange = { newText ->
-            if (newText.length <= 20) {
+            if (newText.length <= maxLength) {
                 onChangeText(newText)
             }
         },

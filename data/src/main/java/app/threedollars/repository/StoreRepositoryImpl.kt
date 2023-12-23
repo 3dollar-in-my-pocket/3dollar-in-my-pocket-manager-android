@@ -73,11 +73,19 @@ class StoreRepositoryImpl @Inject constructor(
         val menusModel = menus?.map {
             MenusModel(it.imageUrl, it.name, it.price)
         }
-        val accountNumberRequest = AccountNumberRequest(
-            accountNumber = accountNumber.toStringDefault(),
-            accountHolder = accountHolder.toStringDefault(),
-            bank = accountBank.toStringDefault()
-        )
+
+        val accountNumberRequest = if (accountNumber != null &&
+            accountHolder != null &&
+            accountBank != null
+        ) {
+            listOf(
+                AccountNumberRequest(
+                    accountNumber = accountNumber.toStringDefault(),
+                    accountHolder = accountHolder.toStringDefault(),
+                    bank = accountBank.toStringDefault()
+                )
+            )
+        } else null
         val bossStoreRequest = BossStoreRequest(
             appearanceDaysModel,
             categoriesIds,
@@ -86,7 +94,7 @@ class StoreRepositoryImpl @Inject constructor(
             menusModel,
             name,
             snsUrl,
-            accountNumbers = listOf(accountNumberRequest)
+            accountNumbers = accountNumberRequest
         )
         return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest)
     }

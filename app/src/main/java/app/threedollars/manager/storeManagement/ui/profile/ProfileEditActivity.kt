@@ -182,7 +182,7 @@ fun ProfileEditContents(
         SignTitleTextContent(titleText = "가게 인증 사진", isExplanationText = false)
         SignCertificationPhoto(Uri.parse(image), onChangeUri)
         SignTitleTextContent(titleText = "SNS", isExplanationText = false, isRequired = false)
-        DefaultTextFieldContent(sns, "SNS를 입력해 주세요.", onChangeText = onChangeSNS)
+        DefaultTextFieldContent(sns, "SNS를 입력해 주세요.", maxLength = 50,onChangeText = onChangeSNS)
         Spacer(modifier = Modifier.height(44.dp))
     }
 }
