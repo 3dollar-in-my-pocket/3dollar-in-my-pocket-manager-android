@@ -122,7 +122,7 @@ class BusinessScheduleEditViewModel @Inject constructor(
     private fun isEditEnable() {
         viewModelScope.launch(exceptionHandler) {
             appearanceDays.values.forEach {
-                if (it.openingHours.startTime.isEmpty() || it.openingHours.endTime.isEmpty() || it.locationDescription.isEmpty()) {
+                if (it.openingHours.startTime.isEmpty() || it.openingHours.endTime.isEmpty()) {
                     _enableComplete.emit(false)
                     return@launch
                 }
