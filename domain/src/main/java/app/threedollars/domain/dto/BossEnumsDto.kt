@@ -1,6 +1,5 @@
 package app.threedollars.domain.dto
 
-
 data class BossEnumsDto(
     val paymentMethodType: List<EnumsDto> = listOf(),
     val bossStoreOpenType: List<EnumsDto> = listOf(),
@@ -21,5 +20,6 @@ data class BossEnumsDto(
     val faqCategory: List<EnumsDto> = listOf(),
     val storeSalesType: List<EnumsDto> = listOf(),
     val userSocialType: List<EnumsDto> = listOf(),
-    val feedbackEmojiType: List<EnumsDto> = listOf()
+    val feedbackEmojiType: List<EnumsDto> = listOf(),
+    val bankType: List<EnumsDto> = listOf(),
 )

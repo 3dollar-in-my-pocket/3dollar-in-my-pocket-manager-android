@@ -5,9 +5,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import app.threedollars.common.Resource
+import app.threedollars.common.ext.toStringDefault
 import app.threedollars.data.model.AppearanceDaysRequestModel
 import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.toDto
+import app.threedollars.data.request.AccountNumberRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.response.*
 import app.threedollars.domain.dto.*
@@ -60,7 +62,10 @@ class StoreRepositoryImpl @Inject constructor(
         introduction: String?,
         menus: List<MenusDto>?,
         name: String?,
-        snsUrl: String?
+        snsUrl: String?,
+        accountNumber: String?,
+        accountHolder: String?,
+        accountBank: String?
     ): Flow<Resource<String>> {
         val appearanceDaysModel = appearanceDays?.map {
             AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
@@ -68,6 +73,11 @@ class StoreRepositoryImpl @Inject constructor(
         val menusModel = menus?.map {
             MenusModel(it.imageUrl, it.name, it.price)
         }
+        val accountNumberRequest = AccountNumberRequest(
+            accountNumber = accountNumber.toStringDefault(),
+            accountHolder = accountHolder.toStringDefault(),
+            bank = accountBank.toStringDefault()
+        )
         val bossStoreRequest = BossStoreRequest(
             appearanceDaysModel,
             categoriesIds,
@@ -75,7 +85,8 @@ class StoreRepositoryImpl @Inject constructor(
             introduction,
             menusModel,
             name,
-            snsUrl
+            snsUrl,
+            accountNumbers = listOf(accountNumberRequest)
         )
         return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest)
     }

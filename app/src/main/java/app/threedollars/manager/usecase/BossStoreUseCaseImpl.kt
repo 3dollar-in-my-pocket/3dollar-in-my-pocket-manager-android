@@ -29,7 +29,22 @@ class BossStoreUseCaseImpl @Inject constructor(private val storeRepository: Stor
         introduction: String?,
         menus: List<MenusDto>?,
         name: String?,
-        snsUrl: String?
+        snsUrl: String?,
+        accountNumber: String?,
+        accountHolder: String?,
+        accountBank: String?
     ): Flow<Resource<String>> =
-        storeRepository.patchBossStore(bossStoreId, appearanceDays, categoriesIds, imageUrl, introduction, menus, name, snsUrl)
+        storeRepository.patchBossStore(
+            bossStoreId = bossStoreId,
+            appearanceDays = appearanceDays,
+            categoriesIds = categoriesIds,
+            imageUrl = imageUrl,
+            introduction = introduction,
+            menus = menus,
+            name = name,
+            snsUrl = snsUrl,
+            accountNumber = accountNumber,
+            accountHolder = accountHolder,
+            accountBank = accountBank
+        )
 }
