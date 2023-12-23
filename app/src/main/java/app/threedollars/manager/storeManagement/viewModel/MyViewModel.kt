@@ -60,23 +60,29 @@ class MyViewModel @Inject constructor(
             it.imageRequestBody as RequestBody
         }
         viewModelScope.launch {
-            imageUploadUseCase.postImageUploadBulk(fileType, list).collect { resource ->
-                if (resource.code == "200") {
-                    resource.data?.let { dtoList ->
-                        dtoList.mapIndexed { index, imageUploadDto ->
-                            menuModelList[index].imageUrl = imageUploadDto.imageUrl
-                            val menus = menuModelList.map { menuModel ->
-                                MenusDto(
-                                    imageUrl = menuModel.imageUrl,
-                                    name = menuModel.name,
-                                    price = menuModel.price
-                                )
+            if (menuModelList.isEmpty()) {
+                bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = listOf()).collect {
+                    _isSuccess.emit(it.data == "OK")
+                }
+            } else {
+                imageUploadUseCase.postImageUploadBulk(fileType, list).collect { resource ->
+                    if (resource.code == "200") {
+                        resource.data?.let { dtoList ->
+                            dtoList.mapIndexed { index, imageUploadDto ->
+                                menuModelList[index].imageUrl = imageUploadDto.imageUrl
+                                val menus = menuModelList.map { menuModel ->
+                                    MenusDto(
+                                        imageUrl = menuModel.imageUrl,
+                                        name = menuModel.name,
+                                        price = menuModel.price
+                                    )
+                                }
+                                bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = menus).collect {
+                                    _isSuccess.emit(it.data == "OK")
+                                }
                             }
-                            bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = menus).collect {
-                                _isSuccess.emit(it.data == "OK")
-                            }
-                        }
 
+                        }
                     }
                 }
             }
