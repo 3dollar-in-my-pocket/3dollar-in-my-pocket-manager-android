@@ -2,33 +2,74 @@ package app.threedollars.manager.storeManagement.ui.businessschedule
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.threedollars.common.ext.toStringDefault
-import app.threedollars.common.ui.*
+import app.threedollars.common.ui.Black
+import app.threedollars.common.ui.Gray0
+import app.threedollars.common.ui.Gray10
+import app.threedollars.common.ui.Gray100
+import app.threedollars.common.ui.Gray30
+import app.threedollars.common.ui.Gray40
+import app.threedollars.common.ui.Gray5
+import app.threedollars.common.ui.Green
+import app.threedollars.common.ui.Red
+import app.threedollars.common.ui.White
 import app.threedollars.manager.R
 import app.threedollars.manager.storeManagement.viewModel.BusinessScheduleEditViewModel
 import app.threedollars.manager.storeManagement.viewModel.defaultScheduleDays
@@ -66,20 +107,20 @@ fun BusinessScheduleEditScreen(viewModel: BusinessScheduleEditViewModel = hiltVi
     Column(
         modifier = Modifier
             .fillMaxSize(1f)
-            .background(Gray0)
+            .background(Gray0),
     ) {
         BusinessScheduleEditTop()
         BusinessScheduleContents(
             Modifier
                 .fillMaxSize()
-                .weight(1f)
+                .weight(1f),
         )
         BusinessScheduleBottom(
             Modifier
                 .fillMaxWidth()
                 .height(64.dp),
-            isEnable
-        ){
+            isEnable,
+        ) {
             viewModel.patchBossStore(bossStore?.bossStoreId.toStringDefault())
         }
     }
@@ -92,13 +133,17 @@ fun BusinessScheduleEditTop() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(modifier = Modifier
-            .wrapContentWidth()
-            .padding(start = 16.dp), onClick = {
-            context.findActivity().finish()
-        }) {
+        IconButton(
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(start = 16.dp),
+            onClick = {
+                context.findActivity().finish()
+            },
+        ) {
             Image(painter = painterResource(id = R.drawable.ic_back), contentDescription = "")
         }
         Text(
@@ -119,20 +164,22 @@ fun BusinessScheduleContents(modifier: Modifier = Modifier, viewModel: BusinessS
     Column(
         modifier = modifier
             .padding(horizontal = 24.dp)
-            .verticalScroll(scrollState)
+            .verticalScroll(scrollState),
     ) {
         Spacer(modifier = Modifier.height(32.dp))
         BusinessScheduleSelectDay()
         Spacer(modifier = Modifier.height(48.dp))
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             scheduleDays.forEach {
-                if (it.isSelected) BusinessScheduleDayDetail(it, { startTime ->
-                    viewModel.editDaysStartTime(it.dayOfTheWeek, startTime)
-                }, { endTime ->
-                    viewModel.editDaysEndTime(it.dayOfTheWeek, endTime)
-                }, { locationDescription ->
-                    viewModel.editDaysLocationDescription(it.dayOfTheWeek, locationDescription)
-                })
+                if (it.isSelected) {
+                    BusinessScheduleDayDetail(it, { startTime ->
+                        viewModel.editDaysStartTime(it.dayOfTheWeek, startTime)
+                    }, { endTime ->
+                        viewModel.editDaysEndTime(it.dayOfTheWeek, endTime)
+                    }, { locationDescription ->
+                        viewModel.editDaysLocationDescription(it.dayOfTheWeek, locationDescription)
+                    })
+                }
             }
         }
         Spacer(modifier = Modifier.height(38.dp))
@@ -195,7 +242,7 @@ fun BusinessScheduleDay(scheduleDay: ScheduleDay = defaultScheduleDays[0], click
                 }
                 clickDay(day)
             },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = scheduleDay.dayOfWeek,
@@ -214,18 +261,22 @@ fun BusinessScheduleDayDetail(
     scheduleDay: ScheduleDay = defaultScheduleDays[0],
     startTimeChanged: (String) -> Unit = {},
     endTimeChanged: (String) -> Unit = {},
-    locationDescriptionChanged: (String) -> Unit = {}
+    locationDescriptionChanged: (String) -> Unit = {},
 ) {
     var startTime by remember(scheduleDay) { mutableStateOf(scheduleDay.startTime.ifEmpty { "시작시간" }) }
     var endTime by remember(scheduleDay) { mutableStateOf(scheduleDay.endTime.ifEmpty { "종료시간" }) }
     var locationDescription by remember(scheduleDay) { mutableStateOf(scheduleDay.locationDescription) }
     val startTimeDialogState = rememberMaterialDialogState()
+    Log.e("aaaaaaaa", scheduleDay.toString())
+    Log.e("startTime", startTime)
+    Log.e("endTime", endTime)
+    Log.e("locationDescription", locationDescription)
     MaterialDialog(
         dialogState = startTimeDialogState,
         buttons = {
             positiveButton("확인")
             negativeButton("취소")
-        }
+        },
     ) {
         timepicker(is24HourClock = true, title = "시작시간") {
             startTime = it.toString()
@@ -238,7 +289,7 @@ fun BusinessScheduleDayDetail(
         buttons = {
             positiveButton("확인")
             negativeButton("취소")
-        }
+        },
     ) {
         timepicker(is24HourClock = true, title = "종료시간") {
             endTime = it.toString()
@@ -249,7 +300,7 @@ fun BusinessScheduleDayDetail(
         modifier = Modifier
             .background(color = White, shape = RoundedCornerShape(16.dp))
             .padding(16.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
         Text(text = "${scheduleDay.dayOfWeek}요일", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.width(18.dp))
@@ -264,7 +315,7 @@ fun BusinessScheduleDayDetail(
                     text = "영업 시간",
                     fontSize = 12.sp,
                     color = Green,
-                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false)),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -306,7 +357,7 @@ fun BusinessScheduleDayDetail(
                     text = "출몰 지역",
                     fontSize = 12.sp,
                     color = Green,
-                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false)),
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -330,8 +381,8 @@ fun BusinessScheduleDayDetail(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
-                    textColor = Gray100
-                )
+                    textColor = Gray100,
+                ),
             )
         }
     }
@@ -346,16 +397,16 @@ fun BusinessScheduleBottom(modifier: Modifier = Modifier, isEnable: Boolean = fa
         onClick = { if (isEnable) onClick() },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            backgroundColor = if (isEnable) Green else Gray30
+            backgroundColor = if (isEnable) Green else Gray30,
         ),
         content = {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = "저장하기",
                 fontSize = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-        }
+        },
     )
 }
 
@@ -365,5 +416,5 @@ data class ScheduleDay(
     val startTime: String,
     val endTime: String,
     val locationDescription: String,
-    val isSelected: Boolean
+    val isSelected: Boolean,
 )
