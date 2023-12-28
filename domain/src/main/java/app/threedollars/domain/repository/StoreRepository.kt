@@ -30,7 +30,10 @@ interface StoreRepository {
         introduction: String? = null,
         menus: List<MenusDto>? = null,
         name: String? = null,
-        snsUrl: String? = null
+        snsUrl: String? = null,
+        accountNumber: String? = null,
+        accountHolder: String? = null,
+        accountBank: String? = null
     ): Flow<Resource<String>>
 
     // boss-store-open-controller

@@ -51,10 +51,19 @@ class BusinessScheduleEditViewModel @Inject constructor(
                                 startTime = appearance.openingHours.startTime,
                                 endTime = appearance.openingHours.endTime,
                                 locationDescription = appearance.locationDescription,
-                                isSelected = true
+                                isSelected = true,
                             )
                         }
                         _scheduleDays.emit(scheduleDays)
+                        scheduleDays.forEach { scheduleDays ->
+                            if (scheduleDays.startTime.isNotEmpty() && scheduleDays.endTime.isNotEmpty()) {
+                                appearanceDays[scheduleDays.dayOfTheWeek] = AppearanceDaysVo(
+                                    dayOfTheWeek = scheduleDays.dayOfTheWeek,
+                                    openingHours = OpeningHoursVo(startTime = scheduleDays.startTime, endTime = scheduleDays.endTime),
+                                    locationDescription = scheduleDays.locationDescription,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -70,9 +79,11 @@ class BusinessScheduleEditViewModel @Inject constructor(
                         it.dayOfTheWeek,
                         it.openingHours.startTime,
                         it.openingHours.endTime,
-                        it.locationDescription
+
+                        it.locationDescription,
                     )
-                }).collect {
+                },
+            ).collect {
                 if (it.code == "200") _editComplete.emit(true)
             }
         }
@@ -89,7 +100,7 @@ class BusinessScheduleEditViewModel @Inject constructor(
                     appearanceDays[it.dayOfTheWeek] = AppearanceDaysVo(
                         it.dayOfTheWeek,
                         OpeningHoursVo(it.startTime, it.endTime),
-                        it.locationDescription
+                        it.locationDescription,
                     )
                 } else {
                     appearanceDays.remove(it.dayOfTheWeek)
@@ -122,7 +133,7 @@ class BusinessScheduleEditViewModel @Inject constructor(
     private fun isEditEnable() {
         viewModelScope.launch(exceptionHandler) {
             appearanceDays.values.forEach {
-                if (it.openingHours.startTime.isEmpty() || it.openingHours.endTime.isEmpty() || it.locationDescription.isEmpty()) {
+                if (it.openingHours.startTime.isEmpty() || it.openingHours.endTime.isEmpty()) {
                     _enableComplete.emit(false)
                     return@launch
                 }
@@ -130,7 +141,6 @@ class BusinessScheduleEditViewModel @Inject constructor(
             _enableComplete.emit(true)
         }
     }
-
 }
 
 val defaultScheduleDays = listOf(

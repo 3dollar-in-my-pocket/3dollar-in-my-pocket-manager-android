@@ -20,5 +20,7 @@ data class BossStoreRequest(
     @Json(name = "name")
     val name: String? = null,
     @Json(name = "snsUrl")
-    val snsUrl: String? = null
+    val snsUrl: String? = null,
+    @Json(name = "accountNumbers")
+    val accountNumbers: List<AccountNumberRequest>? = null
 )

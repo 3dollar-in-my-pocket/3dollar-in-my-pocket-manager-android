@@ -15,6 +15,4 @@ data class FeedbackSpecificResponse(
     val contents: List<ContentsModel> = listOf(),
     @Json(name = "cursor")
     val cursor: CursorModel = CursorModel(),
-) : BaseResponse<FeedbackSpecificResponse>() {
-
-}
+) : BaseResponse<FeedbackSpecificResponse>()

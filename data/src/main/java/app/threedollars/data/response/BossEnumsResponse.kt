@@ -1,6 +1,5 @@
 package app.threedollars.data.response
 
-
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.model.EnumsModel
 import app.threedollars.data.model.toDto
@@ -49,7 +48,9 @@ data class BossEnumsResponse(
     @Json(name = "UserSocialType")
     val userSocialType: List<EnumsModel> = listOf(),
     @Json(name = "FeedbackEmojiType")
-    val feedbackEmojiType: List<EnumsModel> = listOf()
+    val feedbackEmojiType: List<EnumsModel> = listOf(),
+    @Json(name = "Bank")
+    val bankType: List<EnumsModel> = listOf(),
 ) : BaseResponse<BossEnumsResponse>() {
     fun toDto() = BossEnumsDto(
         paymentMethodType.toDto(),
@@ -71,6 +72,7 @@ data class BossEnumsResponse(
         faqCategory.toDto(),
         storeSalesType.toDto(),
         userSocialType.toDto(),
-        feedbackEmojiType.toDto()
+        feedbackEmojiType.toDto(),
+        bankType.toDto(),
     )
 }

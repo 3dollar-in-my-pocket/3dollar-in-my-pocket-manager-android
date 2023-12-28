@@ -1,6 +1,5 @@
 package app.threedollars.manager.vo
 
-
 data class BossEnumsVo(
     val paymentMethodType: List<EnumsVo> = listOf(),
     val bossStoreOpenType: List<EnumsVo> = listOf(),
@@ -21,5 +20,6 @@ data class BossEnumsVo(
     val faqCategory: List<EnumsVo> = listOf(),
     val storeSalesType: List<EnumsVo> = listOf(),
     val userSocialType: List<EnumsVo> = listOf(),
-    val feedbackEmojiType: List<EnumsVo> = listOf()
+    val feedbackEmojiType: List<EnumsVo> = listOf(),
+    val bankType: List<EnumsVo> = listOf(),
 )

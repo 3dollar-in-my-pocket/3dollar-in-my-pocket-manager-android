@@ -12,19 +12,16 @@ import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.manager.storeManagement.data.MenuModel
 import app.threedollars.manager.util.dtoToVo
 import app.threedollars.manager.vo.BossStoreRetrieveVo
-import app.threedollars.manager.vo.ImageUploadVo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
-import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
     private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
     private val bossStoreUseCase: BossStoreUseCase,
-    private val imageUploadUseCase: ImageUploadUseCase
+    private val imageUploadUseCase: ImageUploadUseCase,
 ) : BaseViewModel() {
 
     private val _bossStoreRetrieveMe = MutableEventFlow<BossStoreRetrieveVo>()
@@ -38,7 +35,6 @@ class MyViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _bossStoreRetrieveMe.emit(data.dtoToVo())
-
                     }
                 }
             }
@@ -60,23 +56,29 @@ class MyViewModel @Inject constructor(
             it.imageRequestBody as RequestBody
         }
         viewModelScope.launch {
-            imageUploadUseCase.postImageUploadBulk(fileType, list).collect { resource ->
-                if (resource.code == "200") {
-                    resource.data?.let { dtoList ->
-                        dtoList.mapIndexed { index, imageUploadDto ->
-                            menuModelList[index].imageUrl = imageUploadDto.imageUrl
-                            val menus = menuModelList.map { menuModel ->
-                                MenusDto(
-                                    imageUrl = menuModel.imageUrl,
-                                    name = menuModel.name,
-                                    price = menuModel.price
-                                )
-                            }
-                            bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = menus).collect {
-                                _isSuccess.emit(it.data == "OK")
+            if (menuModelList.isEmpty()) {
+                bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = listOf()).collect {
+                    _isSuccess.emit(it.data == "OK")
+                }
+            } else {
+                imageUploadUseCase.postImageUploadBulk(fileType, list).collect { resource ->
+                    if (resource.code == "200") {
+                        resource.data?.let { dtoList ->
+                            dtoList.mapIndexed { index, imageUploadDto ->
+                                menuModelList[index].imageUrl = imageUploadDto.imageUrl
+                            }.run {
+                                val menus = menuModelList.map { menuModel ->
+                                    MenusDto(
+                                        imageUrl = menuModel.imageUrl,
+                                        name = menuModel.name,
+                                        price = menuModel.price,
+                                    )
+                                }
+                                bossStoreUseCase.patchBossStore(bossStoreId.toString(), menus = menus).collect {
+                                    _isSuccess.emit(it.data == "OK")
+                                }
                             }
                         }
-
                     }
                 }
             }

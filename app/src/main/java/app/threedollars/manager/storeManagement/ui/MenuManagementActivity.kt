@@ -14,7 +14,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -38,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -100,6 +99,7 @@ class MenuManagementActivity : AppCompatActivity() {
         val context = LocalContext.current
         var menuList by remember { mutableStateOf(listOf(MenuModel())) }
         var isLoading by remember { mutableStateOf(true) }
+        var menuSize by remember { mutableIntStateOf(0) }
 
         LaunchedEffect(isSuccess.value) {
             isLoading = false
@@ -121,15 +121,16 @@ class MenuManagementActivity : AppCompatActivity() {
                     imageUrl = it.imageUrl,
                     name = it.name,
                     price = it.price,
-                    imageRequestBody = requestBody
+                    imageRequestBody = requestBody,
                 )
             }?.toMutableList() ?: mutableListOf()
+            menuSize = bossStore.value?.menus?.size ?: 0
         }
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Gray0)
+                .background(color = Gray0),
         ) {
             var isClickDeleteButton by remember { mutableStateOf(false) }
             var isAllDeleteClicked by remember { mutableStateOf(false) }
@@ -139,37 +140,45 @@ class MenuManagementActivity : AppCompatActivity() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, top = 60.dp, bottom = 16.dp)
+                    .padding(start = 24.dp, end = 24.dp, top = 60.dp, bottom = 16.dp),
             ) {
-                Text(buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = Gray70)) {
-                        append("${bossStore.value?.menus?.size}/20개")
-                    }
-                    append("의 메뉴가 등록되어 있습니다.")
-                }, modifier = Modifier.align(Alignment.CenterStart), color = Gray30, fontWeight = FontWeight.W500, fontSize = 14.sp)
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = Gray70)) {
+                            append("$menuSize/20개")
+                        }
+                        append("의 메뉴가 등록되어 있습니다.")
+                    },
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    color = Gray30,
+                    fontWeight = FontWeight.W500,
+                    fontSize = 14.sp,
+                )
                 Text(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .clickable {
                             if (isClickDeleteButton) {
                                 isAllDeleteClicked = true
-                            } else isClickDeleteButton = true
+                            } else {
+                                isClickDeleteButton = true
+                            }
                         },
                     text = if (isClickDeleteButton) "전체 삭제" else "삭제",
                     fontSize = 14.sp,
                     color = Red,
-                    fontWeight = FontWeight.W700
+                    fontWeight = FontWeight.W700,
                 )
             }
 
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(bottom = 24.dp)
+                        .padding(bottom = 24.dp),
                 ) {
                     Box {
                         LazyColumn(
@@ -188,18 +197,21 @@ class MenuManagementActivity : AppCompatActivity() {
                                             .border(
                                                 width = 1.dp,
                                                 color = if (menuList[index].isEmpty) Red else Color.White,
-                                                shape = RoundedCornerShape(16.dp)
+                                                shape = RoundedCornerShape(16.dp),
                                             )
-                                            .padding(12.dp)
+                                            .padding(12.dp),
                                     ) {
                                         MenuPhoto(
                                             modifier = Modifier
                                                 .padding(bottom = if (menuList[index].isEmpty) 24.dp else 0.dp)
                                                 .align(Alignment.TopStart),
-                                            defaultImage = if (menuList[index].imageUrl.isNullOrEmpty()) R.drawable.ic_menu_default.getResourceUri(
-                                                context
-                                            )
-                                            else menuList[index].imageUrl.toString().toUri()
+                                            defaultImage = if (menuList[index].imageUrl.isNullOrEmpty()) {
+                                                R.drawable.ic_menu_default.getResourceUri(
+                                                    context,
+                                                )
+                                            } else {
+                                                menuList[index].imageUrl.toString().toUri()
+                                            },
                                         ) {
                                             menuList[index].imageRequestBody = it
                                         }
@@ -207,7 +219,7 @@ class MenuManagementActivity : AppCompatActivity() {
                                             modifier = Modifier
                                                 .fillMaxWidth(if (isClickDeleteButton) 0.5f else 0.6f)
                                                 .padding(start = 12.dp, bottom = if (menuList[index].isEmpty) 24.dp else 0.dp)
-                                                .align(Alignment.TopEnd)
+                                                .align(Alignment.TopEnd),
                                         ) {
                                             TextField(
                                                 value = menuName,
@@ -229,9 +241,9 @@ class MenuManagementActivity : AppCompatActivity() {
                                                     disabledTextColor = Color.Transparent,
                                                     focusedIndicatorColor = Color.Transparent,
                                                     unfocusedIndicatorColor = Color.Transparent,
-                                                    disabledIndicatorColor = Color.Transparent
+                                                    disabledIndicatorColor = Color.Transparent,
                                                 ),
-                                                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400)
+                                                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400),
                                             )
                                             TextField(
                                                 value = price,
@@ -263,9 +275,9 @@ class MenuManagementActivity : AppCompatActivity() {
                                                     disabledTextColor = Color.Transparent,
                                                     focusedIndicatorColor = Color.Transparent,
                                                     unfocusedIndicatorColor = Color.Transparent,
-                                                    disabledIndicatorColor = Color.Transparent
+                                                    disabledIndicatorColor = Color.Transparent,
                                                 ),
-                                                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400)
+                                                textStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.W400),
                                             )
                                         }
                                         if (menuList[index].isEmpty) {
@@ -274,7 +286,9 @@ class MenuManagementActivity : AppCompatActivity() {
                                                     .padding(top = 16.dp)
                                                     .align(Alignment.BottomStart),
                                                 text = "* 메뉴명, 가격, 사진을 모두 등록해주세요.",
-                                                fontSize = 12.sp, fontWeight = FontWeight.W400, color = Red
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.W400,
+                                                color = Red,
                                             )
                                         }
                                     }
@@ -286,7 +300,10 @@ class MenuManagementActivity : AppCompatActivity() {
                                                     menuList = menuList
                                                         .filterIndexed { i, _ -> index != i }
                                                         .toMutableList()
-                                                }, painter = painterResource(id = R.drawable.ic_delete_circle), contentDescription = ""
+                                                    menuSize--
+                                                },
+                                            painter = painterResource(id = R.drawable.ic_delete_circle),
+                                            contentDescription = "",
                                         )
                                     }
                                 }
@@ -300,20 +317,21 @@ class MenuManagementActivity : AppCompatActivity() {
                                             .border(1.dp, SolidColor(Green), RoundedCornerShape(8.dp))
                                             .clickable {
                                                 menuList = (menuList + mutableListOf(MenuModel())) as MutableList<MenuModel>
+                                                menuSize++
                                             },
-                                        horizontalArrangement = Arrangement.Center
+                                        horizontalArrangement = Arrangement.Center,
                                     ) {
                                         Image(
                                             modifier = Modifier.align(Alignment.CenterVertically),
                                             painter = painterResource(id = R.drawable.ic_plus_circle),
-                                            contentDescription = ""
+                                            contentDescription = "",
                                         )
                                         Text(
                                             modifier = Modifier.padding(start = 8.dp, top = 14.dp, bottom = 14.dp),
                                             text = "메뉴 추가하기",
                                             fontWeight = FontWeight.W700,
                                             fontSize = 14.sp,
-                                            color = Green
+                                            color = Green,
                                         )
                                     }
                                 }
@@ -326,7 +344,7 @@ class MenuManagementActivity : AppCompatActivity() {
                             Spacer(
                                 modifier = Modifier
                                     .matchParentSize()
-                                    .background(color = Color.Gray.copy(alpha = .1f))
+                                    .background(color = Color.Gray.copy(alpha = .1f)),
                             )
                             DeleteDialog(modifier = Modifier.align(Alignment.Center), onCancelListener = {
                                 isAllDeleteClicked = false
@@ -334,13 +352,15 @@ class MenuManagementActivity : AppCompatActivity() {
                                 isClickDeleteButton = false
                                 isAllDeleteClicked = false
                                 menuList = listOf()
+                                menuSize = 0
                             })
                         }
                     }
                 }
-                Button(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp),
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Green, contentColor = Color.White),
                     onClick = {
                         if (isClickDeleteButton) {
@@ -349,7 +369,8 @@ class MenuManagementActivity : AppCompatActivity() {
                             viewModel.patchMenu(bossStoreId = bossStore.value?.bossStoreId, fileType = "BOSS_STORE_MENU_IMAGE", menuList)
                             isLoading = true
                         }
-                    }) {
+                    },
+                ) {
                     Text(text = if (isClickDeleteButton) "삭제 완료" else "저장하기", fontSize = 16.sp, fontWeight = FontWeight.W500)
                 }
             }
@@ -361,17 +382,22 @@ class MenuManagementActivity : AppCompatActivity() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp, top = 24.dp)
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp),
         ) {
             Image(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .clickable {
                         finish()
-                    }, painter = painterResource(id = R.drawable.ic_back), contentDescription = ""
+                    },
+                painter = painterResource(id = R.drawable.ic_back),
+                contentDescription = "",
             )
             Text(
-                modifier = Modifier.align(Alignment.Center), text = "메뉴 관리", fontSize = 16.sp, color = Color.Black
+                modifier = Modifier.align(Alignment.Center),
+                text = "메뉴 관리",
+                fontSize = 16.sp,
+                color = Color.Black,
             )
         }
     }
@@ -403,7 +429,7 @@ class MenuManagementActivity : AppCompatActivity() {
                 .clip(shape = RoundedCornerShape(16.dp))
                 .clickable {
                     galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                }
+                },
         )
     }
 
@@ -414,13 +440,13 @@ class MenuManagementActivity : AppCompatActivity() {
                 .fillMaxWidth(0.8f)
                 .wrapContentHeight(),
             shape = RoundedCornerShape(12.dp),
-            color = Color.White
+            color = Color.White,
         ) {
             Column {
                 Spacer(
                     modifier = Modifier
                         .height(12.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
 
                 Text(
@@ -435,32 +461,34 @@ class MenuManagementActivity : AppCompatActivity() {
                 Spacer(
                     modifier = Modifier
                         .height(12.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
                 Row() {
                     Button(
-                        onClick = { onCancelListener() }, modifier = Modifier
+                        onClick = { onCancelListener() },
+                        modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                             .align(Alignment.CenterVertically),
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White,
-                            backgroundColor = Gray70
-                        )
+                            backgroundColor = Gray70,
+                        ),
                     ) {
                         Text(text = "취소", fontSize = 14.sp)
                     }
                     Button(
-                        onClick = { onAgreeListener() }, modifier = Modifier
+                        onClick = { onAgreeListener() },
+                        modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                             .align(Alignment.CenterVertically),
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White,
-                            backgroundColor = Green
-                        )
+                            backgroundColor = Green,
+                        ),
                     ) {
                         Text(text = "삭제", fontSize = 14.sp)
                     }
@@ -468,9 +496,8 @@ class MenuManagementActivity : AppCompatActivity() {
                 Spacer(
                     modifier = Modifier
                         .height(12.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 )
-
             }
         }
     }
