@@ -7,9 +7,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FavoriteModel(
-    @SerialName("isFavorite")
-    val isFavorite: Boolean? = null,
+    @SerialName("subscriberCount")
+    val subscriberCount: Int? = null,
 ) {
-    fun toDto() = FavoriteDto(isFavorite)
+    fun toDto() = FavoriteDto(
+        subscriberCount = subscriberCount
+    )
 
 }

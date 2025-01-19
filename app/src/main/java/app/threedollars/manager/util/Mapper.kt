@@ -62,10 +62,6 @@ fun FaqDto.dtoToVo() = FaqVo(
     question = question,
 )
 
-fun FavoriteDto?.dtoToVo() = FavoriteVo(
-    isFavorite = this?.isFavorite?.toBooleanDefault() ?: false,
-)
-
 fun FeedbackSpecificDto.dtoToVo() = FeedbackSpecificVo(
     contents = contents.map { it.dtoToVo() },
     cursor = cursor.dtoToVo(),

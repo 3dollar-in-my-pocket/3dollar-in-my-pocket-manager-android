@@ -40,7 +40,8 @@ internal fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
     openStatus = this?.openStatus.dtoToVo(),
     snsUrl = this?.snsUrl.toStringDefault(),
     updatedAt = this?.updatedAt.toStringDefault(),
-    accountNumbers = this?.accountNumbersDto?.map { it.dtoToVo() } ?: listOf()
+    accountNumbers = this?.accountNumbersDto?.map { it.dtoToVo() } ?: listOf(),
+    subscriberCount = this?.favoriteDto?.subscriberCount ?: 0
 )
 
 internal fun CategoriesDto.dtoToVo() = CategoriesVo(

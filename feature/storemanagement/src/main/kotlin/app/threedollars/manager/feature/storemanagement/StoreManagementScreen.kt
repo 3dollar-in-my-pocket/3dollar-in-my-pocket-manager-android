@@ -14,7 +14,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
@@ -26,11 +25,12 @@ import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.manager.feature.storemanagement.components.BossCommentScreen
 import app.threedollars.manager.feature.storemanagement.components.BusinessScheduleEditScreen
 import app.threedollars.manager.feature.storemanagement.components.MyScreen
-import app.threedollars.manager.feature.storemanagement.components.ReviewScreen
+import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
 import app.threedollars.manager.feature.storemanagement.components.account.AccountScreen
 import app.threedollars.manager.feature.storemanagement.components.menumanagement.MenuManagementScreen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
+import app.threedollars.manager.feature.storemanagement.components.review.ReviewScreen
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
@@ -73,6 +73,7 @@ internal fun StoreManagementScreen(
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Gray0,
         topBar = {
             if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO) {
                 TopBar(
@@ -98,10 +99,13 @@ internal fun StoreManagementScreen(
                 ScreenType.REVIEW_INFO -> {
                     Spacer(modifier = Modifier.padding(top = 36.dp))
                     ReviewScreen(
-                        feedbackFulls = feedbackFulls,
-                        feedbackTypes = feedbackTypes,
-                        feedbackSpecific = feedbackSpecific
+                        subscriberCount = bossStoreRetrieve.subscriberCount
                     )
+//                    FeedbackScreen(
+//                        feedbackFulls = feedbackFulls,
+//                        feedbackTypes = feedbackTypes,
+//                        feedbackSpecific = feedbackSpecific
+//                    )
                 }
 
                 ScreenType.PROFILE_EDIT -> {

@@ -5,6 +5,7 @@ import app.threedollars.data.model.AccountNumbers
 import app.threedollars.data.model.Address
 import app.threedollars.data.model.AppearanceDaysModel
 import app.threedollars.data.model.CategoriesModel
+import app.threedollars.data.model.FavoriteModel
 import app.threedollars.data.model.LocationModel
 import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.OpenStatusModel
@@ -48,6 +49,8 @@ data class BossStoreRetrieveResponse(
     val createdAt: String? = null,
     @SerialName("updatedAt")
     val updatedAt: String? = null,
+    @SerialName("favorite")
+    val favorite: FavoriteModel? = null
 ) : BaseResponse<BossStoreRetrieveResponse>() {
     fun toDto() = BossStoreRetrieveDto(
         bossStoreId = bossStoreId,
@@ -66,5 +69,6 @@ data class BossStoreRetrieveResponse(
         distance = distance,
         openStatus = openStatus?.toDto(),
         updatedAt = updatedAt,
+        favoriteDto = favorite?.toDto()
     )
 }

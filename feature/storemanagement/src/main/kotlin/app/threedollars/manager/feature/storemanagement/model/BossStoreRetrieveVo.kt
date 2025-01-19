@@ -17,4 +17,5 @@ internal data class BossStoreRetrieveVo(
     val distance: Int = 0,
     val openStatus: OpenStatusVo = OpenStatusVo(),
     val updatedAt: String = "",
+    val subscriberCount : Int = 0
 )
