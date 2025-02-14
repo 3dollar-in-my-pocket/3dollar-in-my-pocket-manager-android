@@ -16,7 +16,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BossStoreRetrieveResponse(
+internal data class BossStoreRetrieveResponse(
     @SerialName("bossStoreId")
     val bossStoreId: String? = null,
     @SerialName("isOwner")
@@ -50,7 +50,11 @@ data class BossStoreRetrieveResponse(
     @SerialName("updatedAt")
     val updatedAt: String? = null,
     @SerialName("favorite")
-    val favorite: FavoriteModel? = null
+    val favorite: FavoriteModel? = null,
+    @SerialName("rating")
+    val rating: Double? = null,
+    @SerialName("reviews")
+    val reviews: StoreReviewResponse = StoreReviewResponse()
 ) : BaseResponse<BossStoreRetrieveResponse>() {
     fun toDto() = BossStoreRetrieveDto(
         bossStoreId = bossStoreId,
@@ -69,6 +73,8 @@ data class BossStoreRetrieveResponse(
         distance = distance,
         openStatus = openStatus?.toDto(),
         updatedAt = updatedAt,
-        favoriteDto = favorite?.toDto()
+        favoriteDto = favorite?.toDto(),
+        rating = rating,
+        reviewTotalCount = reviews.cursor?.totalCount
     )
 }

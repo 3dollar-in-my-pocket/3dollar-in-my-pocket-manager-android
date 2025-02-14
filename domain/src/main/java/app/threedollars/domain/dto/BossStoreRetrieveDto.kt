@@ -17,5 +17,7 @@ data class BossStoreRetrieveDto(
     val distance: Int? = null,
     val openStatus: OpenStatusDto? = null,
     val updatedAt: String? = null,
-    val favoriteDto: FavoriteDto? = null
+    val favoriteDto: FavoriteDto? = null,
+    val rating: Double? = null,
+    val reviewTotalCount: Int? = null
 )

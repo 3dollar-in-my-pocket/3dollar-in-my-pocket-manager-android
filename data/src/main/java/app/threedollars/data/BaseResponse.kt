@@ -10,5 +10,7 @@ open class BaseResponse<T>(
     @SerialName("message")
     val message: String? = "",
     @SerialName("resultCode")
-    val resultCode: String? = ""
+    val resultCode: String? = "",
+    @SerialName("ok")
+    val ok: Boolean = false
 )
