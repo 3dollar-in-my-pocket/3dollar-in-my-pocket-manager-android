@@ -25,18 +25,19 @@ import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.manager.feature.storemanagement.components.BossCommentScreen
 import app.threedollars.manager.feature.storemanagement.components.BusinessScheduleEditScreen
 import app.threedollars.manager.feature.storemanagement.components.MyScreen
-import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
 import app.threedollars.manager.feature.storemanagement.components.account.AccountScreen
 import app.threedollars.manager.feature.storemanagement.components.menumanagement.MenuManagementScreen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
-import app.threedollars.manager.feature.storemanagement.components.review.ReviewScreen
+import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
+import app.threedollars.manager.feature.storemanagement.components.review.ReviewContent
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
 import app.threedollars.manager.feature.storemanagement.model.BossStoreRetrieveVo
 import app.threedollars.manager.feature.storemanagement.model.FeedbackFullVo
 import app.threedollars.manager.feature.storemanagement.model.FeedbackTypesVo
+import app.threedollars.manager.feature.storemanagement.model.ReviewVo
 import app.threedollars.manager.feature.storemanagement.model.StoreCategoriesVo
 
 @Composable
@@ -50,6 +51,7 @@ internal fun StoreManagementScreen(
     errorMessage: String?,
     scheduleDays: List<ScheduleDay>,
     appearanceDays: HashMap<String, AppearanceDaysVo>,
+    reviews: List<ReviewVo>,
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
     feedbackSpecific: LazyPagingItems<ContentsDto>,
@@ -62,6 +64,7 @@ internal fun StoreManagementScreen(
     onEndTimeUpdate: (String, String) -> Unit,
     onLocationDescriptionUpdate: (String, String) -> Unit,
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
+    onAllReviewNavigate: () -> Unit
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
         BaseDialog(
@@ -97,16 +100,28 @@ internal fun StoreManagementScreen(
                 }
 
                 ScreenType.REVIEW_INFO -> {
-                    Spacer(modifier = Modifier.padding(top = 36.dp))
-                    ReviewScreen(
-                        subscriberCount = bossStoreRetrieve.subscriberCount
+                    Spacer(modifier = Modifier.padding(top = 16.dp))
+                    ReviewContent(
+                        subscriberCount = bossStoreRetrieve.subscriberCount,
+                        rating = bossStoreRetrieve.rating,
+                        reviewTotalCount = bossStoreRetrieve.reviewTotalCount,
+                        reviews = reviews,
+                        feedbackFulls = feedbackFulls,
+                        feedbackTypes = feedbackTypes,
+                        onScreenTypeUpdate = onScreenTypeUpdate,
+                        onAllReviewNavigate = onAllReviewNavigate
                     )
-//                    FeedbackScreen(
-//                        feedbackFulls = feedbackFulls,
-//                        feedbackTypes = feedbackTypes,
-//                        feedbackSpecific = feedbackSpecific
-//                    )
                 }
+
+                ScreenType.FEEDBACK -> {
+                    FeedbackScreen(
+                        feedbackFulls = feedbackFulls,
+                        feedbackTypes = feedbackTypes,
+                        feedbackSpecific = feedbackSpecific,
+                        onScreenTypeUpdate = onScreenTypeUpdate
+                    )
+                }
+
 
                 ScreenType.PROFILE_EDIT -> {
                     ProfileEditScreen(

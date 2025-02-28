@@ -17,29 +17,32 @@ import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun BottomNavigation(
+    visible: Boolean,
     currentTab: TabType?,
     onTabSelected: (TabType) -> Unit,
 ) {
     val tabs = TabType.entries.toPersistentList()
 
-    NavigationBar(
-        containerColor = if (currentTab == TabType.SETTING) Gray100 else White,
-        contentColor = Color.Black
-    ) {
-        tabs.forEach { tab ->
-            NavigationBarItem(
-                icon = { Icon(painterResource(id = tab.icon), contentDescription = null) },
-                colors = NavigationBarItemDefaults.colors().copy(
-                    selectedIconColor = colorResource(id = R.color.green500),
-                    selectedIndicatorColor = Color.Transparent,
-                    unselectedIconColor = Gray50
-                ),
-                alwaysShowLabel = true,
-                selected = currentTab == tab,
-                onClick = {
-                    onTabSelected(tab)
-                }
-            )
+    if (visible) {
+        NavigationBar(
+            containerColor = if (currentTab == TabType.SETTING) Gray100 else White,
+            contentColor = Color.Black
+        ) {
+            tabs.forEach { tab ->
+                NavigationBarItem(
+                    icon = { Icon(painterResource(id = tab.icon), contentDescription = null) },
+                    colors = NavigationBarItemDefaults.colors().copy(
+                        selectedIconColor = colorResource(id = R.color.green500),
+                        selectedIndicatorColor = Color.Transparent,
+                        unselectedIconColor = Gray50
+                    ),
+                    alwaysShowLabel = true,
+                    selected = currentTab == tab,
+                    onClick = {
+                        onTabSelected(tab)
+                    }
+                )
+            }
         }
     }
 }

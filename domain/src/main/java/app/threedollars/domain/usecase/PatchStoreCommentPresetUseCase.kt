@@ -12,7 +12,7 @@ class PatchStoreCommentPresetUseCase @Inject constructor(
         storeId: String,
         presetId: String,
         body: String
-    ): Resource<CommentPresetDto.CommentPreset> {
+    ): Resource<String> {
         return reviewRepository.patchStoreCommentPreset(
             storeId = storeId,
             presetId = presetId,

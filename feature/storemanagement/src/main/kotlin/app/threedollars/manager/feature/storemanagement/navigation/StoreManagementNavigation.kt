@@ -7,7 +7,9 @@ import androidx.navigation.compose.composable
 import app.threedollars.common.TabRoute
 import app.threedollars.manager.feature.storemanagement.StoreManagementRoute
 
-fun NavController.navigateStoreManagement(navOptions: NavOptions) {
+fun NavController.navigateStoreManagement(
+    navOptions: NavOptions,
+) {
     navigate(
         route = TabRoute.StoreManagement,
         navOptions = navOptions
@@ -15,8 +17,11 @@ fun NavController.navigateStoreManagement(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.storeManagementNavGraph(
+    onAllReviewNavigate: () -> Unit
 ) {
     composable<TabRoute.StoreManagement> {
-        StoreManagementRoute()
+        StoreManagementRoute(
+            onAllReviewNavigate = onAllReviewNavigate
+        )
     }
 }

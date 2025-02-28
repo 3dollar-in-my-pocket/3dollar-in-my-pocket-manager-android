@@ -13,17 +13,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(
+internal class UserRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) :
     UserRepository {
-    override suspend fun saveSocialAccessToken(token: String): Flow<Unit> = localDataSource.saveSocialAccessToken(token)
+    override suspend fun saveSocialAccessToken(token: String): Flow<Unit> =
+        localDataSource.saveSocialAccessToken(token)
 
     override suspend fun saveAccessToken(token: String) = localDataSource.saveAccessToken(token)
-    override fun getSocialAccessToken(): Flow<Resource<String>> = localDataSource.getSocialAccessToken().map {
-        Resource.Success(data = it, code = null)
-    }
+    override fun getSocialAccessToken(): Flow<Resource<String>> =
+        localDataSource.getSocialAccessToken().map {
+            Resource.Success(data = it, code = null)
+        }
 
     override fun getAccessToken(): Flow<Resource<String>> = localDataSource.getAccessToken().map {
         Resource.Success(data = it, code = null)
@@ -51,7 +53,15 @@ class UserRepositoryImpl @Inject constructor(
         storeName: String,
         token: String
     ): Flow<Resource<LoginDto>> {
-        val signUpRequest = SignUpRequest(bossName, businessNumber, certificationPhotoUrl, socialType, storeCategoriesIds, storeName, token)
+        val signUpRequest = SignUpRequest(
+            bossName,
+            businessNumber,
+            certificationPhotoUrl,
+            socialType,
+            storeCategoriesIds,
+            storeName,
+            token
+        )
         return remoteDataSource.signUp(signUpRequest).map {
             if (it.data != null) {
                 Resource.Success(data = it.data!!.toDto(), code = it.code)
@@ -77,14 +87,20 @@ class UserRepositoryImpl @Inject constructor(
         return remoteDataSource.putBossAccount(bossAccountInfoRequest)
     }
 
-    override fun putBossDevice(pushPlatformType: String, pushToken: String): Flow<Resource<String>> {
+    override fun putBossDevice(
+        pushPlatformType: String,
+        pushToken: String
+    ): Flow<Resource<String>> {
         val bossDeviceRequest = BossDeviceRequest(pushPlatformType, pushToken)
         return remoteDataSource.putBossDevice(bossDeviceRequest)
     }
 
     override fun deleteBossDevice(): Flow<Resource<String>> = remoteDataSource.deleteBossDevice()
 
-    override fun putBossDeviceToken(pushPlatformType: String, pushToken: String): Flow<Resource<String>> {
+    override fun putBossDeviceToken(
+        pushPlatformType: String,
+        pushToken: String
+    ): Flow<Resource<String>> {
         val bossDeviceRequest = BossDeviceRequest(pushPlatformType, pushToken)
         return remoteDataSource.putBossDeviceToken(bossDeviceRequest)
     }

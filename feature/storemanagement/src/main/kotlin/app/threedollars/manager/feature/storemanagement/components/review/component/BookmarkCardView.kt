@@ -33,7 +33,9 @@ internal fun BookmarkCardView(
     subscriberCount: Int
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors().copy(
             containerColor = White

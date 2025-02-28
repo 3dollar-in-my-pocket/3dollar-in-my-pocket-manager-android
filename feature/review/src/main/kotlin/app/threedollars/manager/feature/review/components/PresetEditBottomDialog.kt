@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,12 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,20 +47,32 @@ import app.threedollars.common.ui.Gray40
 import app.threedollars.common.ui.Gray50
 import app.threedollars.common.ui.Gray95
 import app.threedollars.common.ui.Green
-import app.threedollars.common.ui.Red
 import app.threedollars.common.ui.White
 import app.threedollars.manager.feature.review.DialogType
 import app.threedollars.manager.feature.review.R
-import app.threedollars.manager.feature.review.model.CommentPresetVo
 import app.threedollars.manager.feature.review.noRippleClickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PresetEditBottomSheetDialog(
     sheetState: SheetState,
-    commentPresets: List<CommentPresetVo>,
+    presetText: String,
+    presetId: String,
     onDialogTypeUpdate: (DialogType) -> Unit,
+    onPresetEditClick: (String, String) -> Unit
 ) {
+    val presetFocusRequester = remember { FocusRequester() }
+    var editPresetText by remember { mutableStateOf(presetText) }
+    val presetTextLimit = 300
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val presetFocusModifier = Modifier
+        .focusRequester(presetFocusRequester)
+
+    LaunchedEffect(Unit) {
+        presetFocusRequester.requestFocus()
+        keyboardController?.show()
+    }
     ModalBottomSheet(
         onDismissRequest = { onDialogTypeUpdate(DialogType.NONE) },
         sheetState = sheetState,
@@ -73,60 +87,124 @@ internal fun PresetEditBottomSheetDialog(
                     )
                     .imePadding()
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 20.dp,
+                            end = 20.dp,
+                            bottom = 20.dp
+                        )
                 ) {
-                    Text(
-                        text = "자주 쓰는 문구",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Gray100
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "자주 쓰는 문구 수정",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Gray100
+                        )
 
-                    Image(
-                        modifier = Modifier.noRippleClickable {
-                            onDialogTypeUpdate(DialogType.NONE)
-                        },
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_close),
-                        contentDescription = ""
-                    )
-                }
+                        Image(
+                            modifier = Modifier.noRippleClickable {
+                                onDialogTypeUpdate(DialogType.NONE)
+                            },
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_close),
+                            contentDescription = ""
+                        )
+                    }
 
-                if (commentPresets.isEmpty()) {
-                    Text(
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .padding(top = 16.dp)
+                            .noRippleClickable { presetFocusRequester.requestFocus() },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Gray10),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TextField(
+                                modifier = presetFocusModifier
+                                    .fillMaxWidth()
+                                    .height(240.dp),
+                                value = editPresetText,
+                                onValueChange = { newText ->
+                                    if (newText.length <= presetTextLimit) {
+                                        editPresetText = newText
+                                    }
+                                },
+                                placeholder = {
+                                    Text(
+                                        text = "자주 쓰는 문구를 입력해주세요!",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = Gray40
+                                    )
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Gray10,
+                                    unfocusedContainerColor = Gray10,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    cursorColor = Green,
+                                    focusedTextColor = Gray95,
+                                    unfocusedTextColor = Gray95
+                                ),
+                            )
+
+                            Text(
+                                modifier = Modifier.padding(
+                                    horizontal = 16.dp,
+                                    vertical = 10.dp
+                                ),
+                                text = buildAnnotatedString {
+                                    withStyle(
+                                        style = SpanStyle(
+                                            color = if (editPresetText.length < 10) {
+                                                Gray50
+                                            } else {
+                                                Green
+                                            }
+                                        )
+                                    ) {
+                                        append(editPresetText.length.toString())
+                                    }
+                                    append("/${presetTextLimit}")
+                                },
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Gray50
+                            )
+                        }
+                    }
+
+                    Button(
+                        onClick = { onPresetEditClick(presetId, editPresetText) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 28.dp),
-                        text = "자주 사용하는 문구를 등록하면\n편리하고 빠르게 답글을 달 수 있어요!",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Gray50,
-                        textAlign = TextAlign.Center
-                    )
-                } else {
-
-                }
-
-                Button(
-                    onClick = { onDialogTypeUpdate(DialogType.PRESET_WRITE_DIALOG) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 28.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    enabled = commentPresets.size < 6,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Green,
-                        disabledContainerColor = Gray40
-                    )
-                ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        text = "문구 추가",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = White
-                    )
+                        shape = RectangleShape,
+                        enabled = editPresetText.length > 9,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Green,
+                            disabledContainerColor = Gray30
+                        )
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            text = "문구 추가",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = White
+                        )
+                    }
                 }
             }
         }

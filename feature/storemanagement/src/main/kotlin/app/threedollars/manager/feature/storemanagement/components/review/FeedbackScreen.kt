@@ -1,7 +1,9 @@
-package app.threedollars.manager.feature.storemanagement.components
+package app.threedollars.manager.feature.storemanagement.components.review
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,12 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import app.threedollars.common.ui.Gray10
+import app.threedollars.common.ui.Gray100
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray40
 import app.threedollars.common.ui.Gray5
@@ -39,15 +44,18 @@ import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.LightGreen
 import app.threedollars.common.ui.MildGreen
 import app.threedollars.domain.dto.ContentsDto
+import app.threedollars.manager.feature.storemanagement.R
+import app.threedollars.manager.feature.storemanagement.ScreenType
 import app.threedollars.manager.feature.storemanagement.model.FeedbackFullVo
 import app.threedollars.manager.feature.storemanagement.model.FeedbackTypesVo
 import app.threedollars.manager.feature.storemanagement.noRippleClickable
 
 @Composable
-internal fun ReviewScreen(
+internal fun FeedbackScreen(
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
     feedbackSpecific: LazyPagingItems<ContentsDto>,
+    onScreenTypeUpdate: (ScreenType) -> Unit,
 ) {
     val feedbackFullCount = (feedbackFulls.sumOf { it.count })
     var isAllDateClicked by remember { mutableStateOf(true) }
@@ -55,6 +63,29 @@ internal fun ReviewScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 24.dp,
+                    vertical = 34.dp
+                )
+        ) {
+            Image(
+                modifier = Modifier
+                    .clickable { onScreenTypeUpdate(ScreenType.REVIEW_INFO) },
+                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_left),
+                contentDescription = ""
+            )
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "피드백 평가",
+                color = Gray100,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
         ReviewHeader(
             feedbackFullCount = feedbackFullCount
         )

@@ -16,7 +16,7 @@ import app.threedollars.manager.navigation.factory.TabType
 class MainNavigator(
     val navController: NavHostController,
 ) {
-    val startDestination = app.threedollars.common.TabRoute.Home::class
+    val startDestination = TabRoute.Home::class
 
     private val currentDestination: NavDestination?
         @Composable get() = navController
@@ -24,6 +24,11 @@ class MainNavigator(
 
     fun navigateSetting() {
         navController.navigateSetting(navOptions {})
+    }
+
+    @Composable
+    fun shouldShowBottomBar() = TabType.contains {
+        currentDestination?.hasRoute(it::class) == true
     }
 
     val currentTab: TabType?
