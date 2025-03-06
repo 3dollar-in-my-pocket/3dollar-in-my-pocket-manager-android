@@ -1,10 +1,12 @@
 package app.threedollars.manager.feature.home.components
 
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.threedollars.common.ui.Pink_OP20
 import app.threedollars.manager.feature.home.R
+import app.threedollars.manager.feature.home.StoreStateType
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveAroundVo
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.compose.CameraPositionState
@@ -26,6 +28,7 @@ internal fun MapView(
     location: LatLng,
     isFoodTruckCheck: Boolean,
     bossStoreArounds: List<BossStoreRetrieveAroundVo>,
+    openStatus: StoreStateType,
 ) {
     NaverMap(
         modifier = modifier,
@@ -33,8 +36,19 @@ internal fun MapView(
         properties = MapProperties(locationTrackingMode = LocationTrackingMode.None),
         uiSettings = MapUiSettings(isZoomControlEnabled = false, isLocationButtonEnabled = false),
     ) {
-        Marker(state = MarkerState(location), icon = OverlayImage.fromResource(R.drawable.ic_marker))
-        CircleOverlay(center = location, color = Pink_OP20, radius = 148.dp.value.toDouble())
+        if(openStatus == StoreStateType.OPEN) {
+            Marker(
+                state = MarkerState(location),
+                icon = OverlayImage.fromResource(R.drawable.ic_marker)
+            )
+            CircleOverlay(center = location, color = Pink_OP20, radius = 148.dp.value.toDouble())
+        }else{
+            Marker(
+                state = MarkerState(cameraPositionState.position.target),
+                icon = OverlayImage.fromResource(R.drawable.ic_marker)
+            )
+            CircleOverlay(center = cameraPositionState.position.target, color = Pink_OP20, radius = 148.dp.value.toDouble())
+        }
         if (isFoodTruckCheck) {
             bossStoreArounds.forEach {
                 Marker(

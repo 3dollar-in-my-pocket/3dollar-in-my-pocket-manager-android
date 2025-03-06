@@ -50,7 +50,10 @@ internal class HomeViewModel @Inject constructor(
 
     fun getBossStoreAround(latLng: LatLng) {
         viewModelScope.launch(exceptionHandler) {
-            bossStoreRetrieveUseCase.getBossStoreRetrieveAround(mapLatitude = latLng.latitude, mapLongitude = latLng.longitude).collect {
+            bossStoreRetrieveUseCase.getBossStoreRetrieveAround(
+                mapLatitude = latLng.latitude,
+                mapLongitude = latLng.longitude
+            ).collect {
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _stateFlow.update { state ->
@@ -65,11 +68,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun storeOpen() {
+    fun storeOpen(location: LatLng) {
         viewModelScope.launch(exceptionHandler) {
             val bossStoreId = _stateFlow.value.bossStoreRetrieveMe.bossStoreId.toStringDefault()
-            val location = _stateFlow.value.location
-
             bossStoreOpenUseCase.postBossStoreOpen(
                 bossStoreId = bossStoreId,
                 mapLatitude = location.latitude,
@@ -77,6 +78,7 @@ internal class HomeViewModel @Inject constructor(
             ).collect {
                 _stateFlow.update { state ->
                     state.copy(
+                        location = location,
                         bossStoreRetrieveMe = state.bossStoreRetrieveMe.copy(
                             openStatus = state.bossStoreRetrieveMe.openStatus.copy(
                                 status = StoreStateType.OPEN,

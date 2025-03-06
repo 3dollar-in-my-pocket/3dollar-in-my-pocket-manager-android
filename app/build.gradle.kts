@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "app.threedollars.manager"
-        versionCode = 10
-        versionName = "1.1.4"
+        versionCode = 12
+        versionName = "1.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
