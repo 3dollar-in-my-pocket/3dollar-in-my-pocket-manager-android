@@ -1,6 +1,8 @@
 package app.threedollars.manager.feature.home
 
 import android.Manifest
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,6 +13,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.rememberCameraPositionState
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -32,6 +36,8 @@ fun HomeRoute(
     val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
+    val cameraPositionState = rememberCameraPositionState()
+
     LaunchedEffect(Unit) {
         if (locationPermissionsState.allPermissionsGranted) {
             currentLocationState(
@@ -48,14 +54,26 @@ fun HomeRoute(
 
     HomeScreen(
         location = uiState.location,
+        openLocation = uiState.openLocation,
+        currentLocation = uiState.currentLocation,
         address = uiState.address,
         bossStoreRetrieveMe = uiState.bossStoreRetrieveMe,
+        cameraPositionState = cameraPositionState,
         bossStoreRetrieveArounds = uiState.bossStoreRetrieveArounds,
-        onAddressUpdate = viewModel::updateAddress,
         onStoreStateUpdate = { storeStateType, location ->
             when (storeStateType) {
                 StoreStateType.OPEN -> {
-                    viewModel.storeOpen(location = location)
+                    val distanceInMeters =
+                        uiState.currentLocation.distanceTo(cameraPositionState.position.target)
+                    if (distanceInMeters <= 100) {
+                        viewModel.storeOpen(location = location)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "빨간 원(현재 위치의 반경 100m이내) 안에서 장사를 시작해주세요.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
 
                 StoreStateType.CLOSE -> {
@@ -64,15 +82,16 @@ fun HomeRoute(
             }
         },
         onCurrentLocationClick = {
-            if (uiState.bossStoreRetrieveMe.openStatus.status == StoreStateType.OPEN) {
-                viewModel.getBossStoreAround(uiState.location)
-            } else {
-                currentLocationState(
-                    context = context,
-                    fusedLocationClient = fusedLocationClient,
-                    onCurrentLocation = viewModel::getBossStoreAround
-                )
-            }
+            currentLocationState(
+                context = context,
+                fusedLocationClient = fusedLocationClient,
+                onCurrentLocation = {
+                    cameraPositionState.position =
+                        CameraPosition(uiState.currentLocation, cameraPositionState.position.zoom)
+                    viewModel.updateAddress(context.getCurrentLocationName(uiState.currentLocation))
+                    viewModel.getBossStoreAround(it)
+                }
+            )
         }
     )
 }

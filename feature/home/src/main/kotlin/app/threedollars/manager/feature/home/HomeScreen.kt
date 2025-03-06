@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -41,29 +39,22 @@ import app.threedollars.manager.feature.home.components.MapView
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveAroundVo
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveVo
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.compose.CameraPositionState
 
 @Composable
 internal fun HomeScreen(
     location: LatLng,
+    openLocation: LatLng,
+    currentLocation: LatLng,
     address: String,
     bossStoreRetrieveMe: BossStoreRetrieveVo,
+    cameraPositionState: CameraPositionState,
     bossStoreRetrieveArounds: List<BossStoreRetrieveAroundVo>,
-    onAddressUpdate: (String) -> Unit,
     onStoreStateUpdate: (StoreStateType, LatLng) -> Unit,
     onCurrentLocationClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    val cameraPositionState = rememberCameraPositionState()
 
     var isFoodTruckCheck by remember { mutableStateOf(false) }
-
-    LaunchedEffect(location) {
-        cameraPositionState.position = CameraPosition(location, cameraPositionState.position.zoom)
-        onAddressUpdate(context.getCurrentLocationName(location))
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -74,7 +65,8 @@ internal fun HomeScreen(
             MapView(
                 modifier = Modifier,
                 cameraPositionState = cameraPositionState,
-                location = location,
+                openLocation = openLocation,
+                currentLocation = currentLocation,
                 isFoodTruckCheck = isFoodTruckCheck,
                 bossStoreArounds = bossStoreRetrieveArounds,
                 openStatus = bossStoreRetrieveMe.openStatus.status

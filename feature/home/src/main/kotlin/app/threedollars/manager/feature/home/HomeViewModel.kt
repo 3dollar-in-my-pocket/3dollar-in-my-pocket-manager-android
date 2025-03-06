@@ -59,6 +59,7 @@ internal class HomeViewModel @Inject constructor(
                         _stateFlow.update { state ->
                             state.copy(
                                 location = latLng,
+                                currentLocation = latLng,
                                 bossStoreRetrieveArounds = data.map { bossStoreRetrieveAroundDto -> bossStoreRetrieveAroundDto.dtoToVo() }
                             )
                         }
@@ -68,7 +69,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun storeOpen(location: LatLng) {
+    fun storeOpen(
+        location: LatLng,
+    ) {
         viewModelScope.launch(exceptionHandler) {
             val bossStoreId = _stateFlow.value.bossStoreRetrieveMe.bossStoreId.toStringDefault()
             bossStoreOpenUseCase.postBossStoreOpen(
@@ -78,7 +81,7 @@ internal class HomeViewModel @Inject constructor(
             ).collect {
                 _stateFlow.update { state ->
                     state.copy(
-                        location = location,
+                        openLocation = location,
                         bossStoreRetrieveMe = state.bossStoreRetrieveMe.copy(
                             openStatus = state.bossStoreRetrieveMe.openStatus.copy(
                                 status = StoreStateType.OPEN,
@@ -100,6 +103,7 @@ internal class HomeViewModel @Inject constructor(
             ).collect {
                 _stateFlow.update { state ->
                     state.copy(
+                        location = state.currentLocation,
                         bossStoreRetrieveMe = state.bossStoreRetrieveMe.copy(
                             openStatus = state.bossStoreRetrieveMe.openStatus.copy(
                                 status = StoreStateType.CLOSE

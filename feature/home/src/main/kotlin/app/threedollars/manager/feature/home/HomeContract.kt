@@ -7,7 +7,9 @@ import com.naver.maps.map.NaverMap.DEFAULT_CAMERA_POSITION
 
 
 internal data class HomeState(
+    val openLocation: LatLng = DEFAULT_CAMERA_POSITION.target,
     val location: LatLng = DEFAULT_CAMERA_POSITION.target,
+    val currentLocation: LatLng = DEFAULT_CAMERA_POSITION.target,
     val address: String = "",
     val bossStoreRetrieveMe: BossStoreRetrieveVo = BossStoreRetrieveVo(),
     val bossStoreRetrieveArounds: List<BossStoreRetrieveAroundVo> = listOf(),
