@@ -26,14 +26,10 @@ internal fun Context.getCurrentLocationName(location: LatLng?): String {
         if (addresses.isNullOrEmpty()) {
             notFindMsg
         } else {
-            with(addresses[0]) {
-                val locality = subLocality ?: locality ?: ""
-                val region = adminArea ?: ""
-                if (region.isEmpty() && locality.isEmpty()) {
-                    return notFindMsg
-                }
-                "$region $locality"
+            if (addresses[0].getAddressLine(0).isEmpty()) {
+                return notFindMsg
             }
+            addresses[0].getAddressLine(0).replace("대한민국 ", "")
         }
     } catch (e: Exception) {
         Log.e("getCurrentLocationName", e.message ?: "")
@@ -78,8 +74,8 @@ internal fun currentLocationState(
 internal fun currentLocation(
     context: Context,
     fusedLocationClient: FusedLocationProviderClient,
-) : LatLng? {
-    var latLang : LatLng? = null
+): LatLng? {
+    var latLang: LatLng? = null
 
     val permissionCheck =
         ActivityCompat.checkSelfPermission(

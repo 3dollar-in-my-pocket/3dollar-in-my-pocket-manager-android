@@ -1,7 +1,6 @@
 package app.threedollars.manager.feature.home
 
 import android.Manifest
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
