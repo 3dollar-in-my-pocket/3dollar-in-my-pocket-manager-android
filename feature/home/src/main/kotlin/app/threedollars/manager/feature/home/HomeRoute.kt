@@ -52,6 +52,11 @@ fun HomeRoute(
         }
     }
 
+    LaunchedEffect(uiState.currentLocation) {
+        cameraPositionState.position =
+            CameraPosition(uiState.currentLocation, cameraPositionState.position.zoom)
+        viewModel.updateAddress(context.getCurrentLocationName(uiState.currentLocation))
+    }
     HomeScreen(
         location = uiState.location,
         openLocation = uiState.openLocation,
