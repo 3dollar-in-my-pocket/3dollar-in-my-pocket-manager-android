@@ -5,6 +5,7 @@ import app.threedollars.data.model.AccountNumbers
 import app.threedollars.data.model.Address
 import app.threedollars.data.model.AppearanceDaysModel
 import app.threedollars.data.model.CategoriesModel
+import app.threedollars.data.model.FavoriteModel
 import app.threedollars.data.model.LocationModel
 import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.OpenStatusModel
@@ -15,7 +16,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BossStoreRetrieveResponse(
+internal data class BossStoreRetrieveResponse(
     @SerialName("bossStoreId")
     val bossStoreId: String? = null,
     @SerialName("isOwner")
@@ -48,6 +49,12 @@ data class BossStoreRetrieveResponse(
     val createdAt: String? = null,
     @SerialName("updatedAt")
     val updatedAt: String? = null,
+    @SerialName("favorite")
+    val favorite: FavoriteModel? = null,
+    @SerialName("rating")
+    val rating: Double? = null,
+    @SerialName("reviews")
+    val reviews: StoreReviewResponse = StoreReviewResponse()
 ) : BaseResponse<BossStoreRetrieveResponse>() {
     fun toDto() = BossStoreRetrieveDto(
         bossStoreId = bossStoreId,
@@ -66,5 +73,8 @@ data class BossStoreRetrieveResponse(
         distance = distance,
         openStatus = openStatus?.toDto(),
         updatedAt = updatedAt,
+        favoriteDto = favorite?.toDto(),
+        rating = rating,
+        reviewTotalCount = reviews.cursor?.totalCount
     )
 }

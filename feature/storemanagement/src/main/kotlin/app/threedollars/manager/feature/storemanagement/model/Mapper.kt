@@ -17,6 +17,7 @@ import app.threedollars.domain.dto.MenusDto
 import app.threedollars.domain.dto.OpenStatusDto
 import app.threedollars.domain.dto.OpeningHoursDto
 import app.threedollars.domain.dto.StoreCategoriesDto
+import app.threedollars.domain.dto.StoreReviewDto
 import app.threedollars.manager.feature.storemanagement.components.emptyBusinessSchedules
 import app.threedollars.manager.feature.storemanagement.convertImageUrlToRequestBody
 
@@ -40,7 +41,10 @@ internal fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
     openStatus = this?.openStatus.dtoToVo(),
     snsUrl = this?.snsUrl.toStringDefault(),
     updatedAt = this?.updatedAt.toStringDefault(),
-    accountNumbers = this?.accountNumbersDto?.map { it.dtoToVo() } ?: listOf()
+    accountNumbers = this?.accountNumbersDto?.map { it.dtoToVo() } ?: listOf(),
+    subscriberCount = this?.favoriteDto?.subscriberCount ?: 0,
+    rating = this?.rating.toDoubleDefault(),
+    reviewTotalCount = this?.reviewTotalCount.toIntDefault()
 )
 
 internal fun CategoriesDto.dtoToVo() = CategoriesVo(
@@ -102,7 +106,14 @@ internal fun AppearanceDaysVo.toBusinessSchedule(): BusinessScheduleModel {
     val dayOfTWeek =
         emptyBusinessSchedules.find { it.dayOfTheWeek == dayOfTheWeek }?.dayOfTWeek.toStringDefault()
     val isWeekend = dayOfTWeek == "일요일" || dayOfTWeek == "토요일"
-    return BusinessScheduleModel(dayOfTWeek, dayOfTheWeek, locationDescription.toStringDefault(), openingHours, openingHours != "휴무", isWeekend)
+    return BusinessScheduleModel(
+        dayOfTWeek,
+        dayOfTheWeek,
+        locationDescription.toStringDefault(),
+        openingHours,
+        openingHours != "휴무",
+        isWeekend
+    )
 }
 
 internal fun MenuModel.toDto(): MenusDto =
@@ -134,8 +145,52 @@ internal fun FeedbackFullDto.dtoToVo() = FeedbackFullVo(
     feedbackType = feedbackType,
     ratio = ratio,
 )
+
 internal fun FeedbackTypesDto.dtoToVo() = FeedbackTypesVo(
     description = description,
     emoji = emoji,
     feedbackType = feedbackType,
+)
+
+internal fun StoreReviewDto.StoreReview.dtoToVo() = ReviewVo(
+    reviewId = reviewId,
+    rating = rating,
+    contents = contents.toStringDefault(),
+    images = images.map { it.dtoToVo() },
+    writer = writer.dtoToVo(),
+    createdAt = createdAt.toStringDefault(),
+    sticker = stickers.first().dtoToVo(),
+    comment = comments.firstOrNull { comment -> comment.status == "ACTIVE" }?.dtoToVo()
+)
+
+internal fun StoreReviewDto.StoreReview.Image.dtoToVo() = ReviewVo.Image(
+    imageUrl = imageUrl,
+    width = width,
+    height = height
+)
+
+internal fun StoreReviewDto.StoreReview.Writer.dtoToVo() = ReviewVo.Writer(
+    name = name,
+    medal = medal.dtoToVo()
+)
+
+internal fun StoreReviewDto.StoreReview.Writer.Medal.dtoToVo() = ReviewVo.Writer.Medal(
+    name = name,
+    iconUrl = iconUrl
+)
+
+internal fun StoreReviewDto.StoreReview.Sticker.dtoToVo() = ReviewVo.Sticker(
+    stickerId = stickerId,
+    emoji = emoji,
+    count = count,
+    reactedByMe = reactedByMe
+)
+
+internal fun StoreReviewDto.StoreReview.Comment.dtoToVo() = ReviewVo.Comment(
+    commentId = commentId,
+    content = content,
+    status = status,
+    isOwner = isOwner,
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )

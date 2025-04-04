@@ -84,6 +84,7 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.storemanagement)
     implementation(projects.feature.setting)
+    implementation(projects.feature.review)
     implementation(projects.navigation)
 
     implementation(libs.firebase.messaging.ktx)

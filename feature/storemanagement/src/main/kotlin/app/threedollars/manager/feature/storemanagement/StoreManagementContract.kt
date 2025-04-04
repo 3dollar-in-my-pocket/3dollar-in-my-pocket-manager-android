@@ -6,6 +6,7 @@ import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BossStoreRetrieveVo
 import app.threedollars.manager.feature.storemanagement.model.FeedbackFullVo
 import app.threedollars.manager.feature.storemanagement.model.FeedbackTypesVo
+import app.threedollars.manager.feature.storemanagement.model.ReviewVo
 import app.threedollars.manager.feature.storemanagement.model.StoreCategoriesVo
 
 
@@ -21,11 +22,15 @@ internal data class StoreManagementState(
     val appearanceDays: HashMap<String, AppearanceDaysVo> = hashMapOf(),
     val feedbackFulls: List<FeedbackFullVo> = listOf(),
     val feedbackTypes: List<FeedbackTypesVo> = listOf(),
+    val reviews: List<ReviewVo> = listOf(),
+    val reviewFilterType: ReviewFilterType = ReviewFilterType.LATEST,
+    val selectedReviewId: String = ""
 )
 
 internal enum class ScreenType {
     STORE_INFO,
     REVIEW_INFO,
+    FEEDBACK,
     PROFILE_EDIT,
     BOSS_COMMENT,
     MENU_MANAGEMENT,
@@ -37,6 +42,12 @@ internal enum class DialogType {
     NONE,
     ERROR_DIALOG,
     LOADING_DIALOG
+}
+
+internal enum class ReviewFilterType(val title: String) {
+    LATEST(title = "최신순"),
+    HIGHEST_RATING(title = "별점 높은순"),
+    LOWEST_RATING(title = "별점 낮은순")
 }
 
 internal val defaultScheduleDays = listOf(

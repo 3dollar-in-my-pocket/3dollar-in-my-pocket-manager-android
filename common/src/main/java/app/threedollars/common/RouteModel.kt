@@ -14,5 +14,6 @@ sealed interface TabRoute : Route {
 }
 
 sealed interface Route {
-
+    @Serializable
+    data object Review
 }

@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.map
 import okhttp3.RequestBody
 import javax.inject.Inject
 
-class StoreRepositoryImpl @Inject constructor(
+internal class StoreRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val networkService: NetworkService,
 ) : StoreRepository {

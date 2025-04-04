@@ -30,5 +30,6 @@ include(
     ":feature:home",
     ":feature:setting",
     ":feature:storemanagement",
+    ":feature:review",
     ":navigation"
 )

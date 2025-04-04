@@ -1,13 +1,15 @@
 package app.threedollars.network
 
+import android.database.Cursor
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.*
 import app.threedollars.data.response.*
+import app.threedollars.data.response.StoreReviewResponse.StoreReview
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
-interface NetworkService {
+internal interface NetworkService {
 
     // auth-controller
     @POST("v1/auth/login")
@@ -41,10 +43,16 @@ interface NetworkService {
 
     // boss-store-controller
     @PUT("v1/boss/store/{bossStoreId}")
-    suspend fun putBossStore(@Path("bossStoreId") bossStoreId: String, @Body bossStoreRequest: BossStoreRequest): Response<BaseResponse<String>>
+    suspend fun putBossStore(
+        @Path("bossStoreId") bossStoreId: String,
+        @Body bossStoreRequest: BossStoreRequest
+    ): Response<BaseResponse<String>>
 
     @PATCH("v1/boss/store/{bossStoreId}")
-    suspend fun patchBossStore(@Path("bossStoreId") bossStoreId: String, @Body bossStoreRequest: BossStoreRequest): Response<BaseResponse<String>>
+    suspend fun patchBossStore(
+        @Path("bossStoreId") bossStoreId: String,
+        @Body bossStoreRequest: BossStoreRequest
+    ): Response<BaseResponse<String>>
 
     // boss-store-open-controller
     @DELETE("v1/boss/store/{bossStoreId}/close")
@@ -110,7 +118,10 @@ interface NetworkService {
     // image-upload-controller
     @Multipart
     @POST("v1/upload/{fileType}")
-    suspend fun postImageUpload(@Path("fileType") fileType: String, @Part file: MultipartBody.Part): Response<BaseResponse<ImageUploadResponse>>
+    suspend fun postImageUpload(
+        @Path("fileType") fileType: String,
+        @Part file: MultipartBody.Part
+    ): Response<BaseResponse<ImageUploadResponse>>
 
     @Multipart
     @POST("v1/upload/{fileType}/bulk")
@@ -123,4 +134,69 @@ interface NetworkService {
     @GET("v1/store/{storeType}/categories")
     suspend fun getStoreCategories(@Path("storeType") storeType: String): Response<BaseResponse<List<StoreCategoriesResponse>>>
 
+    @GET("v1/store/{storeId}/reviews")
+    suspend fun getStoreReviews(
+        @Path("storeId") storeId: String,
+        @Query("sort") sort: String,
+        @Query("size") size: Int? = null,
+        @Query("cursor") cursor: String? = null
+    ): Response<BaseResponse<StoreReviewResponse>>
+
+    @GET("v1/store/{storeId}/review/{reviewId}")
+    suspend fun getStoreReviewDetail(
+        @Path("storeId") storeId: String,
+        @Path("reviewId") reviewId: String,
+    ): Response<BaseResponse<StoreReview>>
+
+    @POST("v1/store/{storeId}/review/{reviewId}/report")
+    suspend fun postStoreReviewReport(
+        @Path("storeId") storeId: String,
+        @Path("reviewId") reviewId: String,
+        @Body reportRequest: ReportRequest
+    ): Response<BaseResponse<String>>
+
+    @POST("v1/nonce")
+    suspend fun postNonce(
+        @Body nonceRequest: NonceRequest = NonceRequest()
+    ): Response<BaseResponse<NonceResponse>>
+
+    @POST("v1/store/{storeId}/review/{reviewId}/comment")
+    suspend fun postStoreReviewComment(
+        @Path("storeId") storeId: String,
+        @Path("reviewId") reviewId: String,
+        @Header("X-Nonce-Token") nonce: String,
+        @Body reviewCommentRequest: ReviewCommentRequest
+    ): Response<BaseResponse<CommentCreateResponse>>
+
+    @DELETE("v1/store/{storeId}/review/{reviewId}/comment/{commentId}")
+    suspend fun deleteStoreReviewComment(
+        @Path("storeId") storeId: String,
+        @Path("reviewId") reviewId: String,
+        @Path("commentId") commentId: String
+    ): Response<BaseResponse<String>>
+
+    @POST("v1/store/{storeId}/comment-preset")
+    suspend fun postStoreCommentPreset(
+        @Path("storeId") storeId: String,
+        @Header("X-Nonce-Token") nonce: String,
+        @Body commentPresetRequest: CommentPresetRequest
+    ): Response<BaseResponse<CommentPresetResponse.CommentPreset>>
+
+    @DELETE("v1/store/{storeId}/comment-preset/{presetId}")
+    suspend fun deleteStoreCommentPreset(
+        @Path("storeId") storeId: String,
+        @Path("presetId") presetId: String,
+    ): Response<BaseResponse<String>>
+
+    @PATCH("v1/store/{storeId}/comment-preset/{presetId}")
+    suspend fun patchStoreCommentPreset(
+        @Path("storeId") storeId: String,
+        @Path("presetId") presetId: String,
+        @Body commentPresetRequest: CommentPresetRequest
+    ): Response<BaseResponse<String>>
+
+    @GET("v1/store/{storeId}/comment-presets")
+    suspend fun getStoreCommentPresets(
+        @Path("storeId") storeId: String,
+    ): Response<BaseResponse<CommentPresetResponse>>
 }

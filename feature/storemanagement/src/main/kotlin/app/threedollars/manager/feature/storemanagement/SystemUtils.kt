@@ -10,6 +10,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 internal fun Int.toWon(): String {
     val formatter = java.text.DecimalFormat("#,###")
@@ -31,9 +33,22 @@ internal fun convertImageUrlToRequestBody(imageUrl: String): RequestBody? {
     }
 }
 
-internal inline fun Modifier.noRippleClickable(crossinline onClick: ()->Unit): Modifier = composed {
-    clickable(indication = null,
-        interactionSource = remember { MutableInteractionSource() }) {
-        onClick()
+internal inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier =
+    composed {
+        clickable(indication = null,
+            interactionSource = remember { MutableInteractionSource() }) {
+            onClick()
+        }
+    }
+
+internal fun String.formatDate(): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+
+        val date = inputFormat.parse(this) ?: return "Invalid Date"
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        "Invalid Date"
     }
 }

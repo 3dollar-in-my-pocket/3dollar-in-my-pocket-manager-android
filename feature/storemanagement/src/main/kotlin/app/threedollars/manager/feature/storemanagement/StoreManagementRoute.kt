@@ -10,6 +10,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 
 @Composable
 fun StoreManagementRoute(
+    onAllReviewNavigate: () -> Unit
 ) {
     val viewModel: StoreManagementViewModel = hiltViewModel()
 
@@ -18,6 +19,7 @@ fun StoreManagementRoute(
     val feedbackSpecific = viewModel.feedbackSpecific.collectAsLazyPagingItems()
 
     val screenType = uiState.screenType
+
     LaunchedEffect(screenType) {
         viewModel.getBossStoreRetrieveMe()
 
@@ -25,6 +27,7 @@ fun StoreManagementRoute(
             ScreenType.REVIEW_INFO -> {
                 viewModel.getFeedbackType()
                 viewModel.getFeedbackFull()
+                viewModel.getStoreReviews()
             }
 
             ScreenType.PROFILE_EDIT -> {
@@ -33,6 +36,10 @@ fun StoreManagementRoute(
 
             ScreenType.ACCOUNT -> {
                 viewModel.getBankEnum()
+            }
+
+            ScreenType.FEEDBACK -> {
+                viewModel.getFeedbackSpecific()
             }
 
             else -> {}
@@ -48,37 +55,19 @@ fun StoreManagementRoute(
         errorMessage = uiState.errorMessage,
         scheduleDays = uiState.scheduleDays,
         appearanceDays = uiState.appearanceDays,
+        reviews = uiState.reviews,
         feedbackFulls = uiState.feedbackFulls,
         feedbackTypes = uiState.feedbackTypes,
         feedbackSpecific = feedbackSpecific,
-        onScreenTypeUpdate = { viewModel.updateScreenType(it) },
-        onDialogTypeUpdate = { viewModel.updateDialogType(it) },
-        onBossStorePatch = { viewModel.patchBossStore(it) },
-        onMenuPatch = { viewModel.patchMenu(it) },
-        onStoreCategorySelected = { viewModel.categorySelection(it) },
-        onStartTimeUpdate = { day, time ->
-            viewModel.updateDaysStartTime(
-                day = day,
-                time = time
-            )
-        },
-        onEndTimeUpdate = { day, time ->
-            viewModel.updateDaysEndTime(
-                day = day,
-                time = time
-            )
-        },
-        onLocationDescriptionUpdate = { day, locationDescription ->
-            viewModel.updateDaysLocationDescription(
-                day = day,
-                locationDescription = locationDescription
-            )
-        },
-        onScheduleDayUpdate = { scheduleDay ->
-            viewModel.updateScheduleDay(
-                scheduleDay = scheduleDay
-            )
-        }
-
+        onScreenTypeUpdate = viewModel::updateScreenType,
+        onDialogTypeUpdate = viewModel::updateDialogType,
+        onBossStorePatch = viewModel::patchBossStore,
+        onMenuPatch = viewModel::patchMenu,
+        onStoreCategorySelected = viewModel::categorySelection,
+        onStartTimeUpdate = viewModel::updateDaysStartTime,
+        onEndTimeUpdate = viewModel::updateDaysEndTime,
+        onLocationDescriptionUpdate = viewModel::updateDaysLocationDescription,
+        onScheduleDayUpdate = viewModel::updateScheduleDay,
+        onAllReviewNavigate = onAllReviewNavigate
     )
 }

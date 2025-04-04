@@ -11,6 +11,12 @@ data class CursorModel(
     val hasMore: Boolean = false,
     @SerialName("nextCursor")
     val nextCursor: String? = null,
+    @SerialName("totalCount")
+    val totalCount: Int? = null
 ) {
-    fun toDto() = CursorDto(hasMore, nextCursor)
+    fun toDto() = CursorDto(
+        hasMore = hasMore,
+        nextCursor = nextCursor,
+        totalCount = totalCount
+    )
 }

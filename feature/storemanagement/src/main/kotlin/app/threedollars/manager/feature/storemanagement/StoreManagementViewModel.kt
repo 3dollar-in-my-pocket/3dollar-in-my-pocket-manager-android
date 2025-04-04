@@ -1,32 +1,45 @@
 package app.threedollars.manager.feature.storemanagement
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import app.threedollars.common.ext.toStringDefault
+import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.domain.dto.MenusDto
 import app.threedollars.domain.usecase.BossStoreRetrieveUseCase
 import app.threedollars.domain.usecase.BossStoreUseCase
 import app.threedollars.domain.usecase.EnumMapperUseCase
 import app.threedollars.domain.usecase.FeedbackUseCase
+import app.threedollars.domain.usecase.GetStoreReviewListUseCase
+import app.threedollars.domain.usecase.GetStoreReviewPagingUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
 import app.threedollars.manager.feature.storemanagement.model.OpeningHoursVo
+import app.threedollars.manager.feature.storemanagement.model.ReviewVo
 import app.threedollars.manager.feature.storemanagement.model.dtoToVo
 import app.threedollars.manager.feature.storemanagement.model.toDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class StoreManagementViewModel @Inject constructor(
     private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
@@ -35,16 +48,38 @@ internal class StoreManagementViewModel @Inject constructor(
     private val platformStoreCategoryUseCase: PlatformStoreCategoryUseCase,
     private val enumMapperUseCase: EnumMapperUseCase,
     private val feedbackUseCase: FeedbackUseCase,
+    private val getStoreReviewListUseCase: GetStoreReviewListUseCase,
+    private val getStoreReviewPagingUseCase: GetStoreReviewPagingUseCase
 ) : ViewModel() {
 
-    private val _stateFlow: MutableStateFlow<StoreManagementState> = MutableStateFlow(StoreManagementState())
+    private val _stateFlow: MutableStateFlow<StoreManagementState> =
+        MutableStateFlow(StoreManagementState())
 
     val stateFlow: StateFlow<StoreManagementState> = _stateFlow.asStateFlow()
 
-    val feedbackSpecific by lazy {
-        feedbackUseCase.getFeedbackSpecific(
+    private val _feedbackSpecific = MutableStateFlow<Flow<PagingData<ContentsDto>>>(emptyFlow())
+
+    val feedbackSpecific = _feedbackSpecific.flatMapLatest { it }
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
+    private val _storeReviewPaging = MutableStateFlow<Flow<PagingData<ReviewVo>>>(emptyFlow())
+
+    val storeReviewPaging = _storeReviewPaging.flatMapLatest { it }
+        .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
+    fun getFeedbackSpecific() {
+        _feedbackSpecific.value = feedbackUseCase.getFeedbackSpecific(
             targetId = _stateFlow.value.bossStoreRetrieve.bossStoreId
         ).cachedIn(viewModelScope)
+    }
+
+    fun getReviewPaging() {
+        _storeReviewPaging.value = getStoreReviewPagingUseCase(
+            storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
+            sort = _stateFlow.value.reviewFilterType.name,
+        ).map {
+            it.map { dto -> dto.dtoToVo() }
+        }.cachedIn(viewModelScope)
     }
 
     fun updateScreenType(screenType: ScreenType) {
@@ -61,6 +96,23 @@ internal class StoreManagementViewModel @Inject constructor(
                 dialogType = dialogType
             )
         }
+    }
+
+    fun updateSelectedReviewId(reviewId: String) {
+        _stateFlow.update {
+            it.copy(
+                selectedReviewId = reviewId
+            )
+        }
+    }
+
+    fun updateReviewFilterType(reviewFilterType: ReviewFilterType) {
+        _stateFlow.update {
+            it.copy(
+                reviewFilterType = reviewFilterType
+            )
+        }
+        getReviewPaging()
     }
 
     fun getBossStoreRetrieveMe() {
@@ -231,14 +283,15 @@ internal class StoreManagementViewModel @Inject constructor(
 
     fun categorySelection(index: Int) {
         val selectedStoreCategories = _stateFlow.value.selectedStoreCategories
-        val storeCategories = _stateFlow.value.storeCategories.mapIndexed { mapIndex, storeCategory ->
-            when {
-                mapIndex != index -> storeCategory // 인덱스가 다르면 그대로 반환
-                storeCategory.isSelected -> storeCategory.copy(isSelected = false) // 이미 선택된 경우 선택 해제
-                selectedStoreCategories.size < 3 -> storeCategory.copy(isSelected = true) // 선택 제한 이내면 선택
-                else -> storeCategory // 선택 제한 초과 시 그대로 반환
+        val storeCategories =
+            _stateFlow.value.storeCategories.mapIndexed { mapIndex, storeCategory ->
+                when {
+                    mapIndex != index -> storeCategory // 인덱스가 다르면 그대로 반환
+                    storeCategory.isSelected -> storeCategory.copy(isSelected = false) // 이미 선택된 경우 선택 해제
+                    selectedStoreCategories.size < 3 -> storeCategory.copy(isSelected = true) // 선택 제한 이내면 선택
+                    else -> storeCategory // 선택 제한 초과 시 그대로 반환
+                }
             }
-        }
 
         _stateFlow.update { state ->
             state.copy(
@@ -255,9 +308,10 @@ internal class StoreManagementViewModel @Inject constructor(
     fun patchMenu(
         bossStorePatchModel: BossStorePatchModel,
     ) {
-        val imageRequestBodyList = bossStorePatchModel.menus?.filter { it.imageRequestBody != null }?.map {
-            it.imageRequestBody as RequestBody
-        }
+        val imageRequestBodyList =
+            bossStorePatchModel.menus?.filter { it.imageRequestBody != null }?.map {
+                it.imageRequestBody as RequestBody
+            }
         _stateFlow.update {
             it.copy(
                 dialogType = DialogType.LOADING_DIALOG,
@@ -384,7 +438,8 @@ internal class StoreManagementViewModel @Inject constructor(
             val appearanceDaysVo = updatedAppearanceDays[day]
 
             if (appearanceDaysVo != null) {
-                updatedAppearanceDays[day] = appearanceDaysVo.copy(locationDescription = locationDescription)
+                updatedAppearanceDays[day] =
+                    appearanceDaysVo.copy(locationDescription = locationDescription)
             }
 
             state.copy(
@@ -446,6 +501,23 @@ internal class StoreManagementViewModel @Inject constructor(
                     _stateFlow.update { state ->
                         state.copy(
                             feedbackTypes = feedbackTypes
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun getStoreReviews() {
+        viewModelScope.launch {
+            getStoreReviewListUseCase(
+                storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
+                sort = "LATEST",
+            ).collect { dto ->
+                dto.data?.let { storeReviewDto ->
+                    _stateFlow.update { state ->
+                        state.copy(
+                            reviews = storeReviewDto.contents.map { it.dtoToVo() }.take(3)
                         )
                     }
                 }

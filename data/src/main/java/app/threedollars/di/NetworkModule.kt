@@ -87,5 +87,5 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkService(retrofit: Retrofit): NetworkService = retrofit.create(NetworkService::class.java)
+    internal fun provideNetworkService(retrofit: Retrofit): NetworkService = retrofit.create(NetworkService::class.java)
 }
