@@ -18,10 +18,7 @@ interface ReviewRepository {
         sort: String
     ): Flow<PagingData<StoreReviewDto.StoreReview>>
 
-    fun getStoreReviewDetail(
-        storeId: String,
-        reviewId: String,
-    ): Flow<Resource<StoreReviewDto.StoreReview>>
+    suspend fun getStoreReviewDetail(reviewId: String): Flow<Resource<StoreReviewDto.StoreReview>>
 
     fun postStoreReviewReport(
         storeId: String,
