@@ -46,6 +46,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.threedollars.common.ui.Gray10
@@ -402,4 +403,41 @@ private fun ReviewDetailTopBar(
             fontWeight = FontWeight.SemiBold
         )
     }
+}
+
+@Preview(
+    name = "ReviewDetailScreen",
+    showBackground = true,
+)
+@Composable
+fun PreviewReviewDetailScreen_EmptyComment() {
+    val dummyReview = ReviewVo(
+        reviewId = "rev1",
+        rating = 4,
+        contents = "아주 맛있었어요!",
+        images = listOf(),
+        writer = ReviewVo.Writer(name = "홍길동", medal = ReviewVo.Writer.Medal()),
+        comment = ReviewVo.Comment(
+            commentId = "111",
+            content  = "내용",
+     status = "",
+        )
+    )
+    ReviewDetailScreen(
+        reviewVo = dummyReview,
+        commentPresets = listOf(),
+        dialogType = NONE,
+        selectEditPresetText = "",
+        selectEditPresetId = "",
+        onScreenTypeUpdate = {},
+        onDialogTypeUpdate = {},
+        onReportClick = {},
+        onCommentClick = { },
+        onCommentDeleteClick = {},
+        onPresetClick = {},
+        onPresetWriteClick = {},
+        onPresetEditClick = { _, _ -> },
+        onPresetDeleteClick = {},
+        onPresetEditMenuClick = { _, _ -> }
+    )
 }
