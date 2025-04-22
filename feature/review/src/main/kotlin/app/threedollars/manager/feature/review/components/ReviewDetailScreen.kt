@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,7 +60,10 @@ import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.Red
 import app.threedollars.common.ui.White
 import app.threedollars.manager.feature.review.DialogType
-import app.threedollars.manager.feature.review.DialogType.*
+import app.threedollars.manager.feature.review.DialogType.PRESET_DIALOG
+import app.threedollars.manager.feature.review.DialogType.PRESET_EDIT_DIALOG
+import app.threedollars.manager.feature.review.DialogType.PRESET_WRITE_DIALOG
+import app.threedollars.manager.feature.review.DialogType.REPORT_DIALOG
 import app.threedollars.manager.feature.review.R
 import app.threedollars.manager.feature.review.ScreenType
 import app.threedollars.manager.feature.review.ScreenType.ALL_REVIEW
@@ -103,7 +105,6 @@ internal fun ReviewDetailScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             ReviewDetailTopBar(
                 onScreenTypeUpdate = onScreenTypeUpdate,

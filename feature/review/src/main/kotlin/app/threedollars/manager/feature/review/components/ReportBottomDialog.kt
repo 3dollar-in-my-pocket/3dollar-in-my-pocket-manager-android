@@ -74,6 +74,7 @@ internal fun ReportBottomSheetDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
+                    .padding(bottom = 40.dp)
                     .imePadding()
             ) {
                 Row(

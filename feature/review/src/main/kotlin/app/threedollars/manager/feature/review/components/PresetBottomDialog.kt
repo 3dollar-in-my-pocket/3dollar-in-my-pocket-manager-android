@@ -65,7 +65,7 @@ internal fun PresetBottomSheetDialog(
                     .padding(
                         start = 20.dp,
                         end = 20.dp,
-                        bottom = 20.dp
+                        bottom = 40.dp
                     )
                     .imePadding()
             ) {
