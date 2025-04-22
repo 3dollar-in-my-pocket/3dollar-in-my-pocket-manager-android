@@ -26,14 +26,10 @@ internal fun Context.getCurrentLocationName(location: LatLng?): String {
         if (addresses.isNullOrEmpty()) {
             notFindMsg
         } else {
-            with(addresses[0]) {
-                val locality = subLocality ?: locality ?: ""
-                val region = adminArea ?: ""
-                if (region.isEmpty() && locality.isEmpty()) {
-                    return notFindMsg
-                }
-                "$region $locality"
+            if (addresses[0].getAddressLine(0).isEmpty()) {
+                return notFindMsg
             }
+            addresses[0].getAddressLine(0).replace("대한민국 ", "")
         }
     } catch (e: Exception) {
         Log.e("getCurrentLocationName", e.message ?: "")
@@ -73,6 +69,43 @@ internal fun currentLocationState(
     } else {
         Toast.makeText(context, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
     }
+}
+
+internal fun currentLocation(
+    context: Context,
+    fusedLocationClient: FusedLocationProviderClient,
+): LatLng? {
+    var latLang: LatLng? = null
+
+    val permissionCheck =
+        ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    if (permissionCheck) {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                if (location.latitude in -90.0..90.0 && location.longitude in -180.0..180.0) {
+                    latLang = LatLng(location.latitude, location.longitude)
+                } else {
+                    Toast.makeText(context, "잘못된 위치 값입니다.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "위치정보가 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            Log.e("currentLocationState", e.message ?: "위치 가져오기 실패")
+            Toast.makeText(context, "위치를 가져오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    return latLang
 }
 
 internal fun String.getTodayOpenTime(): String {

@@ -1,6 +1,5 @@
 package app.threedollars.manager.feature.home
 
-import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -42,52 +38,21 @@ import app.threedollars.manager.feature.home.components.HomeBottomOn
 import app.threedollars.manager.feature.home.components.MapView
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveAroundVo
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveVo
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.compose.CameraPositionState
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun HomeScreen(
     location: LatLng,
+    openLocation: LatLng,
+    currentLocation: LatLng,
     address: String,
     bossStoreRetrieveMe: BossStoreRetrieveVo,
+    cameraPositionState: CameraPositionState,
     bossStoreRetrieveArounds: List<BossStoreRetrieveAroundVo>,
-    onBossStoreAroundUpdate: (LatLng) -> Unit,
-    onAddressUpdate: (String) -> Unit,
-    onStoreStateUpdate: (StoreStateType) -> Unit,
+    onStoreStateUpdate: (StoreStateType, LatLng) -> Unit,
+    onCurrentLocationClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-    val locationPermissionsState = rememberMultiplePermissionsState(
-        listOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    )
-    val cameraPositionState = rememberCameraPositionState()
-
-    val getCurrentLocation = {
-        currentLocationState(context, fusedLocationClient) {
-            onBossStoreAroundUpdate(it)
-        }
-    }
-
-    LaunchedEffect(location) {
-        cameraPositionState.position = CameraPosition(location, cameraPositionState.position.zoom)
-        onAddressUpdate(context.getCurrentLocationName(location))
-    }
-
-    if (locationPermissionsState.allPermissionsGranted) {
-        getCurrentLocation()
-    } else {
-        SideEffect { locationPermissionsState.launchMultiplePermissionRequest() }
-        onAddressUpdate("위치권한을 허락해주세요.")
-    }
 
     var isFoodTruckCheck by remember { mutableStateOf(false) }
 
@@ -100,13 +65,20 @@ internal fun HomeScreen(
             MapView(
                 modifier = Modifier,
                 cameraPositionState = cameraPositionState,
-                location = location,
+                openLocation = openLocation,
+                currentLocation = currentLocation,
                 isFoodTruckCheck = isFoodTruckCheck,
-                bossStoreArounds = bossStoreRetrieveArounds
+                bossStoreArounds = bossStoreRetrieveArounds,
+                openStatus = bossStoreRetrieveMe.openStatus.status
             )
             Text(
                 text = address,
-                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.Black),
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 24.dp, end = 24.dp, top = 44.dp)
@@ -134,9 +106,13 @@ internal fun HomeScreen(
                         contentDescription = "체크박스"
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "다른 푸드트럭 보기", fontSize = 14.sp, color = colorResource(id = R.color.gray100))
+                    Text(
+                        text = "다른 푸드트럭 보기",
+                        fontSize = 14.sp,
+                        color = colorResource(id = R.color.gray100)
+                    )
                 }
-                IconButton(onClick = { getCurrentLocation() }) {
+                IconButton(onClick = onCurrentLocationClick) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_location),
                         contentDescription = "내 위치 아이콘"
@@ -146,13 +122,16 @@ internal fun HomeScreen(
             }
         }
         if (bossStoreRetrieveMe.openStatus.status == StoreStateType.OPEN) {
-            HomeBottomOn(Modifier.align(Alignment.BottomStart), bossStoreRetrieveMe.openStatus.openStartDateTime.toStringDefault()) {
-                onStoreStateUpdate(StoreStateType.CLOSE)
+            HomeBottomOn(
+                Modifier.align(Alignment.BottomStart),
+                bossStoreRetrieveMe.openStatus.openStartDateTime.toStringDefault()
+            ) {
+                onStoreStateUpdate(StoreStateType.CLOSE, cameraPositionState.position.target)
             }
         } else {
             HomeBottomOff(Modifier.align(Alignment.BottomStart)) {
                 if (location.latitude != 0.0) {
-                    onStoreStateUpdate(StoreStateType.OPEN)
+                    onStoreStateUpdate(StoreStateType.OPEN, cameraPositionState.position.target)
                 }
             }
         }
