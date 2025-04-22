@@ -37,7 +37,7 @@ fun HomeRoute(
 
     val cameraPositionState = rememberCameraPositionState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
             currentLocationState(
                 context = context,
