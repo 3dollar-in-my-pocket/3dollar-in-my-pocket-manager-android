@@ -73,7 +73,7 @@ internal class StoreManagementViewModel @Inject constructor(
         ).cachedIn(viewModelScope)
     }
 
-    fun getReviewPaging() {
+    private fun getReviewPaging() {
         _storeReviewPaging.value = getStoreReviewPagingUseCase(
             storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
             sort = _stateFlow.value.reviewFilterType.name,

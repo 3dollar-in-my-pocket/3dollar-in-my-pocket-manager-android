@@ -10,10 +10,11 @@ import app.threedollars.domain.dto.StoreReviewDto
 internal fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
     bossStoreId = this?.bossStoreId.toStringDefault(),
     rating = this?.rating.toDoubleDefault(),
-    reviewTotalCount = this?.reviewTotalCount.toIntDefault()
+    reviewTotalCount = this?.reviewTotalCount.toIntDefault(),
+    storeName = this?.name.toStringDefault()
 )
 
-internal fun StoreReviewDto.StoreReview.dtoToVo() = ReviewVo(
+internal fun StoreReviewDto.StoreReview.dtoToVo(storeName: String) = ReviewVo(
     reviewId = reviewId,
     rating = rating,
     contents = contents.toStringDefault(),
@@ -21,7 +22,8 @@ internal fun StoreReviewDto.StoreReview.dtoToVo() = ReviewVo(
     writer = writer.dtoToVo(),
     createdAt = createdAt.toStringDefault(),
     sticker = stickers.first().dtoToVo(),
-    comment = comments.firstOrNull { comment -> comment.status == "ACTIVE" }?.dtoToVo()
+    comment = comments.firstOrNull { comment -> comment.status == "ACTIVE" }?.dtoToVo(),
+    storeName = storeName
 )
 
 internal fun StoreReviewDto.StoreReview.Image.dtoToVo() = ReviewVo.Image(
