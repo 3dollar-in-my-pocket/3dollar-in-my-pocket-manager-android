@@ -9,9 +9,10 @@ import app.threedollars.manager.feature.review.ReviewRoute
 
 fun NavController.navigateReview(
     navOptions: NavOptions,
+    reviewId: String?
 ) {
     navigate(
-        route = Route.Review,
+        route = Route.Review(reviewId = reviewId),
         navOptions = navOptions
     )
 }

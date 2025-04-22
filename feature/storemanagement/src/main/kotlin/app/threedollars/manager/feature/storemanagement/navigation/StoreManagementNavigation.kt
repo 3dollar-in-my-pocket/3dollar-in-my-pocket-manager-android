@@ -17,7 +17,7 @@ fun NavController.navigateStoreManagement(
 }
 
 fun NavGraphBuilder.storeManagementNavGraph(
-    onAllReviewNavigate: () -> Unit
+    onAllReviewNavigate: (String?) -> Unit
 ) {
     composable<TabRoute.StoreManagement> {
         StoreManagementRoute(

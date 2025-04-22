@@ -64,7 +64,7 @@ internal fun StoreManagementScreen(
     onEndTimeUpdate: (String, String) -> Unit,
     onLocationDescriptionUpdate: (String, String) -> Unit,
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
-    onAllReviewNavigate: () -> Unit
+    onAllReviewNavigate: (String?) -> Unit
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
         BaseDialog(

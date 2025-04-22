@@ -26,7 +26,7 @@ internal fun ReviewContent(
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
     onScreenTypeUpdate: (ScreenType) -> Unit,
-    onAllReviewNavigate: () -> Unit
+    onAllReviewNavigate: (String?) -> Unit
 ) {
     Column(
         modifier = Modifier
