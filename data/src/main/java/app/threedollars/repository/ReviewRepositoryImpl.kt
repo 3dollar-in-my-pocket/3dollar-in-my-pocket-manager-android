@@ -14,6 +14,7 @@ import app.threedollars.network.NetworkService
 import app.threedollars.source.RemoteDataSource
 import app.threedollars.source.ReviewDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -50,10 +51,11 @@ internal class ReviewRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getStoreReviewDetail(
-        storeId: String,
+    override suspend fun getStoreReviewDetail(
         reviewId: String
     ): Flow<Resource<StoreReviewDto.StoreReview>> {
+        val storeId =
+            remoteDataSource.getBossStoreRetrieveMe().first().data?.bossStoreId.toStringDefault()
         return remoteDataSource.getStoreReviewDetail(
             storeId = storeId,
             reviewId = reviewId

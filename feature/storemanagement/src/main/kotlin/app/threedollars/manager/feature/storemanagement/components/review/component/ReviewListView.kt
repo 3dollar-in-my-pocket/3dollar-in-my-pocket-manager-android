@@ -46,12 +46,13 @@ internal fun ReviewListView(
                 ReviewCardView(
                     reviewVo = reviewVo,
                     storeName = storeName
+                    onReviewDetailClick = onAllReviewNavigate
                 )
             }
 
             Button(
                 onClick = {
-                    onAllReviewNavigate()
+                    onAllReviewNavigate(null)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

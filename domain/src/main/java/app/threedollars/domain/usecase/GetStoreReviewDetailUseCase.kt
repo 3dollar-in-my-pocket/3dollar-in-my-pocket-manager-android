@@ -9,12 +9,10 @@ import javax.inject.Inject
 class GetStoreReviewDetailUseCase @Inject constructor(
     private val reviewRepository: ReviewRepository,
 ) {
-    operator fun invoke(
-        storeId: String,
+    suspend operator fun invoke(
         reviewId: String,
     ): Flow<Resource<StoreReviewDto.StoreReview>> {
         return reviewRepository.getStoreReviewDetail(
-            storeId = storeId,
             reviewId = reviewId
         )
     }
