@@ -105,6 +105,7 @@ internal fun StoreManagementScreen(
                         subscriberCount = bossStoreRetrieve.subscriberCount,
                         rating = bossStoreRetrieve.rating,
                         reviewTotalCount = bossStoreRetrieve.reviewTotalCount,
+                        storeName = bossStoreRetrieve.name,
                         reviews = reviews,
                         feedbackFulls = feedbackFulls,
                         feedbackTypes = feedbackTypes,

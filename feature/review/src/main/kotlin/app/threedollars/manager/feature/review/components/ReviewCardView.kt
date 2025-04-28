@@ -143,7 +143,10 @@ internal fun ReviewCardView(
         Spacer(modifier = Modifier.height(12.dp))
 
         reviewVo.comment?.let { comment ->
-            CommentCardView(comment)
+            CommentCardView(
+                comment = comment,
+                storeName = reviewVo.storeName
+            )
         }
     }
 }
@@ -203,7 +206,8 @@ private fun RatingCardView(rating: Int) {
 
 @Composable
 private fun CommentCardView(
-    comment: ReviewVo.Comment
+    comment: ReviewVo.Comment,
+    storeName: String
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -223,7 +227,7 @@ private fun CommentCardView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = comment.commentId,
+                    text = storeName,
                     fontSize = 12.sp,
                     color = Gray80,
                     fontWeight = FontWeight.Medium,

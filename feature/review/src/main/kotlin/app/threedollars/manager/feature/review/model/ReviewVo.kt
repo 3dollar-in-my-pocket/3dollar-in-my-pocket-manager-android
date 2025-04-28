@@ -9,7 +9,8 @@ internal data class ReviewVo(
     val writer: Writer = Writer(),
     val createdAt: String = "",
     val sticker: Sticker = Sticker(),
-    val comment: Comment? = null
+    val comment: Comment? = null,
+    val storeName: String = ""
 ) {
     internal data class Image(
         val imageUrl: String = "",

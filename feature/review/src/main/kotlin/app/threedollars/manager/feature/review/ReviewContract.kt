@@ -1,6 +1,5 @@
 package app.threedollars.manager.feature.review
 
-import app.threedollars.data.response.CommentPresetResponse
 import app.threedollars.manager.feature.review.model.BossStoreRetrieveVo
 import app.threedollars.manager.feature.review.model.CommentPresetVo
 import app.threedollars.manager.feature.review.model.ReviewVo
@@ -11,7 +10,6 @@ internal data class ReviewState(
     val dialogType: DialogType = DialogType.NONE,
     val errorMessage: String? = null,
     val bossStoreRetrieve: BossStoreRetrieveVo = BossStoreRetrieveVo(),
-    val reviews: List<ReviewVo> = listOf(),
     val reviewFilterType: ReviewFilterType = ReviewFilterType.LATEST,
     val selectedReview: ReviewVo = ReviewVo(),
     val commentPresets: List<CommentPresetVo> = listOf(),

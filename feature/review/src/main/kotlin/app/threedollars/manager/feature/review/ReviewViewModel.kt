@@ -79,7 +79,7 @@ internal class ReviewViewModel @Inject constructor(
             storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
             sort = _stateFlow.value.reviewFilterType.name,
         ).map {
-            it.map { dto -> dto.dtoToVo() }
+            it.map { dto -> dto.dtoToVo(storeName = _stateFlow.value.bossStoreRetrieve.storeName) }
         }.cachedIn(viewModelScope)
     }
 
@@ -145,7 +145,9 @@ internal class ReviewViewModel @Inject constructor(
                     it.data?.let { data ->
                         _stateFlow.update { state ->
                             state.copy(
-                                selectedReview = data.dtoToVo()
+                                selectedReview = data.dtoToVo(
+                                    storeName = _stateFlow.value.bossStoreRetrieve.storeName
+                                )
                             )
                         }
                     }

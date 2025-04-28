@@ -24,7 +24,8 @@ internal fun ReviewListView(
     reviewTotalCount: Int,
     rating: Double,
     reviews: List<ReviewVo>,
-    onAllReviewNavigate: (String?) -> Unit
+    storeName: String,
+    onAllReviewNavigate: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -44,6 +45,7 @@ internal fun ReviewListView(
 
                 ReviewCardView(
                     reviewVo = reviewVo,
+                    storeName = storeName
                     onReviewDetailClick = onAllReviewNavigate
                 )
             }

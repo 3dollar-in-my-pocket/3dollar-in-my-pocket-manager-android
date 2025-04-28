@@ -22,6 +22,7 @@ internal fun ReviewContent(
     subscriberCount: Int,
     rating: Double,
     reviewTotalCount: Int,
+    storeName : String,
     reviews: List<ReviewVo>,
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
@@ -55,6 +56,7 @@ internal fun ReviewContent(
             reviewTotalCount = reviewTotalCount,
             rating = rating,
             reviews = reviews,
+            storeName = storeName,
             onAllReviewNavigate = onAllReviewNavigate,
         )
     }
