@@ -10,7 +10,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 
 @Composable
 fun StoreManagementRoute(
-    onAllReviewNavigate: () -> Unit
+    onAllReviewNavigate: (String?) -> Unit
 ) {
     val viewModel: StoreManagementViewModel = hiltViewModel()
 

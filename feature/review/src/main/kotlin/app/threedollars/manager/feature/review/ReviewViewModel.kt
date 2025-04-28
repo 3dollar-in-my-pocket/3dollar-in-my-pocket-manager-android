@@ -1,6 +1,6 @@
 package app.threedollars.manager.feature.review
 
-import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -17,6 +17,7 @@ import app.threedollars.domain.usecase.PatchStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreReviewCommentUseCase
 import app.threedollars.domain.usecase.PostStoreReviewReportUseCase
+import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import app.threedollars.manager.feature.review.model.ReviewVo
 import app.threedollars.manager.feature.review.model.dtoToVo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,7 +49,8 @@ internal class ReviewViewModel @Inject constructor(
     private val postStoreCommentPresetUseCase: PostStoreCommentPresetUseCase,
     private val deleteStoreCommentPresetUseCase: DeleteStoreCommentPresetUseCase,
     private val patchStoreCommentPresetUseCase: PatchStoreCommentPresetUseCase,
-    private val getStoreCommentPresetListUseCase: GetStoreCommentPresetListUseCase
+    private val getStoreCommentPresetListUseCase: GetStoreCommentPresetListUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<ReviewState> =
@@ -63,6 +65,14 @@ internal class ReviewViewModel @Inject constructor(
 
     private val _toastFlow = MutableSharedFlow<String?>()
     val toastFlow = _toastFlow.asSharedFlow()
+
+    init {
+        val reviewId = savedStateHandle.get<String?>("reviewId")
+        reviewId?.let {
+            getStoreReviewDetail(reviewId = reviewId)
+            updateScreenType(REVIEW_DETAIL)
+        }
+    }
 
     private fun getReviewPaging() {
         _storeReviewPaging.value = getStoreReviewPagingUseCase(
@@ -130,10 +140,7 @@ internal class ReviewViewModel @Inject constructor(
 
     fun getStoreReviewDetail(reviewId: String) {
         viewModelScope.launch {
-            getStoreReviewDetailUseCase(
-                storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
-                reviewId = reviewId
-            ).collect {
+            getStoreReviewDetailUseCase(reviewId = reviewId).collect {
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _stateFlow.update { state ->

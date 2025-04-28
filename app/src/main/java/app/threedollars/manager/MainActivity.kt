@@ -17,13 +17,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import app.threedollars.manager.ext.navigateTab
-import app.threedollars.manager.feature.setting.navigation.settingNavGraph
-import app.threedollars.manager.navigation.MainNavigator
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
 import app.threedollars.manager.feature.review.navigation.navigateReview
 import app.threedollars.manager.feature.review.navigation.reviewNavGraph
-import app.threedollars.manager.navigation.rememberMainNavigator
+import app.threedollars.manager.feature.setting.navigation.settingNavGraph
 import app.threedollars.manager.feature.storemanagement.navigation.storeManagementNavGraph
+import app.threedollars.manager.navigation.MainNavigator
+import app.threedollars.manager.navigation.rememberMainNavigator
 import app.threedollars.manager.screen.BottomNavigation
 import app.threedollars.manager.util.findActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,9 +75,10 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
         homeNavGraph()
 
         storeManagementNavGraph(
-            onAllReviewNavigate = {
+            onAllReviewNavigate = { reviewId ->
                 navigator.navController.navigateReview(
-                    navOptions = navOptions
+                    navOptions = navOptions,
+                    reviewId = reviewId
                 )
             }
         )
