@@ -68,6 +68,7 @@ fun StoreManagementRoute(
         onEndTimeUpdate = viewModel::updateDaysEndTime,
         onLocationDescriptionUpdate = viewModel::updateDaysLocationDescription,
         onScheduleDayUpdate = viewModel::updateScheduleDay,
-        onAllReviewNavigate = onAllReviewNavigate
+        onAllReviewNavigate = onAllReviewNavigate,
+        onStickerClick = viewModel::putStickersReplace
     )
 }

@@ -2,9 +2,30 @@ package app.threedollars.source
 
 import app.threedollars.common.Resource
 import app.threedollars.data.BaseResponse
-import app.threedollars.data.request.*
-import app.threedollars.data.response.*
-import app.threedollars.domain.dto.CommentPresetDto
+import app.threedollars.data.request.BossAccountInfoRequest
+import app.threedollars.data.request.BossDeviceRequest
+import app.threedollars.data.request.BossStoreRequest
+import app.threedollars.data.request.CommentPresetRequest
+import app.threedollars.data.request.LoginRequest
+import app.threedollars.data.request.ReportRequest
+import app.threedollars.data.request.ReviewCommentRequest
+import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.response.BossAccountInfoResponse
+import app.threedollars.data.response.BossEnumsResponse
+import app.threedollars.data.response.BossStoreRetrieveAroundResponse
+import app.threedollars.data.response.BossStoreRetrieveResponse
+import app.threedollars.data.response.CommentCreateResponse
+import app.threedollars.data.response.CommentPresetResponse
+import app.threedollars.data.response.FaqCategoriesResponse
+import app.threedollars.data.response.FaqResponse
+import app.threedollars.data.response.FeedbackFullResponse
+import app.threedollars.data.response.FeedbackTypesResponse
+import app.threedollars.data.response.ImageUploadResponse
+import app.threedollars.data.response.LoginResponse
+import app.threedollars.data.response.NonceResponse
+import app.threedollars.data.response.StickersReplaceRequest
+import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.network.NetworkService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -58,14 +79,14 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override fun putBossStore(
         bossStoreId: String,
-        bossStoreRequest: BossStoreRequest
+        bossStoreRequest: BossStoreRequest,
     ): Flow<Resource<String>> = flow {
         emit(safeApiCall(networkService.putBossStore(bossStoreId, bossStoreRequest)))
     }
 
     override fun patchBossStore(
         bossStoreId: String,
-        bossStoreRequest: BossStoreRequest
+        bossStoreRequest: BossStoreRequest,
     ): Flow<Resource<String>> = flow {
         emit(safeApiCall(networkService.patchBossStore(bossStoreId, bossStoreRequest)))
     }
@@ -77,7 +98,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
     override fun postBossStoreOpen(
         bossStoreId: String,
         mapLatitude: Double,
-        mapLongitude: Double
+        mapLongitude: Double,
     ): Flow<Resource<String>> = flow {
         emit(safeApiCall(networkService.postBossStoreOpen(bossStoreId, mapLatitude, mapLongitude)))
     }
@@ -85,7 +106,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
     override fun getBossStoreRetrieveSpecific(
         bossStoreId: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
     ): Flow<Resource<BossStoreRetrieveResponse>> = flow {
         emit(
             safeApiCall(
@@ -108,7 +129,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         mapLatitude: Double,
         mapLongitude: Double,
         orderType: String,
-        size: Int
+        size: Int,
     ): Flow<Resource<List<BossStoreRetrieveAroundResponse>>> = flow {
         emit(
             safeApiCall(
@@ -138,7 +159,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override fun getFeedbackFull(
         targetType: String,
-        targetId: String
+        targetId: String,
     ): Flow<Resource<List<FeedbackFullResponse>>> = flow {
         emit(safeApiCall(networkService.getFeedbackFull(targetType, targetId)))
     }
@@ -150,7 +171,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override fun postImageUpload(
         fileType: String,
-        requestBody: RequestBody
+        requestBody: RequestBody,
     ): Flow<Resource<ImageUploadResponse>> {
         return flow {
             val multipartBody = MultipartBody.Part.createFormData(
@@ -164,7 +185,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override fun postImageUploadBulk(
         fileType: String,
-        requestBodyList: List<RequestBody>
+        requestBodyList: List<RequestBody>,
     ): Flow<Resource<List<ImageUploadResponse>>> =
         flow {
             val multipartBodyList = requestBodyList.mapIndexed { index, requestBody ->
@@ -198,7 +219,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override fun getStoreReviewDetail(
         storeId: String,
-        reviewId: String
+        reviewId: String,
     ): Flow<Resource<StoreReviewResponse.StoreReview>> = flow {
         emit(
             safeApiCall(
@@ -213,7 +234,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
     override fun postStoreReviewReport(
         storeId: String,
         reviewId: String,
-        reasonDetail: String
+        reasonDetail: String,
     ): Flow<Resource<String>> = flow {
         emit(
             safeApiCall(
@@ -232,7 +253,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         storeId: String,
         reviewId: String,
         nonce: String,
-        reviewComment: String
+        reviewComment: String,
     ): Resource<CommentCreateResponse> = safeApiCall(
         networkService.postStoreReviewComment(
             storeId = storeId,
@@ -244,10 +265,24 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         )
     )
 
+    override suspend fun putStickersReplace(
+        storeId: String,
+        reviewId: String,
+        stickers: String,
+    ): Resource<String> = safeApiCall(
+        networkService.putStickersReplace(
+            storeId = storeId,
+            reviewId = reviewId,
+            stickersReplaceRequest = StickersReplaceRequest(
+                stickers = if (stickers.isEmpty()) listOf() else listOf(StickersReplaceRequest.Sticker(stickerId = stickers))
+            )
+        )
+    )
+
     override suspend fun deleteStoreReviewComment(
         storeId: String,
         reviewId: String,
-        commentId: String
+        commentId: String,
     ): Resource<String> = safeApiCall(
         networkService.deleteStoreReviewComment(
             storeId = storeId,
@@ -263,7 +298,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
     override suspend fun postStoreCommentPreset(
         storeId: String,
         nonce: String,
-        body: String
+        body: String,
     ): Resource<CommentPresetResponse.CommentPreset> = safeApiCall(
         networkService.postStoreCommentPreset(
             storeId = storeId,
@@ -274,7 +309,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override suspend fun deleteStoreCommentPreset(
         storeId: String,
-        presetId: String
+        presetId: String,
     ): Resource<String> = safeApiCall(
         networkService.deleteStoreCommentPreset(
             storeId = storeId,
@@ -285,7 +320,7 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
     override suspend fun patchStoreCommentPreset(
         storeId: String,
         presetId: String,
-        body: String
+        body: String,
     ): Resource<String> = safeApiCall(
         networkService.patchStoreCommentPreset(
             storeId = storeId,

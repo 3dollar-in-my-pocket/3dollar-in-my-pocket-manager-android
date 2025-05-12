@@ -427,7 +427,7 @@ fun PreviewReviewDetailScreen_EmptyComment() {
     ReviewDetailScreen(
         reviewVo = dummyReview,
         commentPresets = listOf(),
-        dialogType = NONE,
+        dialogType = DialogType.NONE,
         selectEditPresetText = "",
         selectEditPresetId = "",
         onScreenTypeUpdate = {},

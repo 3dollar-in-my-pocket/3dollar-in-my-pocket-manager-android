@@ -16,6 +16,7 @@ import app.threedollars.domain.usecase.GetStoreReviewListUseCase
 import app.threedollars.domain.usecase.GetStoreReviewPagingUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
+import app.threedollars.domain.usecase.PutStickersReplaceUseCase
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
@@ -49,7 +50,8 @@ internal class StoreManagementViewModel @Inject constructor(
     private val enumMapperUseCase: EnumMapperUseCase,
     private val feedbackUseCase: FeedbackUseCase,
     private val getStoreReviewListUseCase: GetStoreReviewListUseCase,
-    private val getStoreReviewPagingUseCase: GetStoreReviewPagingUseCase
+    private val getStoreReviewPagingUseCase: GetStoreReviewPagingUseCase,
+    private val putStickersReplaceUseCase: PutStickersReplaceUseCase,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<StoreManagementState> =
@@ -521,6 +523,21 @@ internal class StoreManagementViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    fun putStickersReplace(reviewId: String, stickers: String) {
+        viewModelScope.launch {
+
+            val code = putStickersReplaceUseCase(
+                storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
+                reviewId = reviewId,
+                stickers = stickers
+            ).code
+
+            if (code == "200") {
+                getStoreReviews()
             }
         }
     }

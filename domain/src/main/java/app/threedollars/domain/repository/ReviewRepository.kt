@@ -15,7 +15,7 @@ interface ReviewRepository {
 
     fun getStoreReviewPaging(
         storeId: String,
-        sort: String
+        sort: String,
     ): Flow<PagingData<StoreReviewDto.StoreReview>>
 
     suspend fun getStoreReviewDetail(reviewId: String): Flow<Resource<StoreReviewDto.StoreReview>>
@@ -23,24 +23,30 @@ interface ReviewRepository {
     fun postStoreReviewReport(
         storeId: String,
         reviewId: String,
-        reasonDetail: String
+        reasonDetail: String,
     ): Flow<Resource<String>>
 
     suspend fun postStoreReviewComment(
         storeId: String,
         reviewId: String,
-        reviewComment: String
+        reviewComment: String,
     ): Resource<CommentCreateDto>
 
     suspend fun deleteStoreReviewComment(
         storeId: String,
         reviewId: String,
-        commentId: String
+        commentId: String,
+    ): Resource<String>
+
+    suspend fun putStickersReplace(
+        storeId: String,
+        reviewId: String,
+        stickers: String,
     ): Resource<String>
 
     suspend fun postStoreCommentPreset(
         storeId: String,
-        body: String
+        body: String,
     ): Resource<CommentPresetDto.CommentPreset>
 
     suspend fun deleteStoreCommentPreset(
@@ -51,7 +57,7 @@ interface ReviewRepository {
     suspend fun patchStoreCommentPreset(
         storeId: String,
         presetId: String,
-        body: String
+        body: String,
     ): Resource<String>
 
     suspend fun getStoreCommentPresets(

@@ -38,7 +38,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
 
     override fun getStoreReviewPaging(
         storeId: String,
-        sort: String
+        sort: String,
     ): Flow<PagingData<StoreReviewDto.StoreReview>> = Pager(PagingConfig(pageSize = 10)) {
         ReviewDataSource(
             networkService = networkService,
@@ -52,7 +52,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getStoreReviewDetail(
-        reviewId: String
+        reviewId: String,
     ): Flow<Resource<StoreReviewDto.StoreReview>> {
         val storeId =
             remoteDataSource.getBossStoreRetrieveMe().first().data?.bossStoreId.toStringDefault()
@@ -71,7 +71,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
     override fun postStoreReviewReport(
         storeId: String,
         reviewId: String,
-        reasonDetail: String
+        reasonDetail: String,
     ): Flow<Resource<String>> {
         return remoteDataSource.postStoreReviewReport(
             storeId = storeId,
@@ -89,7 +89,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
     override suspend fun postStoreReviewComment(
         storeId: String,
         reviewId: String,
-        reviewComment: String
+        reviewComment: String,
     ): Resource<CommentCreateDto> = runCatching {
         remoteDataSource.postStoreReviewComment(
             storeId = storeId,
@@ -110,10 +110,32 @@ internal class ReviewRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun putStickersReplace(
+        storeId: String, reviewId: String,
+        stickers: String,
+    ): Resource<String> = runCatching {
+        remoteDataSource.putStickersReplace(
+            storeId = storeId,
+            reviewId = reviewId,
+            stickers = stickers
+        )
+    }.fold(
+        onSuccess = {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!, code = it.code)
+            } else {
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
+            }
+        },
+        onFailure = {
+            Resource.Error(errorMessage = it.message, code = "")
+        }
+    )
+
     override suspend fun deleteStoreReviewComment(
         storeId: String,
         reviewId: String,
-        commentId: String
+        commentId: String,
     ): Resource<String> = runCatching {
         remoteDataSource.deleteStoreReviewComment(
             storeId = storeId,
@@ -135,7 +157,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
 
     override suspend fun postStoreCommentPreset(
         storeId: String,
-        body: String
+        body: String,
     ): Resource<CommentPresetDto.CommentPreset> = runCatching {
         remoteDataSource.postStoreCommentPreset(
             storeId = storeId,
@@ -157,7 +179,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
 
     override suspend fun deleteStoreCommentPreset(
         storeId: String,
-        presetId: String
+        presetId: String,
     ): Resource<String> = runCatching {
         remoteDataSource.deleteStoreCommentPreset(
             storeId = storeId,
@@ -179,7 +201,7 @@ internal class ReviewRepositoryImpl @Inject constructor(
     override suspend fun patchStoreCommentPreset(
         storeId: String,
         presetId: String,
-        body: String
+        body: String,
     ): Resource<String> = runCatching {
         remoteDataSource.patchStoreCommentPreset(
             storeId = storeId,
