@@ -90,7 +90,7 @@ internal fun ReviewDetailScreen(
     onPresetEditClick: (String, String) -> Unit,
     onPresetDeleteClick: (String) -> Unit,
     onPresetEditMenuClick: (String, String) -> Unit,
-    onStickerClick: (String, String) -> Unit,
+    onStickerClick: (String, String, Boolean) -> Unit,
 ) {
     val commentFocusRequester = remember { FocusRequester() }
     val isCommentFocused = remember { mutableStateOf(false) }
@@ -193,7 +193,7 @@ internal fun ReviewDetailScreen(
         ) {
             ReviewCardView(
                 reviewVo = reviewVo,
-                onStickerClick = onStickerClick
+                onStickerClick = { onStickerClick(reviewVo.reviewId, if (reviewVo.sticker.reactedByMe) "" else "LIKE", true) }
             )
             if (reviewVo.comment == null) {
                 CommentView(
@@ -442,6 +442,6 @@ fun PreviewReviewDetailScreen_EmptyComment() {
         onPresetEditClick = { _, _ -> },
         onPresetDeleteClick = {},
         onPresetEditMenuClick = { _, _ -> },
-        onStickerClick = { _, _ -> }
+        onStickerClick = { _, _, _ -> }
     )
 }

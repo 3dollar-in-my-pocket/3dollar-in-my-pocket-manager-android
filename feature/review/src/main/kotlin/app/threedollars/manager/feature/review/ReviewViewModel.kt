@@ -52,7 +52,7 @@ internal class ReviewViewModel @Inject constructor(
     private val patchStoreCommentPresetUseCase: PatchStoreCommentPresetUseCase,
     private val getStoreCommentPresetListUseCase: GetStoreCommentPresetListUseCase,
     private val putStickersReplaceUseCase: PutStickersReplaceUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<ReviewState> =
@@ -112,7 +112,7 @@ internal class ReviewViewModel @Inject constructor(
 
     fun updateEditPreset(
         presetId: String,
-        presetText: String
+        presetText: String,
     ) {
         _stateFlow.update { state ->
             state.copy(
@@ -160,7 +160,7 @@ internal class ReviewViewModel @Inject constructor(
     }
 
     fun reportStoreReview(
-        reasonDetail: String
+        reasonDetail: String,
     ) {
         viewModelScope.launch {
             postStoreReviewReportUseCase(
@@ -272,9 +272,13 @@ internal class ReviewViewModel @Inject constructor(
             }
         }
     }
-    fun putStickersReplace(reviewId: String, stickers: String) {
-        viewModelScope.launch {
 
+    fun putStickersReplace(
+        reviewId: String,
+        stickers: String,
+        isDetail: Boolean,
+    ) {
+        viewModelScope.launch {
             val code = putStickersReplaceUseCase(
                 storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
                 reviewId = reviewId,
@@ -282,7 +286,11 @@ internal class ReviewViewModel @Inject constructor(
             ).code
 
             if (code == "200") {
-                getStoreReviewDetail(reviewId = reviewId)
+                if (isDetail) {
+                    getStoreReviewDetail(reviewId = reviewId)
+                } else {
+                    getReviewPaging()
+                }
             }
         }
     }

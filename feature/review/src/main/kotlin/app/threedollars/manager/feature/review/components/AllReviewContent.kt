@@ -47,7 +47,7 @@ internal fun AllReviewContent(
     storeReviewPaging: LazyPagingItems<ReviewVo>,
     onReviewDetailClick: (String) -> Unit,
     onStoreManagementNavigate: () -> Unit,
-    onStickerClick: (String, String) -> Unit,
+    onStickerClick: (String, String, Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,7 +99,7 @@ internal fun AllReviewContent(
                         ReviewCardView(
                             reviewVo = reviewVo,
                             onReviewDetailClick = onReviewDetailClick,
-                            onStickerClick = onStickerClick
+                            onStickerClick = { onStickerClick(reviewVo.reviewId, if (reviewVo.sticker.reactedByMe) "" else "LIKE", false) }
                         )
                         Spacer(
                             modifier = Modifier

@@ -45,7 +45,7 @@ import coil.compose.AsyncImage
 internal fun ReviewCardView(
     reviewVo: ReviewVo,
     onReviewDetailClick: (String) -> Unit = {},
-    onStickerClick: (String, String) -> Unit,
+    onStickerClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -133,7 +133,7 @@ internal fun ReviewCardView(
             Image(
                 imageVector = ImageVector.vectorResource(if (reviewVo.sticker.reactedByMe) R.drawable.ic_heart_fill else R.drawable.ic_heart_line),
                 contentDescription = "",
-                modifier = Modifier.clickable { onStickerClick(reviewVo.reviewId, if (reviewVo.sticker.reactedByMe) "" else "LIKE") }
+                modifier = Modifier.clickable { onStickerClick() }
             )
             Text(
                 text = "좋아요 ${reviewVo.sticker.count}",
@@ -270,6 +270,6 @@ private fun ReviewCardViewPreview() {
             comment = ReviewVo.Comment()
         ),
         onReviewDetailClick = {},
-        onStickerClick = { _, _ -> }
+        onStickerClick = {}
     )
 }

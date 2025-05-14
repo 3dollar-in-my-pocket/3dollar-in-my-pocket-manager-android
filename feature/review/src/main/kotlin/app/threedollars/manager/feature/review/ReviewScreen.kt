@@ -36,7 +36,7 @@ internal fun ReviewScreen(
     onPresetEditClick: (String, String) -> Unit,
     onPresetDeleteClick: (String) -> Unit,
     onPresetEditMenuClick: (String, String) -> Unit,
-    onStickerClick: (String, String) -> Unit,
+    onStickerClick: (String, String, Boolean) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
