@@ -84,6 +84,7 @@ fun ReviewRoute(
         },
         onPresetEditClick = viewModel::patchStoreCommentPreset,
         onPresetDeleteClick = viewModel::deleteStoreCommentPreset,
-        onPresetEditMenuClick = viewModel::updateEditPreset
+        onPresetEditMenuClick = viewModel::updateEditPreset,
+        onStickerClick = viewModel::putStickersReplace
     )
 }

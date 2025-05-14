@@ -35,7 +35,8 @@ internal fun ReviewScreen(
     onPresetWriteClick: (String) -> Unit,
     onPresetEditClick: (String, String) -> Unit,
     onPresetDeleteClick: (String) -> Unit,
-    onPresetEditMenuClick: (String, String) -> Unit
+    onPresetEditMenuClick: (String, String) -> Unit,
+    onStickerClick: (String, String) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -51,7 +52,8 @@ internal fun ReviewScreen(
                 onReviewFilterTypeUpdate = onReviewFilterTypeUpdate,
                 storeReviewPaging = storeReviewPaging,
                 onReviewDetailClick = onReviewDetailClick,
-                onStoreManagementNavigate = onStoreManagementNavigate
+                onStoreManagementNavigate = onStoreManagementNavigate,
+                onStickerClick = onStickerClick
             )
         }
 
@@ -71,7 +73,8 @@ internal fun ReviewScreen(
                 onPresetWriteClick = onPresetWriteClick,
                 onPresetEditClick = onPresetEditClick,
                 onPresetDeleteClick = onPresetDeleteClick,
-                onPresetEditMenuClick = onPresetEditMenuClick
+                onPresetEditMenuClick = onPresetEditMenuClick,
+                onStickerClick = onStickerClick
             )
         }
     }

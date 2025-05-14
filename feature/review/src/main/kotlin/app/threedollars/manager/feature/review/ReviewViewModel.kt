@@ -17,6 +17,7 @@ import app.threedollars.domain.usecase.PatchStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreReviewCommentUseCase
 import app.threedollars.domain.usecase.PostStoreReviewReportUseCase
+import app.threedollars.domain.usecase.PutStickersReplaceUseCase
 import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import app.threedollars.manager.feature.review.model.ReviewVo
 import app.threedollars.manager.feature.review.model.dtoToVo
@@ -50,6 +51,7 @@ internal class ReviewViewModel @Inject constructor(
     private val deleteStoreCommentPresetUseCase: DeleteStoreCommentPresetUseCase,
     private val patchStoreCommentPresetUseCase: PatchStoreCommentPresetUseCase,
     private val getStoreCommentPresetListUseCase: GetStoreCommentPresetListUseCase,
+    private val putStickersReplaceUseCase: PutStickersReplaceUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -267,6 +269,20 @@ internal class ReviewViewModel @Inject constructor(
                         commentPresets = result.data?.contents?.map { it.dtoToVo() } ?: listOf()
                     )
                 }
+            }
+        }
+    }
+    fun putStickersReplace(reviewId: String, stickers: String) {
+        viewModelScope.launch {
+
+            val code = putStickersReplaceUseCase(
+                storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
+                reviewId = reviewId,
+                stickers = stickers
+            ).code
+
+            if (code == "200") {
+                getStoreReviewDetail(reviewId = reviewId)
             }
         }
     }
