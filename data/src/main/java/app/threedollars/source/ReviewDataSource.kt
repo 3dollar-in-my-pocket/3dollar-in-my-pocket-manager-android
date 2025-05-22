@@ -25,7 +25,7 @@ internal class ReviewDataSource(
                     cursor = nextCursor
                 ).body()
             LoadResult.Page(
-                data = response?.data?.contents?.filter { it.status == "POSTED" } ?: emptyList(),
+                data = response?.data?.contents?.filter { it.status != "DELETED" } ?: emptyList(),
                 prevKey = null,
                 nextKey = response?.data?.cursor?.nextCursor
             )
