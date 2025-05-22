@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +46,7 @@ internal fun AllReviewContent(
     onReviewFilterTypeUpdate: (ReviewFilterType) -> Unit,
     storeReviewPaging: LazyPagingItems<ReviewVo>,
     onReviewDetailClick: (String) -> Unit,
-    onStoreManagementNavigate: () -> Unit
+    onStoreManagementNavigate: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -96,16 +95,20 @@ internal fun AllReviewContent(
                 ) {
                     items(storeReviewPaging.itemCount) { index ->
                         val reviewVo = storeReviewPaging[index] ?: ReviewVo()
-                        ReviewCardView(
-                            reviewVo = reviewVo,
-                            onReviewDetailClick = onReviewDetailClick
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp)
-                                .background(Gray5)
-                        )
+                        if (reviewVo.status == "FILTERED") {
+                            BlindReviewCardView(reviewVo = reviewVo)
+                        } else {
+                            ReviewCardView(
+                                reviewVo = reviewVo,
+                                onReviewDetailClick = onReviewDetailClick
+                            )
+                            Spacer(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .background(Gray5)
+                            )
+                        }
                     }
                 }
             }

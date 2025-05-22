@@ -25,7 +25,7 @@ internal fun ReviewListView(
     rating: Double,
     reviews: List<ReviewVo>,
     storeName: String,
-    onAllReviewNavigate: () -> Unit
+    onAllReviewNavigate: (String?) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -43,11 +43,15 @@ internal fun ReviewListView(
             reviews.forEach { reviewVo ->
                 Spacer(modifier = Modifier.height(20.dp))
 
-                ReviewCardView(
-                    reviewVo = reviewVo,
-                    storeName = storeName
-                    onReviewDetailClick = onAllReviewNavigate
-                )
+                if (reviewVo.status == "FILTERED") {
+                    BlindReviewCardView(reviewVo = reviewVo)
+                } else {
+                    ReviewCardView(
+                        reviewVo = reviewVo,
+                        storeName = storeName,
+                        onReviewDetailClick = onAllReviewNavigate
+                    )
+                }
             }
 
             Button(
