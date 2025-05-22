@@ -1,10 +1,16 @@
 package app.threedollars.manager.feature.review
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
+import app.threedollars.common.ui.CircleProgressBar
 import app.threedollars.manager.feature.review.ScreenType.ALL_REVIEW
+import app.threedollars.manager.feature.review.ScreenType.LOADING
 import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import app.threedollars.manager.feature.review.components.AllReviewContent
 import app.threedollars.manager.feature.review.components.ReviewDetailScreen
@@ -76,6 +82,12 @@ internal fun ReviewScreen(
                 onPresetEditMenuClick = onPresetEditMenuClick,
                 onStickerClick = onStickerClick
             )
+        }
+
+        LOADING -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircleProgressBar(modifier = Modifier.align(Alignment.Center))
+            }
         }
     }
 }

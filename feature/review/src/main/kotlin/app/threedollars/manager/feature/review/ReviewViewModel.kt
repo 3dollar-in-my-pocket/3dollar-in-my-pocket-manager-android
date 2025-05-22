@@ -18,6 +18,7 @@ import app.threedollars.domain.usecase.PostStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreReviewCommentUseCase
 import app.threedollars.domain.usecase.PostStoreReviewReportUseCase
 import app.threedollars.domain.usecase.PutStickersReplaceUseCase
+import app.threedollars.manager.feature.review.ScreenType.LOADING
 import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import app.threedollars.manager.feature.review.model.ReviewVo
 import app.threedollars.manager.feature.review.model.dtoToVo
@@ -71,8 +72,8 @@ internal class ReviewViewModel @Inject constructor(
     init {
         val reviewId = savedStateHandle.get<String?>("reviewId")
         reviewId?.let {
+            updateScreenType(LOADING)
             getStoreReviewDetail(reviewId = reviewId)
-            updateScreenType(REVIEW_DETAIL)
         }
     }
 
@@ -86,27 +87,15 @@ internal class ReviewViewModel @Inject constructor(
     }
 
     fun updateScreenType(screenType: ScreenType) {
-        _stateFlow.update {
-            it.copy(
-                screenType = screenType
-            )
-        }
+        _stateFlow.update { it.copy(screenType = screenType) }
     }
 
     fun updateDialogType(dialogType: DialogType) {
-        _stateFlow.update {
-            it.copy(
-                dialogType = dialogType
-            )
-        }
+        _stateFlow.update { it.copy(dialogType = dialogType) }
     }
 
     fun updateReviewFilterType(reviewFilterType: ReviewFilterType) {
-        _stateFlow.update {
-            it.copy(
-                reviewFilterType = reviewFilterType
-            )
-        }
+        _stateFlow.update { it.copy(reviewFilterType = reviewFilterType) }
         getReviewPaging()
     }
 
@@ -129,9 +118,7 @@ internal class ReviewViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _stateFlow.update { state ->
-                            state.copy(
-                                bossStoreRetrieve = data.dtoToVo(),
-                            )
+                            state.copy(bossStoreRetrieve = data.dtoToVo())
                         }
                     }
                     getReviewPaging()
@@ -146,14 +133,11 @@ internal class ReviewViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _stateFlow.update { state ->
-                            state.copy(
-                                selectedReview = data.dtoToVo(
-                                    storeName = _stateFlow.value.bossStoreRetrieve.storeName
-                                )
-                            )
+                            state.copy(selectedReview = data.dtoToVo(storeName = _stateFlow.value.bossStoreRetrieve.storeName))
                         }
                     }
                 }
+                updateScreenType(REVIEW_DETAIL)
             }
 
         }
@@ -170,9 +154,7 @@ internal class ReviewViewModel @Inject constructor(
             ).collect {
                 if (it.code.toString() == "200") {
                     _stateFlow.update { state ->
-                        state.copy(
-                            dialogType = DialogType.NONE
-                        )
+                        state.copy(dialogType = DialogType.NONE)
                     }
                     _toastFlow.emit("신고 완료!")
                 }

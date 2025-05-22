@@ -14,12 +14,13 @@ internal data class ReviewState(
     val selectedReview: ReviewVo = ReviewVo(),
     val commentPresets: List<CommentPresetVo> = listOf(),
     val selectEditPresetText: String = "",
-    val selectEditPresetId: String = ""
+    val selectEditPresetId: String = "",
 )
 
 internal enum class ScreenType {
     ALL_REVIEW,
     REVIEW_DETAIL,
+    LOADING
 }
 
 internal enum class DialogType {
