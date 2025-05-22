@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.threedollars.common.ui.DoubleBackExitHandler
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -56,6 +57,9 @@ fun HomeRoute(
             CameraPosition(uiState.currentLocation, cameraPositionState.position.zoom)
         viewModel.updateAddress(context.getCurrentLocationName(uiState.currentLocation))
     }
+
+    DoubleBackExitHandler()
+
     HomeScreen(
         location = uiState.location,
         openLocation = uiState.openLocation,
