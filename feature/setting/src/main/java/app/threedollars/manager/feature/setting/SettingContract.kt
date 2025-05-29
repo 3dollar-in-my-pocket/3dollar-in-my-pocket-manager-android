@@ -9,10 +9,10 @@ import app.threedollars.domain.dto.FaqDto
 data class SettingState(
     val bossAccountInfo: BossAccountInfoDto = BossAccountInfoDto(),
     val faqList: List<FaqDto> = listOf(),
-    val pageType: PageType = PageType.SETTING,
+    val screenType: ScreenType = ScreenType.SETTING,
     val isSuccess: Boolean = false,
 )
 
-enum class PageType {
+enum class ScreenType {
     SETTING, FAQ
 }

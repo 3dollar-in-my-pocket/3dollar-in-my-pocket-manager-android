@@ -33,7 +33,7 @@ import app.threedollars.domain.dto.FaqDto
 @Composable
 fun FaqScreen(
     faqList: List<FaqDto>,
-    onClickBackButton: (PageType) -> Unit,
+    onClickBackButton: (ScreenType) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -47,7 +47,7 @@ fun FaqScreen(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .clickable {
-                        onClickBackButton(PageType.SETTING)
+                        onClickBackButton(ScreenType.SETTING)
                     },
                 painter = painterResource(id = R.drawable.ic_back_white),
                 contentDescription = "",

@@ -1,12 +1,12 @@
 package app.threedollars.manager.feature.setting
 
-import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.threedollars.common.ui.DoubleBackExitHandler
 
 @Composable
 fun SettingRoute(
@@ -22,8 +22,10 @@ fun SettingRoute(
         }
     }
 
-    when (uiState.pageType) {
-        PageType.SETTING -> {
+    when (uiState.screenType) {
+        ScreenType.SETTING -> {
+            DoubleBackExitHandler()
+
             SettingScreen(
                 bossAccountInfo = uiState.bossAccountInfo,
                 onClickSignOut = { viewModel.signOut() },
@@ -36,16 +38,17 @@ fun SettingRoute(
                     }
                 },
                 onClickFaq = { pageType ->
-                    viewModel.updatePageType(pageType = pageType)
+                    viewModel.updateScreenType(screenType = pageType)
                 }
             )
         }
 
-        PageType.FAQ -> {
+        ScreenType.FAQ -> {
+            BackHandler { viewModel.updateScreenType(ScreenType.SETTING) }
             FaqScreen(
                 faqList = uiState.faqList,
                 onClickBackButton = { pageType ->
-                    viewModel.updatePageType(pageType = pageType)
+                    viewModel.updateScreenType(screenType = pageType)
                 }
             )
         }

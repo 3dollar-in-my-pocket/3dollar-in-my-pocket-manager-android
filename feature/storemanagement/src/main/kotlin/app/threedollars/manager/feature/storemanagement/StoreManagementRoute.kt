@@ -1,16 +1,18 @@
 package app.threedollars.manager.feature.storemanagement
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.threedollars.common.ui.DoubleBackExitHandler
 
 
 @Composable
 fun StoreManagementRoute(
-    onAllReviewNavigate: (String?) -> Unit
+    onAllReviewNavigate: (String?) -> Unit,
 ) {
     val viewModel: StoreManagementViewModel = hiltViewModel()
 
@@ -43,6 +45,23 @@ fun StoreManagementRoute(
             }
 
             else -> {}
+        }
+    }
+    if (screenType == ScreenType.STORE_INFO) {
+        DoubleBackExitHandler()
+    } else {
+        BackHandler {
+            when (screenType) {
+                ScreenType.REVIEW_INFO,
+                ScreenType.PROFILE_EDIT,
+                ScreenType.BUSINESS_SCHEDULE_EDIT,
+                ScreenType.MENU_MANAGEMENT,
+                ScreenType.BOSS_COMMENT,
+                ScreenType.ACCOUNT,
+                    -> viewModel.updateScreenType(ScreenType.STORE_INFO)
+                ScreenType.FEEDBACK -> viewModel.updateScreenType(ScreenType.REVIEW_INFO)
+                else -> {}
+            }
         }
     }
     StoreManagementScreen(

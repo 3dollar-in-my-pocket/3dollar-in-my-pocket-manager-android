@@ -44,7 +44,7 @@ fun SettingScreen(
     bossAccountInfo: BossAccountInfoDto,
     onClickSignOut: () -> Unit,
     onClickLogOut: () -> Unit,
-    onClickFaq: (PageType) -> Unit,
+    onClickFaq: (ScreenType) -> Unit,
     onSwitchBossDevice: (Boolean, String) -> Unit,
 ) {
     val openWebPage = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result -> }
@@ -152,7 +152,7 @@ fun SettingScreen(
             leftText = "FAQ", rightImage = R.drawable.ic_right_arrow,
             modifier = Modifier.padding(top = 8.dp),
             onClick = {
-                onClickFaq(PageType.FAQ)
+                onClickFaq(ScreenType.FAQ)
             }
         )
         SettingCategoryContent(
