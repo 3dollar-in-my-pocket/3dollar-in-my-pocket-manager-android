@@ -1,7 +1,6 @@
 package app.threedollars.manager.feature.storemanagement.components.menumanagement
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import app.threedollars.common.ext.getResourceUri
+import app.threedollars.common.ui.CircleProgressBar
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray5
@@ -362,9 +362,7 @@ internal fun MenuManagementScreen(
                         }
                     }
                     if (dialogType == DialogType.LOADING_DIALOG) {
-                        CircleProgressBar(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        CircleProgressBar(modifier = Modifier.align(Alignment.Center))
                     }
                     if (isAllDeleteClicked) {
                         Spacer(

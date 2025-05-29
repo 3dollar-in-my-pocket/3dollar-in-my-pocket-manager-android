@@ -9,7 +9,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import app.threedollars.manager.feature.review.ScreenType.*
+import app.threedollars.manager.feature.review.ScreenType.ALL_REVIEW
+import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -45,6 +46,8 @@ fun ReviewRoute(
             REVIEW_DETAIL -> {
                 viewModel.updateScreenType(ALL_REVIEW)
             }
+
+            else -> {}
         }
     }
     LaunchedEffect(screenType) {
@@ -72,7 +75,6 @@ fun ReviewRoute(
         onReviewFilterTypeUpdate = viewModel::updateReviewFilterType,
         onReviewDetailClick = { reviewId ->
             viewModel.getStoreReviewDetail(reviewId = reviewId)
-            viewModel.updateScreenType(REVIEW_DETAIL)
         },
         onStoreManagementNavigate = onStoreManagementNavigate,
         onReportClick = viewModel::reportStoreReview,
@@ -84,6 +86,7 @@ fun ReviewRoute(
         },
         onPresetEditClick = viewModel::patchStoreCommentPreset,
         onPresetDeleteClick = viewModel::deleteStoreCommentPreset,
-        onPresetEditMenuClick = viewModel::updateEditPreset
+        onPresetEditMenuClick = viewModel::updateEditPreset,
+        onStickerClick = viewModel::putStickersReplace
     )
 }

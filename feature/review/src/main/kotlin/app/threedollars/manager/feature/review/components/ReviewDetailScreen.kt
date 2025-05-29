@@ -89,7 +89,8 @@ internal fun ReviewDetailScreen(
     onPresetWriteClick: (String) -> Unit,
     onPresetEditClick: (String, String) -> Unit,
     onPresetDeleteClick: (String) -> Unit,
-    onPresetEditMenuClick: (String, String) -> Unit
+    onPresetEditMenuClick: (String, String) -> Unit,
+    onStickerClick: (String, String, Boolean) -> Unit,
 ) {
     val commentFocusRequester = remember { FocusRequester() }
     val isCommentFocused = remember { mutableStateOf(false) }
@@ -192,6 +193,7 @@ internal fun ReviewDetailScreen(
         ) {
             ReviewCardView(
                 reviewVo = reviewVo,
+                onStickerClick = { onStickerClick(reviewVo.reviewId, if (reviewVo.sticker.reactedByMe) "" else "LIKE", true) }
             )
             if (reviewVo.comment == null) {
                 CommentView(
@@ -238,7 +240,7 @@ private fun CommentView(
     commentFocusModifier: Modifier,
     commentText: String,
     onCommentTextChanged: (String) -> Unit,
-    onPresetClick: () -> Unit
+    onPresetClick: () -> Unit,
 ) {
     val commentTextLimit = 300
 
@@ -376,7 +378,7 @@ private fun CommentView(
 @Composable
 private fun ReviewDetailTopBar(
     onScreenTypeUpdate: (ScreenType) -> Unit,
-    onDialogTypeUpdate: (DialogType) -> Unit
+    onDialogTypeUpdate: (DialogType) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -420,8 +422,8 @@ fun PreviewReviewDetailScreen_EmptyComment() {
         writer = ReviewVo.Writer(name = "홍길동", medal = ReviewVo.Writer.Medal()),
         comment = ReviewVo.Comment(
             commentId = "111",
-            content  = "내용",
-     status = "",
+            content = "내용",
+            status = "",
         )
     )
     ReviewDetailScreen(
@@ -439,6 +441,7 @@ fun PreviewReviewDetailScreen_EmptyComment() {
         onPresetWriteClick = {},
         onPresetEditClick = { _, _ -> },
         onPresetDeleteClick = {},
-        onPresetEditMenuClick = { _, _ -> }
+        onPresetEditMenuClick = { _, _ -> },
+        onStickerClick = { _, _, _ -> }
     )
 }

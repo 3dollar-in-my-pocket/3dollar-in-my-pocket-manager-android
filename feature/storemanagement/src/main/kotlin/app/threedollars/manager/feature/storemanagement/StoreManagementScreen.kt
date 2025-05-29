@@ -64,7 +64,8 @@ internal fun StoreManagementScreen(
     onEndTimeUpdate: (String, String) -> Unit,
     onLocationDescriptionUpdate: (String, String) -> Unit,
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
-    onAllReviewNavigate: (String?) -> Unit
+    onAllReviewNavigate: (String?) -> Unit,
+    onStickerClick: (String, String) -> Unit,
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
         BaseDialog(
@@ -110,7 +111,8 @@ internal fun StoreManagementScreen(
                         feedbackFulls = feedbackFulls,
                         feedbackTypes = feedbackTypes,
                         onScreenTypeUpdate = onScreenTypeUpdate,
-                        onAllReviewNavigate = onAllReviewNavigate
+                        onAllReviewNavigate = onAllReviewNavigate,
+                        onStickerClick = onStickerClick
                     )
                 }
 
