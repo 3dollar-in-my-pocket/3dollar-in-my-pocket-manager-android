@@ -11,7 +11,7 @@ android {
     val localProperties = Properties()
     localProperties.load(FileInputStream(rootProject.file("local.properties")))
 
-    compileSdk = 34
+    compileSdk = 35
     signingConfigs {
         create("release") {
             storeFile = file("ThreeDollarsManager.jks")
@@ -22,7 +22,7 @@ android {
     }
 
     defaultConfig {
-        targetSdk = 34
+        targetSdk = 35
         applicationId = "app.threedollars.manager"
         versionCode = 15
         versionName = "1.1.7"
