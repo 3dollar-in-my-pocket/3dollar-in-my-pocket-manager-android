@@ -43,10 +43,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "KAKAO_KEY","${localProperties["kakao_key_release"]}")
+            buildConfigField("String", "KAKAO_KEY", "${localProperties["kakao_key_release"]}")
             buildConfigField("String", "BASE_URL", "${localProperties["base_url_release"]}")
-
-            manifestPlaceholders["kakao_key"] = (localProperties["kakao_key_release"] as String).replace("\"","")
+            manifestPlaceholders["kakao_key"] = (localProperties["kakao_key_release"] as String).replace("\"", "")
             manifestPlaceholders["naver_map_client_id"] = localProperties["naver_map_client_id"] as String
         }
         getByName("debug") {
@@ -58,9 +57,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "KAKAO_KEY","${localProperties["kakao_key_dev"]}")
+            buildConfigField("String", "KAKAO_KEY", "${localProperties["kakao_key_dev"]}")
             buildConfigField("String", "BASE_URL", "${localProperties["base_url_dev"]}")
-            manifestPlaceholders["kakao_key"] = (localProperties["kakao_key_dev"] as String).replace("\"","")
+            manifestPlaceholders["kakao_key"] = (localProperties["kakao_key_dev"] as String).replace("\"", "")
             manifestPlaceholders["naver_map_client_id"] = localProperties["naver_map_client_id"] as String
         }
     }

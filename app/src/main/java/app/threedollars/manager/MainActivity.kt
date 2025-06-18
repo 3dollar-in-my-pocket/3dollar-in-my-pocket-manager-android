@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import app.threedollars.common.REVIEW_LIST
+import app.threedollars.common.TabRoute
 import app.threedollars.manager.ext.navigateTab
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
 import app.threedollars.manager.feature.review.navigation.navigateReview
@@ -31,10 +33,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    companion object {
+        const val SCREEN_TYPE_KEY = "screenType"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val screenType: String? = intent?.getStringExtra(SCREEN_TYPE_KEY)
         setContent {
-            MainScreenView()
+            MainScreenView(screenType = screenType)
         }
     }
 
@@ -42,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-fun MainScreenView() {
+fun MainScreenView(screenType: String? = "") {
     val navigator: MainNavigator = rememberMainNavigator()
     Scaffold(
         bottomBar = {
@@ -55,12 +62,12 @@ fun MainScreenView() {
             )
         }
     ) {
-        NavigationGraph(navigator = navigator, it.calculateBottomPadding())
+        NavigationGraph(navigator = navigator, it.calculateBottomPadding(), screenType)
     }
 }
 
 @Composable
-fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
+fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screenType: String?) {
     val context = LocalContext.current
     val navOptions: NavOptions by lazy {
         navOptions {}
@@ -68,7 +75,10 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
     NavHost(
         modifier = Modifier.padding(bottom = calculateBottomPadding),
         navController = navigator.navController,
-        startDestination = navigator.startDestination,
+        startDestination = when (screenType) {
+            REVIEW_LIST -> TabRoute.StoreManagement
+            else -> navigator.startDestination
+        },
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
@@ -80,7 +90,8 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
                     navOptions = navOptions,
                     reviewId = reviewId
                 )
-            }
+            },
+            screenType = screenType
         )
 
         settingNavGraph(
@@ -96,4 +107,5 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
             }
         )
     }
+
 }
