@@ -42,7 +42,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun checkMyInfo() {
+    fun checkMyInfo() {
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
                 if (it.code.toString() == "200") {
