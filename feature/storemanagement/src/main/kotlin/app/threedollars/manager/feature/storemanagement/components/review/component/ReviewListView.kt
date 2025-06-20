@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,50 +31,61 @@ internal fun ReviewListView(
     onAllReviewNavigate: (String?) -> Unit,
     onStickerClick: (String, String) -> Unit,
 ) {
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(White)
-    ) {
-        TotalReviewCountView(
-            reviewTotalCount = reviewTotalCount,
-            rating = rating
+            .padding(horizontal = 24.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = White
         )
-
-        if (reviews.isEmpty()) {
-            // TODO: 리스트뷰가 빈값일 때 처리
-        } else {
-            reviews.forEach { reviewVo ->
-                Spacer(modifier = Modifier.height(20.dp))
-
-                ReviewCardView(
-                    reviewVo = reviewVo,
-                    storeName = storeName,
-                    onReviewDetailClick = onAllReviewNavigate,
-                    onStickerClick = onStickerClick
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 12.dp
                 )
-            }
+        ) {
+            TotalReviewCountView(
+                reviewTotalCount = reviewTotalCount,
+                rating = rating
+            )
 
-            Button(
-                onClick = {
-                    onAllReviewNavigate(null)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp)
-                    .padding(horizontal = 24.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Green
-                )
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    text = "리뷰 전체 보기",
-                    fontSize = 14.sp,
-                    color = White,
-                    fontWeight = FontWeight.SemiBold
-                )
+            if (reviews.isEmpty()) {
+                // TODO: 리스트뷰가 빈값일 때 처리
+            } else {
+                reviews.forEach { reviewVo ->
+                    Spacer(modifier = Modifier.height(20.dp))
+                    ReviewCardView(
+                        reviewVo = reviewVo,
+                        storeName = storeName,
+                        onReviewDetailClick = onAllReviewNavigate,
+                        onStickerClick = onStickerClick
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        onAllReviewNavigate(null)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                        .padding(horizontal = 24.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Green
+                    )
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        text = "리뷰 전체 보기",
+                        fontSize = 14.sp,
+                        color = White,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         }
     }
