@@ -74,32 +74,6 @@ internal fun BookmarkCardView(
                     )
                 }
 
-                Row(
-                    modifier = Modifier
-                        .align(
-                            Alignment.TopEnd
-                        )
-                        .clickable {
-                            // TODO: 메세지 보내기 이동
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier,
-                        text = "메세지 보내기",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Gray50
-                    )
-                    Image(
-                        modifier = Modifier.padding(start = 4.dp),
-                        imageVector = ImageVector.vectorResource(
-                            id = R.drawable.ic_arrow_right,
-                        ),
-                        contentDescription = ""
-                    )
-                }
-
                 val text = buildAnnotatedString {
                     withStyle(
                         style =
