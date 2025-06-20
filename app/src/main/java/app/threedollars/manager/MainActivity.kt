@@ -67,7 +67,7 @@ fun MainScreenView(screenType: String? = "") {
 }
 
 @Composable
-fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screenType: String?) {
+fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screenType: String? = null) {
     val context = LocalContext.current
     val navOptions: NavOptions by lazy {
         navOptions {}
@@ -76,7 +76,7 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screen
         modifier = Modifier.padding(bottom = calculateBottomPadding),
         navController = navigator.navController,
         startDestination = when (screenType) {
-            REVIEW_LIST -> TabRoute.StoreManagement
+            REVIEW_LIST -> TabRoute.StoreManagement::class
             else -> navigator.startDestination
         },
         enterTransition = { EnterTransition.None },
