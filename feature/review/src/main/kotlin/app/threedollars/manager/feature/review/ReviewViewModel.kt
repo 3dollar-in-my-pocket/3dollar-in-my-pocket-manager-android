@@ -145,6 +145,7 @@ internal class ReviewViewModel @Inject constructor(
 
     fun reportStoreReview(
         reasonDetail: String,
+        onReportComplete: () -> Unit
     ) {
         viewModelScope.launch {
             postStoreReviewReportUseCase(
@@ -157,6 +158,7 @@ internal class ReviewViewModel @Inject constructor(
                         state.copy(dialogType = DialogType.NONE)
                     }
                     _toastFlow.emit("신고 완료!")
+                    onReportComplete.invoke()
                 }
             }
         }

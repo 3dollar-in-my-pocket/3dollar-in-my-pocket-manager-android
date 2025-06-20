@@ -34,7 +34,7 @@ internal fun ReviewScreen(
     onReviewFilterTypeUpdate: (ReviewFilterType) -> Unit,
     onReviewDetailClick: (String) -> Unit,
     onStoreManagementNavigate: () -> Unit,
-    onReportClick: (String) -> Unit,
+    onReportClick: (String, () -> Unit) -> Unit,
     onCommentClick: (String) -> Unit,
     onCommentDeleteClick: () -> Unit,
     onPresetClick: () -> Unit,

@@ -57,7 +57,8 @@ import app.threedollars.manager.feature.review.noRippleClickable
 internal fun ReportBottomSheetDialog(
     sheetState: SheetState,
     onDialogTypeUpdate: (DialogType) -> Unit,
-    onReportClick: (String) -> Unit
+    onReportClick: (String, () -> Unit) -> Unit,
+    onReportComplete: () -> Unit
 ) {
     val reportFocusRequester = remember { FocusRequester() }
     var reportText by remember { mutableStateOf("") }
@@ -183,7 +184,7 @@ internal fun ReportBottomSheetDialog(
                 )
 
                 Button(
-                    onClick = { onReportClick(reportText) },
+                    onClick = { onReportClick(reportText, onReportComplete) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 28.dp),
