@@ -82,7 +82,7 @@ internal fun ReviewDetailScreen(
     selectEditPresetId: String,
     onScreenTypeUpdate: (ScreenType) -> Unit,
     onDialogTypeUpdate: (DialogType) -> Unit,
-    onReportClick: (String) -> Unit,
+    onReportClick: (String, () -> Unit) -> Unit,
     onCommentClick: (String) -> Unit,
     onCommentDeleteClick: () -> Unit,
     onPresetClick: () -> Unit,
@@ -147,7 +147,8 @@ internal fun ReviewDetailScreen(
                 ReportBottomSheetDialog(
                     sheetState = sheetState,
                     onDialogTypeUpdate = onDialogTypeUpdate,
-                    onReportClick = onReportClick
+                    onReportClick = onReportClick,
+                    onReportComplete = { onScreenTypeUpdate(ALL_REVIEW) }
                 )
             }
 
@@ -434,7 +435,7 @@ fun PreviewReviewDetailScreen_EmptyComment() {
         selectEditPresetId = "",
         onScreenTypeUpdate = {},
         onDialogTypeUpdate = {},
-        onReportClick = {},
+        onReportClick = { _, _ -> },
         onCommentClick = { },
         onCommentDeleteClick = {},
         onPresetClick = {},
