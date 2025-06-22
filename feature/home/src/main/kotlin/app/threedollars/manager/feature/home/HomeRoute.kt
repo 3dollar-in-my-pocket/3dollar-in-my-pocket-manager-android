@@ -74,7 +74,7 @@ fun HomeRoute(
                     val distanceInMeters =
                         uiState.currentLocation.distanceTo(cameraPositionState.position.target)
                     if (distanceInMeters <= 100) {
-                        viewModel.storeOpen(location = location)
+                        viewModel.storeOpen(location = cameraPositionState.position.target)
                     } else {
                         Toast.makeText(
                             context,

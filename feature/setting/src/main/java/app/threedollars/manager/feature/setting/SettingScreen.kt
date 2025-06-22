@@ -2,6 +2,7 @@ package app.threedollars.manager.feature.setting
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -57,7 +58,7 @@ fun SettingScreen(
             .verticalScroll(scrollState)
     ) {
         var isSignOutDialog by remember { mutableStateOf(false) }
-        var switchOn by remember { mutableStateOf(bossAccountInfo.isSetupNotification) }
+        var switchOn by remember(bossAccountInfo.isSetupNotification) { mutableStateOf(bossAccountInfo.isSetupNotification) }
 
         if (isSignOutDialog) {
             BaseDialog(

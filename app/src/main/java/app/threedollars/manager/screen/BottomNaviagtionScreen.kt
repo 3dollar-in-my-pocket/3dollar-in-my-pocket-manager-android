@@ -39,7 +39,9 @@ fun BottomNavigation(
                     alwaysShowLabel = true,
                     selected = currentTab == tab,
                     onClick = {
-                        onTabSelected(tab)
+                        if (currentTab != tab) {
+                            onTabSelected(tab)
+                        }
                     }
                 )
             }
