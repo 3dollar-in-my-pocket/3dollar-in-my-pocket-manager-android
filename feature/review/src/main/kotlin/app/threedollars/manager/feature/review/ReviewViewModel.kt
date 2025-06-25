@@ -271,7 +271,20 @@ internal class ReviewViewModel @Inject constructor(
                 if (isDetail) {
                     getStoreReviewDetail(reviewId = reviewId)
                 } else {
-                    getReviewPaging()
+                    _storeReviewPaging.value = _storeReviewPaging.value.map { pagingData ->
+                        pagingData.map { review ->
+                            if (review.reviewId == reviewId) {
+                                review.copy(
+                                    sticker = review.sticker.copy(
+                                        reactedByMe = !review.sticker.reactedByMe,
+                                        count = if (!review.sticker.reactedByMe) review.sticker.count + 1 else review.sticker.count - 1
+                                    )
+                                )
+                            } else {
+                                review
+                            }
+                        }
+                    }
                 }
             }
         }
