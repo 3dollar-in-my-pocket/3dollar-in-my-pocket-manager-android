@@ -154,12 +154,12 @@ internal class ReviewViewModel @Inject constructor(
                 reasonDetail = reasonDetail
             ).collect {
                 if (it.code.toString() == "200") {
-                    _stateFlow.update { state ->
-                        state.copy(dialogType = DialogType.NONE)
-                    }
                     _toastFlow.emit("신고 완료!")
-                    onReportComplete.invoke()
                 }
+                _stateFlow.update { state ->
+                    state.copy(dialogType = DialogType.NONE)
+                }
+                onReportComplete.invoke()
             }
         }
     }
