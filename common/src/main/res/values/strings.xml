@@ -46,4 +46,10 @@
     <string name="review_reached_boss">리뷰가 사장님께 도착했어요 :)</string>
     <string name="by_day">일별</string>
     <string name="boss_name">%s 사장님</string>
+
+    <!-- Maintenance Screen -->
+    <string name="maintenance_title">서버 점검중</string>
+    <string name="maintenance_message">현재 서버 점검 중입니다.\n잠시 후 다시 시도해 주세요.</string>
+    <string name="maintenance_retry">다시 시도</string>
+    <string name="maintenance_description">Maintenance</string>
 </resources>

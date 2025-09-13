@@ -6,9 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,8 +20,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import app.threedollars.common.MaintenanceStateManager
 import app.threedollars.common.REVIEW_LIST
 import app.threedollars.common.TabRoute
+import app.threedollars.common.ui.MaintenanceScreen
 import app.threedollars.manager.ext.navigateTab
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
 import app.threedollars.manager.feature.review.navigation.navigateReview
@@ -51,7 +57,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreenView(screenType: String? = "") {
     val navigator: MainNavigator = rememberMainNavigator()
-    Scaffold(
+    val isMaintenanceMode by MaintenanceStateManager.isMaintenanceMode.collectAsState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
         bottomBar = {
             BottomNavigation(
                 currentTab = navigator.currentTab,
@@ -61,8 +70,19 @@ fun MainScreenView(screenType: String? = "") {
                 }
             )
         }
-    ) {
-        NavigationGraph(navigator = navigator, it.calculateBottomPadding(), screenType)
+        ) {
+            NavigationGraph(navigator = navigator, it.calculateBottomPadding(), screenType)
+        }
+
+        // 503 에러 시 점검중 화면 표시
+        if (isMaintenanceMode) {
+            MaintenanceScreen(
+                onRetry = {
+                    // 재시도 시 maintenance 상태 리셋
+                    MaintenanceStateManager.reset()
+                }
+            )
+        }
     }
 }
 
