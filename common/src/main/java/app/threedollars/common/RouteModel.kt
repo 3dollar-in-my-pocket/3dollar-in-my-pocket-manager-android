@@ -17,3 +17,5 @@ sealed interface Route {
     @Serializable
     data class Review(val reviewId: String?)
 }
+
+const val REVIEW_LIST = "reviewList"

@@ -1,5 +1,6 @@
 package app.threedollars.manager.feature.home
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.common.ext.toStringDefault
@@ -59,6 +60,7 @@ internal class HomeViewModel @Inject constructor(
                         _stateFlow.update { state ->
                             state.copy(
                                 location = latLng,
+                                openLocation = latLng,
                                 currentLocation = latLng,
                                 bossStoreRetrieveArounds = data.map { bossStoreRetrieveAroundDto -> bossStoreRetrieveAroundDto.dtoToVo() }
                             )

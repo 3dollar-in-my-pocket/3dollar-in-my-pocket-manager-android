@@ -1,10 +1,16 @@
 package app.threedollars.manager.feature.review
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
+import app.threedollars.common.ui.CircleProgressBar
 import app.threedollars.manager.feature.review.ScreenType.ALL_REVIEW
+import app.threedollars.manager.feature.review.ScreenType.LOADING
 import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import app.threedollars.manager.feature.review.components.AllReviewContent
 import app.threedollars.manager.feature.review.components.ReviewDetailScreen
@@ -28,14 +34,15 @@ internal fun ReviewScreen(
     onReviewFilterTypeUpdate: (ReviewFilterType) -> Unit,
     onReviewDetailClick: (String) -> Unit,
     onStoreManagementNavigate: () -> Unit,
-    onReportClick: (String) -> Unit,
+    onReportClick: (String, () -> Unit) -> Unit,
     onCommentClick: (String) -> Unit,
     onCommentDeleteClick: () -> Unit,
     onPresetClick: () -> Unit,
     onPresetWriteClick: (String) -> Unit,
     onPresetEditClick: (String, String) -> Unit,
     onPresetDeleteClick: (String) -> Unit,
-    onPresetEditMenuClick: (String, String) -> Unit
+    onPresetEditMenuClick: (String, String) -> Unit,
+    onStickerClick: (String, String, Boolean) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -51,7 +58,8 @@ internal fun ReviewScreen(
                 onReviewFilterTypeUpdate = onReviewFilterTypeUpdate,
                 storeReviewPaging = storeReviewPaging,
                 onReviewDetailClick = onReviewDetailClick,
-                onStoreManagementNavigate = onStoreManagementNavigate
+                onStoreManagementNavigate = onStoreManagementNavigate,
+                onStickerClick = onStickerClick
             )
         }
 
@@ -71,8 +79,15 @@ internal fun ReviewScreen(
                 onPresetWriteClick = onPresetWriteClick,
                 onPresetEditClick = onPresetEditClick,
                 onPresetDeleteClick = onPresetDeleteClick,
-                onPresetEditMenuClick = onPresetEditMenuClick
+                onPresetEditMenuClick = onPresetEditMenuClick,
+                onStickerClick = onStickerClick
             )
+        }
+
+        LOADING -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircleProgressBar(modifier = Modifier.align(Alignment.Center))
+            }
         }
     }
 }

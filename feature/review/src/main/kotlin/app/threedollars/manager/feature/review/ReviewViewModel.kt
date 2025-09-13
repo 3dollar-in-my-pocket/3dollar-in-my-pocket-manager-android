@@ -17,6 +17,8 @@ import app.threedollars.domain.usecase.PatchStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreCommentPresetUseCase
 import app.threedollars.domain.usecase.PostStoreReviewCommentUseCase
 import app.threedollars.domain.usecase.PostStoreReviewReportUseCase
+import app.threedollars.domain.usecase.PutStickersReplaceUseCase
+import app.threedollars.manager.feature.review.ScreenType.LOADING
 import app.threedollars.manager.feature.review.ScreenType.REVIEW_DETAIL
 import app.threedollars.manager.feature.review.model.ReviewVo
 import app.threedollars.manager.feature.review.model.dtoToVo
@@ -50,7 +52,8 @@ internal class ReviewViewModel @Inject constructor(
     private val deleteStoreCommentPresetUseCase: DeleteStoreCommentPresetUseCase,
     private val patchStoreCommentPresetUseCase: PatchStoreCommentPresetUseCase,
     private val getStoreCommentPresetListUseCase: GetStoreCommentPresetListUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val putStickersReplaceUseCase: PutStickersReplaceUseCase,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<ReviewState> =
@@ -69,8 +72,8 @@ internal class ReviewViewModel @Inject constructor(
     init {
         val reviewId = savedStateHandle.get<String?>("reviewId")
         reviewId?.let {
+            updateScreenType(LOADING)
             getStoreReviewDetail(reviewId = reviewId)
-            updateScreenType(REVIEW_DETAIL)
         }
     }
 
@@ -84,33 +87,21 @@ internal class ReviewViewModel @Inject constructor(
     }
 
     fun updateScreenType(screenType: ScreenType) {
-        _stateFlow.update {
-            it.copy(
-                screenType = screenType
-            )
-        }
+        _stateFlow.update { it.copy(screenType = screenType) }
     }
 
     fun updateDialogType(dialogType: DialogType) {
-        _stateFlow.update {
-            it.copy(
-                dialogType = dialogType
-            )
-        }
+        _stateFlow.update { it.copy(dialogType = dialogType) }
     }
 
     fun updateReviewFilterType(reviewFilterType: ReviewFilterType) {
-        _stateFlow.update {
-            it.copy(
-                reviewFilterType = reviewFilterType
-            )
-        }
+        _stateFlow.update { it.copy(reviewFilterType = reviewFilterType) }
         getReviewPaging()
     }
 
     fun updateEditPreset(
         presetId: String,
-        presetText: String
+        presetText: String,
     ) {
         _stateFlow.update { state ->
             state.copy(
@@ -127,9 +118,7 @@ internal class ReviewViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _stateFlow.update { state ->
-                            state.copy(
-                                bossStoreRetrieve = data.dtoToVo(),
-                            )
+                            state.copy(bossStoreRetrieve = data.dtoToVo())
                         }
                     }
                     getReviewPaging()
@@ -144,21 +133,19 @@ internal class ReviewViewModel @Inject constructor(
                 if (it.code.toString() == "200") {
                     it.data?.let { data ->
                         _stateFlow.update { state ->
-                            state.copy(
-                                selectedReview = data.dtoToVo(
-                                    storeName = _stateFlow.value.bossStoreRetrieve.storeName
-                                )
-                            )
+                            state.copy(selectedReview = data.dtoToVo(storeName = _stateFlow.value.bossStoreRetrieve.storeName))
                         }
                     }
                 }
+                updateScreenType(REVIEW_DETAIL)
             }
 
         }
     }
 
     fun reportStoreReview(
-        reasonDetail: String
+        reasonDetail: String,
+        onReportComplete: () -> Unit
     ) {
         viewModelScope.launch {
             postStoreReviewReportUseCase(
@@ -167,13 +154,12 @@ internal class ReviewViewModel @Inject constructor(
                 reasonDetail = reasonDetail
             ).collect {
                 if (it.code.toString() == "200") {
-                    _stateFlow.update { state ->
-                        state.copy(
-                            dialogType = DialogType.NONE
-                        )
-                    }
                     _toastFlow.emit("신고 완료!")
                 }
+                _stateFlow.update { state ->
+                    state.copy(dialogType = DialogType.NONE)
+                }
+                onReportComplete.invoke()
             }
         }
     }
@@ -266,6 +252,41 @@ internal class ReviewViewModel @Inject constructor(
                         dialogType = DialogType.PRESET_DIALOG,
                         commentPresets = result.data?.contents?.map { it.dtoToVo() } ?: listOf()
                     )
+                }
+            }
+        }
+    }
+
+    fun putStickersReplace(
+        reviewId: String,
+        stickers: String,
+        isDetail: Boolean,
+    ) {
+        viewModelScope.launch {
+            val code = putStickersReplaceUseCase(
+                storeId = _stateFlow.value.bossStoreRetrieve.bossStoreId,
+                reviewId = reviewId,
+                stickers = stickers
+            ).code
+
+            if (code == "200") {
+                if (isDetail) {
+                    getStoreReviewDetail(reviewId = reviewId)
+                } else {
+                    _storeReviewPaging.value = _storeReviewPaging.value.map { pagingData ->
+                        pagingData.map { review ->
+                            if (review.reviewId == reviewId) {
+                                review.copy(
+                                    sticker = review.sticker.copy(
+                                        reactedByMe = !review.sticker.reactedByMe,
+                                        count = if (!review.sticker.reactedByMe) review.sticker.count + 1 else review.sticker.count - 1
+                                    )
+                                )
+                            } else {
+                                review
+                            }
+                        }
+                    }
                 }
             }
         }

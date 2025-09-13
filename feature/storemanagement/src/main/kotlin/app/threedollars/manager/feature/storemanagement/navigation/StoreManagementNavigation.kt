@@ -17,11 +17,13 @@ fun NavController.navigateStoreManagement(
 }
 
 fun NavGraphBuilder.storeManagementNavGraph(
-    onAllReviewNavigate: (String?) -> Unit
+    onAllReviewNavigate: (String?) -> Unit,
+    screenType: String?
 ) {
     composable<TabRoute.StoreManagement> {
         StoreManagementRoute(
-            onAllReviewNavigate = onAllReviewNavigate
+            onAllReviewNavigate = onAllReviewNavigate,
+            screenType = screenType
         )
     }
 }

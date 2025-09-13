@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -47,6 +49,7 @@ internal fun AllReviewContent(
     storeReviewPaging: LazyPagingItems<ReviewVo>,
     onReviewDetailClick: (String) -> Unit,
     onStoreManagementNavigate: () -> Unit,
+    onStickerClick: (String, String, Boolean) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -93,7 +96,7 @@ internal fun AllReviewContent(
                     modifier = Modifier
                         .fillMaxSize(),
                 ) {
-                    items(storeReviewPaging.itemCount) { index ->
+                    items(storeReviewPaging.itemCount, key = { storeReviewPaging[it]?.reviewId ?: -1 }) { index ->
                         val reviewVo = storeReviewPaging[index] ?: ReviewVo()
                         if (reviewVo.status == "FILTERED") {
                             BlindReviewCardView(reviewVo = reviewVo)

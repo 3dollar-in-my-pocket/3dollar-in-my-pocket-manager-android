@@ -6,9 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,6 +20,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
+import app.threedollars.common.MaintenanceStateManager
+import app.threedollars.common.REVIEW_LIST
+import app.threedollars.common.TabRoute
+import app.threedollars.common.ui.MaintenanceScreen
 import app.threedollars.manager.ext.navigateTab
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
 import app.threedollars.manager.feature.review.navigation.navigateReview
@@ -31,10 +39,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    companion object {
+        const val SCREEN_TYPE_KEY = "screenType"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val screenType: String? = intent?.getStringExtra(SCREEN_TYPE_KEY)
         setContent {
-            MainScreenView()
+            MainScreenView(screenType = screenType)
         }
     }
 
@@ -42,9 +55,12 @@ class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-fun MainScreenView() {
+fun MainScreenView(screenType: String? = "") {
     val navigator: MainNavigator = rememberMainNavigator()
-    Scaffold(
+    val isMaintenanceMode by MaintenanceStateManager.isMaintenanceMode.collectAsState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
         bottomBar = {
             BottomNavigation(
                 currentTab = navigator.currentTab,
@@ -54,13 +70,24 @@ fun MainScreenView() {
                 }
             )
         }
-    ) {
-        NavigationGraph(navigator = navigator, it.calculateBottomPadding())
+        ) {
+            NavigationGraph(navigator = navigator, it.calculateBottomPadding(), screenType)
+        }
+
+        // 503 에러 시 점검중 화면 표시
+        if (isMaintenanceMode) {
+            MaintenanceScreen(
+                onRetry = {
+                    // 재시도 시 maintenance 상태 리셋
+                    MaintenanceStateManager.reset()
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
+fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screenType: String? = null) {
     val context = LocalContext.current
     val navOptions: NavOptions by lazy {
         navOptions {}
@@ -68,7 +95,10 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
     NavHost(
         modifier = Modifier.padding(bottom = calculateBottomPadding),
         navController = navigator.navController,
-        startDestination = navigator.startDestination,
+        startDestination = when (screenType) {
+            REVIEW_LIST -> TabRoute.StoreManagement::class
+            else -> navigator.startDestination
+        },
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
@@ -80,7 +110,8 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
                     navOptions = navOptions,
                     reviewId = reviewId
                 )
-            }
+            },
+            screenType = screenType
         )
 
         settingNavGraph(
@@ -96,4 +127,5 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp) {
             }
         )
     }
+
 }

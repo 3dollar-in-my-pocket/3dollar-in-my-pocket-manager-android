@@ -3,6 +3,7 @@ package app.threedollars.di
 import android.os.Build
 import app.threedollars.data.BuildConfig
 import app.threedollars.db.DataStoreManager
+import app.threedollars.network.MaintenanceInterceptor
 import app.threedollars.network.NetworkService
 import app.threedollars.source.LocalDataSourceImpl.Companion.ACCESS_TOKEN
 import app.threedollars.source.LocalDataSourceImpl.Companion.APPLICATION_ID
@@ -34,12 +35,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideMaintenanceInterceptor(): MaintenanceInterceptor = MaintenanceInterceptor()
+
+    @Provides
+    @Singleton
     fun provideHeaderInterceptor(
         httpLoggingInterceptor: HttpLoggingInterceptor,
+        maintenanceInterceptor: MaintenanceInterceptor,
         dataStoreManager: DataStoreManager,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(maintenanceInterceptor)
             .addInterceptor {
                 val token = runBlocking { dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: "" }
                 val versionName = runBlocking { dataStoreManager.getStringData(VERSION_NAME).firstOrNull() ?: "" }

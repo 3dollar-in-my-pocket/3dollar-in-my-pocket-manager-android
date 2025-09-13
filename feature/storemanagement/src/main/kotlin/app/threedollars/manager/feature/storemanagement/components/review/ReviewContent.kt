@@ -22,12 +22,13 @@ internal fun ReviewContent(
     subscriberCount: Int,
     rating: Double,
     reviewTotalCount: Int,
-    storeName : String,
+    storeName: String,
     reviews: List<ReviewVo>,
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
     onScreenTypeUpdate: (ScreenType) -> Unit,
-    onAllReviewNavigate: (String?) -> Unit
+    onAllReviewNavigate: (String?) -> Unit,
+    onStickerClick: (String, String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -58,6 +59,7 @@ internal fun ReviewContent(
             reviews = reviews,
             storeName = storeName,
             onAllReviewNavigate = onAllReviewNavigate,
+            onStickerClick = onStickerClick
         )
     }
 }

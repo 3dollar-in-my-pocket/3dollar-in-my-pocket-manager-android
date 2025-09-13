@@ -1,16 +1,20 @@
 package app.threedollars.manager.feature.storemanagement
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.threedollars.common.REVIEW_LIST
+import app.threedollars.common.ui.DoubleBackExitHandler
 
 
 @Composable
 fun StoreManagementRoute(
-    onAllReviewNavigate: (String?) -> Unit
+    onAllReviewNavigate: (String?) -> Unit,
+    screenType: String?
 ) {
     val viewModel: StoreManagementViewModel = hiltViewModel()
 
@@ -18,12 +22,22 @@ fun StoreManagementRoute(
 
     val feedbackSpecific = viewModel.feedbackSpecific.collectAsLazyPagingItems()
 
-    val screenType = uiState.screenType
+    val currentScreenType = uiState.screenType
 
-    LaunchedEffect(screenType) {
+    LaunchedEffect(Unit) {
+        screenType?.let {
+            val defaultScreenType = when(screenType){
+                REVIEW_LIST -> ScreenType.REVIEW_INFO
+                else -> ScreenType.STORE_INFO
+            }
+            viewModel.updateScreenType(defaultScreenType)
+        }
+    }
+
+    LaunchedEffect(currentScreenType) {
         viewModel.getBossStoreRetrieveMe()
 
-        when (screenType) {
+        when (currentScreenType) {
             ScreenType.REVIEW_INFO -> {
                 viewModel.getFeedbackType()
                 viewModel.getFeedbackFull()
@@ -45,8 +59,25 @@ fun StoreManagementRoute(
             else -> {}
         }
     }
+    if (currentScreenType == ScreenType.STORE_INFO) {
+        DoubleBackExitHandler()
+    } else {
+        BackHandler {
+            when (currentScreenType) {
+                ScreenType.REVIEW_INFO,
+                ScreenType.PROFILE_EDIT,
+                ScreenType.BUSINESS_SCHEDULE_EDIT,
+                ScreenType.MENU_MANAGEMENT,
+                ScreenType.BOSS_COMMENT,
+                ScreenType.ACCOUNT,
+                    -> viewModel.updateScreenType(ScreenType.STORE_INFO)
+                ScreenType.FEEDBACK -> viewModel.updateScreenType(ScreenType.REVIEW_INFO)
+                else -> {}
+            }
+        }
+    }
     StoreManagementScreen(
-        screenType = screenType,
+        screenType = currentScreenType,
         dialogType = uiState.dialogType,
         bossStoreRetrieve = uiState.bossStoreRetrieve,
         storeCategories = uiState.storeCategories,
@@ -68,6 +99,7 @@ fun StoreManagementRoute(
         onEndTimeUpdate = viewModel::updateDaysEndTime,
         onLocationDescriptionUpdate = viewModel::updateDaysLocationDescription,
         onScheduleDayUpdate = viewModel::updateScheduleDay,
-        onAllReviewNavigate = onAllReviewNavigate
+        onAllReviewNavigate = onAllReviewNavigate,
+        onStickerClick = viewModel::putStickersReplace
     )
 }

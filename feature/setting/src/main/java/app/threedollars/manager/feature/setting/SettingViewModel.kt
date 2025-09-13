@@ -48,11 +48,11 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun updatePageType(pageType: PageType) {
+    fun updateScreenType(screenType: ScreenType) {
         viewModelScope.launch {
             _stateFlow.update { state ->
                 state.copy(
-                    pageType = pageType
+                    screenType = screenType
                 )
             }
         }
