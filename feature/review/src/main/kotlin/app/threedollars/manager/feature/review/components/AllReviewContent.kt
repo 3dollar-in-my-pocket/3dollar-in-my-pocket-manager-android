@@ -103,7 +103,8 @@ internal fun AllReviewContent(
                         } else {
                             ReviewCardView(
                                 reviewVo = reviewVo,
-                                onReviewDetailClick = onReviewDetailClick
+                                onReviewDetailClick = onReviewDetailClick,
+                                onStickerClick = { onStickerClick(reviewVo.reviewId, if (reviewVo.sticker.reactedByMe) "" else "LIKE", false) }
                             )
                             Spacer(
                                 modifier = Modifier

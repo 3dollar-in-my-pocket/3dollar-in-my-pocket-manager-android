@@ -63,7 +63,8 @@ internal fun ReviewListView(
                         ReviewCardView(
                             reviewVo = reviewVo,
                             storeName = storeName,
-                            onReviewDetailClick = onAllReviewNavigate
+                            onReviewDetailClick = onAllReviewNavigate,
+                            onStickerClick = onStickerClick
                         )
                     }
                 }
