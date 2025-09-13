@@ -10,17 +10,18 @@ internal data class ReviewVo(
     val createdAt: String = "",
     val sticker: Sticker = Sticker(),
     val comment: Comment? = null,
-    val storeName: String = ""
+    val storeName: String = "",
+    val status: String = "",
 ) {
     internal data class Image(
         val imageUrl: String = "",
         val width: Int? = null,
-        val height: Int? = null
+        val height: Int? = null,
     )
 
     internal data class Writer(
         val name: String = "",
-        val medal: Medal = Medal()
+        val medal: Medal = Medal(),
     ) {
         internal data class Medal(
             val name: String = "",
@@ -32,7 +33,7 @@ internal data class ReviewVo(
         val stickerId: String = "",
         val emoji: String = "",
         val count: Int = 0,
-        val reactedByMe: Boolean = false
+        val reactedByMe: Boolean = false,
     )
 
     internal data class Comment(
@@ -41,6 +42,6 @@ internal data class ReviewVo(
         val status: String = "",
         val isOwner: Boolean = false,
         val createdAt: String? = null,
-        val updatedAt: String? = null
+        val updatedAt: String? = null,
     )
 }

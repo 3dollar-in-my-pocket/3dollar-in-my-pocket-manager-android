@@ -160,7 +160,8 @@ internal fun StoreReviewDto.StoreReview.dtoToVo() = ReviewVo(
     writer = writer.dtoToVo(),
     createdAt = createdAt.toStringDefault(),
     sticker = stickers.first().dtoToVo(),
-    comment = comments.firstOrNull { comment -> comment.status == "ACTIVE" }?.dtoToVo()
+    comment = comments.firstOrNull { comment -> comment.status == "ACTIVE" }?.dtoToVo(),
+    status = status
 )
 
 internal fun StoreReviewDto.StoreReview.Image.dtoToVo() = ReviewVo.Image(

@@ -51,18 +51,21 @@ internal fun ReviewListView(
                 reviewTotalCount = reviewTotalCount,
                 rating = rating
             )
-
             if (reviews.isEmpty()) {
-                // TODO: 리스트뷰가 빈값일 때 처리
+            // TODO: 리스트뷰가 빈값일 때 처리
             } else {
                 reviews.forEach { reviewVo ->
                     Spacer(modifier = Modifier.height(20.dp))
-                    ReviewCardView(
-                        reviewVo = reviewVo,
-                        storeName = storeName,
-                        onReviewDetailClick = onAllReviewNavigate,
-                        onStickerClick = onStickerClick
-                    )
+
+                    if (reviewVo.status == "FILTERED") {
+                        BlindReviewCardView(reviewVo = reviewVo)
+                    } else {
+                        ReviewCardView(
+                            reviewVo = reviewVo,
+                            storeName = storeName,
+                            onReviewDetailClick = onAllReviewNavigate
+                        )
+                    }
                 }
 
                 Button(

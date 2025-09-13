@@ -163,7 +163,7 @@ internal data class StoreReviewResponse(
     }
 
     fun toDto() = StoreReviewDto(
-        contents = contents.filter { it.status == "POSTED" }.map { it.toDto() },
+        contents = contents.filter { it.status != "DELETED" }.map { it.toDto() },
         cursor = cursor?.toDto()
     )
 }

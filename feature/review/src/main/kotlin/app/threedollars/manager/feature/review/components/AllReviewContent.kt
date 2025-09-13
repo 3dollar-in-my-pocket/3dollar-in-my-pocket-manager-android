@@ -98,17 +98,20 @@ internal fun AllReviewContent(
                 ) {
                     items(storeReviewPaging.itemCount, key = { storeReviewPaging[it]?.reviewId ?: -1 }) { index ->
                         val reviewVo = storeReviewPaging[index] ?: ReviewVo()
-                        ReviewCardView(
-                            reviewVo = reviewVo,
-                            onReviewDetailClick = onReviewDetailClick,
-                            onStickerClick = { onStickerClick(reviewVo.reviewId, if (reviewVo.sticker.reactedByMe) "" else "LIKE", false) }
-                        )
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp)
-                                .background(Gray5)
-                        )
+                        if (reviewVo.status == "FILTERED") {
+                            BlindReviewCardView(reviewVo = reviewVo)
+                        } else {
+                            ReviewCardView(
+                                reviewVo = reviewVo,
+                                onReviewDetailClick = onReviewDetailClick
+                            )
+                            Spacer(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .background(Gray5)
+                            )
+                        }
                     }
                 }
             }

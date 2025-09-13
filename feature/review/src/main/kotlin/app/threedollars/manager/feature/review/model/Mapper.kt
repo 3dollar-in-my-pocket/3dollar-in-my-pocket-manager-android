@@ -23,7 +23,8 @@ internal fun StoreReviewDto.StoreReview.dtoToVo(storeName: String) = ReviewVo(
     createdAt = createdAt.toStringDefault(),
     sticker = stickers.first().dtoToVo(),
     comment = comments.firstOrNull { comment -> comment.status == "ACTIVE" }?.dtoToVo(),
-    storeName = storeName
+    storeName = storeName,
+    status = status
 )
 
 internal fun StoreReviewDto.StoreReview.Image.dtoToVo() = ReviewVo.Image(
