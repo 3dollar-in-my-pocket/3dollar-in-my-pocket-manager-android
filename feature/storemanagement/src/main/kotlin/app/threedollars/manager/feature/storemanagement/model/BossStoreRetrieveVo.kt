@@ -13,6 +13,7 @@ internal data class BossStoreRetrieveVo(
     val appearanceDays: List<AppearanceDaysVo> = listOf(),
     val categories: List<CategoriesVo> = listOf(),
     val accountNumbers: List<AccountNumbersVo> = listOf(),
+    val contactNumbers: List<ContactNumbersVo> = listOf(),
     val createdAt: String = "",
     val distance: Int = 0,
     val openStatus: OpenStatusVo = OpenStatusVo(),

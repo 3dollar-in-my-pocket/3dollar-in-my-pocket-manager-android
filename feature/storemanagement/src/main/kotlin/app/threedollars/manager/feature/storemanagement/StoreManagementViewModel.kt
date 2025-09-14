@@ -179,7 +179,8 @@ internal class StoreManagementViewModel @Inject constructor(
                     snsUrl = bossStorePatchModel.snsUrl,
                     accountNumber = bossStorePatchModel.accountNumber,
                     accountHolder = bossStorePatchModel.accountHolder,
-                    accountBank = bossStorePatchModel.accountBank
+                    accountBank = bossStorePatchModel.accountBank,
+                    contactNumber = bossStorePatchModel.contactNumber
                 ).collect {
                     if (it.code == "200") {
                         _stateFlow.update { state ->
@@ -214,7 +215,8 @@ internal class StoreManagementViewModel @Inject constructor(
                             snsUrl = bossStorePatchModel.snsUrl,
                             accountNumber = bossStorePatchModel.accountNumber,
                             accountHolder = bossStorePatchModel.accountHolder,
-                            accountBank = bossStorePatchModel.accountBank
+                            accountBank = bossStorePatchModel.accountBank,
+                            contactNumber = bossStorePatchModel.contactNumber
                         ).collect {
                             if (it.code == "200") {
                                 _stateFlow.update { state ->

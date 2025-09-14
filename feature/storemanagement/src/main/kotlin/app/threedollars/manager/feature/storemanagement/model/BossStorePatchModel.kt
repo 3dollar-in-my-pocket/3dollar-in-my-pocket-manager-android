@@ -15,5 +15,6 @@ internal data class BossStorePatchModel(
     val accountNumber: String? = null,
     val accountHolder: String? = null,
     val accountBank: String? = null,
+    val contactNumber: String? = null,
     val imageRequestBody: RequestBody? = null,
 )

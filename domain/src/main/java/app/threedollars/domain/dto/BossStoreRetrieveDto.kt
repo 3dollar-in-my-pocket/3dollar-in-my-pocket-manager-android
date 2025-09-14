@@ -13,6 +13,7 @@ data class BossStoreRetrieveDto(
     val appearanceDays: List<AppearanceDaysDto> = listOf(),
     val categories: List<CategoriesDto> = listOf(),
     val accountNumbersDto: List<AccountNumbersDto> = listOf(),
+    val contactNumbersDto: List<ContactNumbersDto> = listOf(),
     val createdAt: String? = null,
     val distance: Int? = null,
     val openStatus: OpenStatusDto? = null,

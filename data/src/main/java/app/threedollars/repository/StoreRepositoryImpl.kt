@@ -11,6 +11,7 @@ import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.toDto
 import app.threedollars.data.request.AccountNumberRequest
 import app.threedollars.data.request.BossStoreRequest
+import app.threedollars.data.request.ContactNumberRequest
 import app.threedollars.data.response.toDto
 import app.threedollars.domain.dto.AppearanceDaysRequestDto
 import app.threedollars.domain.dto.BossEnumsDto
@@ -77,6 +78,7 @@ internal class StoreRepositoryImpl @Inject constructor(
         accountNumber: String?,
         accountHolder: String?,
         accountBank: String?,
+        contactNumber: String?,
     ): Flow<Resource<String>> {
         val appearanceDaysModel = appearanceDays?.map {
             AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
@@ -97,6 +99,16 @@ internal class StoreRepositoryImpl @Inject constructor(
                 )
             )
         } else null
+
+        val contactNumberRequest = if (contactNumber?.isNotEmpty() == true) {
+            listOf(
+                ContactNumberRequest(
+                    number = contactNumber,
+                    description = "string"
+                )
+            )
+        } else null
+
         val bossStoreRequest = BossStoreRequest(
             appearanceDaysModel,
             categoriesIds,
@@ -105,7 +117,8 @@ internal class StoreRepositoryImpl @Inject constructor(
             menusModel,
             name,
             snsUrl,
-            accountNumbers = accountNumberRequest
+            accountNumbers = accountNumberRequest,
+            contactNumbers = contactNumberRequest
         )
         return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest)
     }

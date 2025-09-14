@@ -24,4 +24,6 @@ data class BossStoreRequest(
     val snsUrl: String? = null,
     @SerialName("accountNumbers")
     val accountNumbers: List<AccountNumberRequest>? = null,
+    @SerialName("contactsNumbers")
+    val contactNumbers: List<ContactNumberRequest>? = null,
 )

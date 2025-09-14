@@ -5,6 +5,7 @@ import app.threedollars.data.model.AccountNumbers
 import app.threedollars.data.model.Address
 import app.threedollars.data.model.AppearanceDaysModel
 import app.threedollars.data.model.CategoriesModel
+import app.threedollars.data.model.ContactNumbers
 import app.threedollars.data.model.FavoriteModel
 import app.threedollars.data.model.LocationModel
 import app.threedollars.data.model.MenusModel
@@ -41,6 +42,8 @@ internal data class BossStoreRetrieveResponse(
     val categories: List<CategoriesModel>? = listOf(),
     @SerialName("accountNumbers")
     val accountNumbers: List<AccountNumbers>? = listOf(),
+    @SerialName("contactNumbers")
+    val contactNumbers: List<ContactNumbers>? = listOf(),
     @SerialName("openStatus")
     val openStatus: OpenStatusModel? = null,
     @SerialName("distance")
@@ -69,6 +72,7 @@ internal data class BossStoreRetrieveResponse(
         appearanceDays = appearanceDays?.toDto() ?: listOf(),
         categories = categories?.toDto() ?: listOf(),
         accountNumbersDto = accountNumbers?.map { it.toDto() } ?: listOf(),
+        contactNumbersDto = contactNumbers?.map { it.toDto() } ?: listOf(),
         createdAt = createdAt,
         distance = distance,
         openStatus = openStatus?.toDto(),
