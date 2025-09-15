@@ -42,8 +42,8 @@ internal data class BossStoreRetrieveResponse(
     val categories: List<CategoriesModel>? = listOf(),
     @SerialName("accountNumbers")
     val accountNumbers: List<AccountNumbers>? = listOf(),
-    @SerialName("contactNumbers")
-    val contactNumbers: List<ContactNumbers>? = listOf(),
+    @SerialName("contactsNumbers")
+    val contactsNumbers: List<ContactNumbers>? = listOf(),
     @SerialName("openStatus")
     val openStatus: OpenStatusModel? = null,
     @SerialName("distance")
@@ -72,7 +72,7 @@ internal data class BossStoreRetrieveResponse(
         appearanceDays = appearanceDays?.toDto() ?: listOf(),
         categories = categories?.toDto() ?: listOf(),
         accountNumbersDto = accountNumbers?.map { it.toDto() } ?: listOf(),
-        contactNumbersDto = contactNumbers?.map { it.toDto() } ?: listOf(),
+        contactNumbersDto = contactsNumbers?.map { it.toDto() } ?: listOf(),
         createdAt = createdAt,
         distance = distance,
         openStatus = openStatus?.toDto(),

@@ -5,4 +5,5 @@ data class ProfileModel(
     val name: String,
     val category: List<String>,
     val snsLink: String,
+    val contactNumber: String,
 )
