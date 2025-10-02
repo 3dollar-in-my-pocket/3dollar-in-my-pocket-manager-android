@@ -48,14 +48,21 @@ class SplashViewModel @Inject constructor(
     private fun login(accessToken: String) {
         viewModelScope.launch(exceptionHandler) {
             authUseCase.login("KAKAO", accessToken).collect {
-                if (it.code.toString() == "200") {
-                    it.data?.token?.let { token ->
-                        authUseCase.saveAccessToken(token).collect {
-                            checkMyInfo()
+                when (it.code.toString()) {
+                    "200" -> {
+                        it.data?.token?.let { token ->
+                            authUseCase.saveAccessToken(token).collect {
+                                checkMyInfo()
+                            }
                         }
                     }
-                } else if (it.code.toString() == "404" || it.code.toString() == "400") {
-                    _loginNavItem.emit(LoginNavItem.Login)
+                    "503" -> {
+                        // 503 에러는 MaintenanceInterceptor에서 처리됨
+                        // 화면 전환 없이 점검 화면만 표시
+                    }
+                    "404", "400" -> {
+                        _loginNavItem.emit(LoginNavItem.Login)
+                    }
                 }
             }
         }
@@ -64,17 +71,26 @@ class SplashViewModel @Inject constructor(
     private fun checkMyInfo() {
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
-                if (it.code.toString() == "200") {
-                    val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
-                    bossDeviceUseCase.putBossDeviceToken("FCM", firebaseToken.await()).collect {
-                        _loginNavItem.emit(LoginNavItem.Home)
+                when (it.code.toString()) {
+                    "200" -> {
+                        val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
+                        bossDeviceUseCase.putBossDeviceToken("FCM", firebaseToken.await()).collect {
+                            _loginNavItem.emit(LoginNavItem.Home)
+                        }
                     }
-                } else if (it.code.toString() == "401") {
-                    autoLogin()
-                } else if (it.code.toString() == "403") {
-                    _loginNavItem.emit(LoginNavItem.Waiting)
-                } else if (it.code.toString() == "404") {
-                    _loginNavItem.emit(LoginNavItem.Login)
+                    "503" -> {
+                        // 503 에러는 MaintenanceInterceptor에서 처리됨
+                        // 화면 전환 없이 점검 화면만 표시
+                    }
+                    "401" -> {
+                        autoLogin()
+                    }
+                    "403" -> {
+                        _loginNavItem.emit(LoginNavItem.Waiting)
+                    }
+                    "404" -> {
+                        _loginNavItem.emit(LoginNavItem.Login)
+                    }
                 }
             }
         }

@@ -8,11 +8,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.threedollars.common.MaintenanceStateManager
+import app.threedollars.common.ui.MaintenanceDialog
 import app.threedollars.manager.sign.LoginNavItem
+import app.threedollars.manager.util.findActivity
+import kotlin.system.exitProcess
 import app.threedollars.manager.sign.ui.LoginScreen
 import app.threedollars.manager.sign.ui.SignScreen
 import app.threedollars.manager.sign.ui.SplashScreen
@@ -70,6 +77,8 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginNavigationGraph(viewModel: LoginViewModel, loginKakao: () -> Unit) {
     val navController = rememberNavController()
+    val showMaintenanceDialog by MaintenanceStateManager.showMaintenanceDialog.collectAsState()
+    val context = LocalContext.current
 
     NavHost(
         navController, startDestination = LoginNavItem.Splash.screenRoute, modifier = Modifier.fillMaxSize()
@@ -87,5 +96,17 @@ fun LoginNavigationGraph(viewModel: LoginViewModel, loginKakao: () -> Unit) {
         composable(LoginNavItem.Waiting.screenRoute) {
             WaitingScreen(navController)
         }
+    }
+
+    // 503 에러 시 점검 다이얼로그 표시
+    if (showMaintenanceDialog) {
+        MaintenanceDialog(
+            onDismiss = {
+                // 재시도: 앱 종료 후 재시작 유도
+                MaintenanceStateManager.reset()
+                context.findActivity().finish()
+                exitProcess(0)
+            }
+        )
     }
 }

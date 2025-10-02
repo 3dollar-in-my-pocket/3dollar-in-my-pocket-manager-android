@@ -2,13 +2,32 @@ package app.threedollars.network
 
 import app.threedollars.common.MaintenanceStateManager
 import okhttp3.Interceptor
+import okhttp3.Protocol
 import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
 
 class MaintenanceInterceptor : Interceptor {
 
+    companion object {
+        // 테스트용 플래그: true로 설정하면 모든 API에 대해 503 응답 반환
+        var FORCE_503_FOR_TESTING = false
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
+
+        // 테스트 모드: 모든 요청에 대해 503 반환
+        if (FORCE_503_FOR_TESTING) {
+            MaintenanceStateManager.setMaintenanceMode(true)
+            return Response.Builder()
+                .request(request)
+                .protocol(Protocol.HTTP_1_1)
+                .code(503)
+                .message("Service Unavailable - Testing Mode")
+                .body("{}".toResponseBody(null))
+                .build()
+        }
 
         return try {
             val response = chain.proceed(request)

@@ -23,7 +23,7 @@ import androidx.navigation.navOptions
 import app.threedollars.common.MaintenanceStateManager
 import app.threedollars.common.REVIEW_LIST
 import app.threedollars.common.TabRoute
-import app.threedollars.common.ui.MaintenanceScreen
+import app.threedollars.common.ui.MaintenanceDialog
 import app.threedollars.manager.ext.navigateTab
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
 import app.threedollars.manager.feature.review.navigation.navigateReview
@@ -57,10 +57,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreenView(screenType: String? = "") {
     val navigator: MainNavigator = rememberMainNavigator()
-    val isMaintenanceMode by MaintenanceStateManager.isMaintenanceMode.collectAsState()
+    val showMaintenanceDialog by MaintenanceStateManager.showMaintenanceDialog.collectAsState()
+    val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
+    Scaffold(
         bottomBar = {
             BottomNavigation(
                 currentTab = navigator.currentTab,
@@ -70,19 +70,22 @@ fun MainScreenView(screenType: String? = "") {
                 }
             )
         }
-        ) {
-            NavigationGraph(navigator = navigator, it.calculateBottomPadding(), screenType)
-        }
+    ) {
+        NavigationGraph(navigator = navigator, it.calculateBottomPadding(), screenType)
+    }
 
-        // 503 에러 시 점검중 화면 표시
-        if (isMaintenanceMode) {
-            MaintenanceScreen(
-                onRetry = {
-                    // 재시도 시 maintenance 상태 리셋
-                    MaintenanceStateManager.reset()
-                }
-            )
-        }
+    // 503 에러 시 점검 다이얼로그 표시
+    if (showMaintenanceDialog) {
+        MaintenanceDialog(
+            onDismiss = {
+                // 재시도: 앱 재시작을 위해 LoginActivity로 이동
+                MaintenanceStateManager.reset()
+                context.startActivity(Intent(context, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+                context.findActivity().finish()
+            }
+        )
     }
 }
 
