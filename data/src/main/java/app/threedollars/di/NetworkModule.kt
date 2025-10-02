@@ -45,8 +45,6 @@ object NetworkModule {
         dataStoreManager: DataStoreManager,
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
-            .addInterceptor(maintenanceInterceptor)
             .addInterceptor {
                 val token = runBlocking { dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: "" }
                 val versionName = runBlocking { dataStoreManager.getStringData(VERSION_NAME).firstOrNull() ?: "" }
@@ -60,6 +58,8 @@ object NetworkModule {
                     .build()
                 it.proceed(request)
             }
+            .addInterceptor(maintenanceInterceptor)
+            .addInterceptor(httpLoggingInterceptor)
             .build()
     }
 
