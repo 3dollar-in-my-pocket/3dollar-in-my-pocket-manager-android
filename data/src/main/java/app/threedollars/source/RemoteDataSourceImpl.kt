@@ -42,6 +42,10 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         emit(safeApiCall(networkService.login(loginRequest)))
     }
 
+    override fun demoLogin(code: String): Flow<Resource<LoginResponse>> = flow {
+        emit(safeApiCall(networkService.demoLogin(code)))
+    }
+
     override fun logout(): Flow<Resource<String>> = flow {
         emit(safeApiCall(networkService.logout()))
     }

@@ -18,6 +18,9 @@ class AuthUseCase @Inject constructor(private val userRepository: UserRepository
     fun login(socialType: String, token: String): Flow<Resource<LoginDto>> =
         userRepository.login(socialType, token)
 
+    fun demoLogin(code: String): Flow<Resource<LoginDto>> =
+        userRepository.demoLogin(code)
+
     fun logout(): Flow<Resource<String>> =
         userRepository.logout()
 

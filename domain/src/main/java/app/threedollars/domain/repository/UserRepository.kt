@@ -15,6 +15,8 @@ interface UserRepository {
 
     fun login(socialType: String, token: String): Flow<Resource<LoginDto>>
 
+    fun demoLogin(code: String): Flow<Resource<LoginDto>>
+
     fun logout(): Flow<Resource<String>>
 
     fun signUp(

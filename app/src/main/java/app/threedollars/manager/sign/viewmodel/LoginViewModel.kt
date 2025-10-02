@@ -42,6 +42,24 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun demoLogin(code: String) {
+        viewModelScope.launch(exceptionHandler) {
+            authUseCase.demoLogin(code).collect { loginDto ->
+                authUseCase.saveSocialAccessToken(code).collect {
+                    if (loginDto.code.toString() == "200") {
+                        loginDto.data?.token?.let { token ->
+                            authUseCase.saveAccessToken(token).collect {
+                                checkMyInfo()
+                            }
+                        }
+                    } else if (loginDto.code.toString() == "404") {
+                        _loginNavItem.emit(LoginNavItem.Sign)
+                    }
+                }
+            }
+        }
+    }
+
     fun checkMyInfo() {
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {

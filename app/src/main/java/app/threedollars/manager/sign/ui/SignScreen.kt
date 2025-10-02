@@ -52,6 +52,7 @@ fun SignScreen(navController: NavHostController, viewModel: SignViewModel = hilt
     }
     Column(
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize(1f)
             .background(Gray5)
             .verticalScroll(scrollState)

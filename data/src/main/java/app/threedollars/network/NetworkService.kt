@@ -48,6 +48,9 @@ internal interface NetworkService {
     @POST("v1/auth/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<BaseResponse<LoginResponse>>
 
+    @POST("login/demo")
+    suspend fun demoLogin(@Query("code") code: String): Response<BaseResponse<LoginResponse>>
+
     @POST("v1/auth/logout")
     suspend fun logout(): Response<BaseResponse<String>>
 

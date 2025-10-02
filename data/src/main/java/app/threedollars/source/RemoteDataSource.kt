@@ -28,6 +28,8 @@ import okhttp3.RequestBody
 internal interface RemoteDataSource {
     fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>>
 
+    fun demoLogin(code: String): Flow<Resource<LoginResponse>>
+
     fun logout(): Flow<Resource<String>>
 
     fun signUp(signUpRequest: SignUpRequest): Flow<Resource<LoginResponse>>

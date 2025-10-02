@@ -42,6 +42,16 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun demoLogin(code: String): Flow<Resource<LoginDto>> {
+        return remoteDataSource.demoLogin(code).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
+            } else {
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
+            }
+        }
+    }
+
     override fun logout(): Flow<Resource<String>> = remoteDataSource.logout()
 
     override fun signUp(
