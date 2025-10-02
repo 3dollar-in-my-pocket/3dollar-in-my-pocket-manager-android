@@ -16,6 +16,10 @@ enum class TabType(
         icon = R.drawable.ic_truck,
         route = app.threedollars.common.TabRoute.StoreManagement
     ),
+    AI(
+        icon = R.drawable.ic_ai,
+        route = app.threedollars.common.TabRoute.AI
+    ),
     SETTING(
         icon = R.drawable.ic_my,
         route = app.threedollars.common.TabRoute.Setting

@@ -25,6 +25,7 @@ import app.threedollars.common.REVIEW_LIST
 import app.threedollars.common.TabRoute
 import app.threedollars.common.ui.MaintenanceDialog
 import app.threedollars.manager.ext.navigateTab
+import app.threedollars.manager.feature.ai.navigation.aiNavGraph
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
 import app.threedollars.manager.feature.review.navigation.navigateReview
 import app.threedollars.manager.feature.review.navigation.reviewNavGraph
@@ -116,7 +117,9 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screen
             },
             screenType = screenType
         )
+        aiNavGraph(
 
+        )
         settingNavGraph(
             onMoveLoginPage = {
                 context.startActivity(Intent(context, LoginActivity::class.java))

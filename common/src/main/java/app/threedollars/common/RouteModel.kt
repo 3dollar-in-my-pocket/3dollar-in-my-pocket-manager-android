@@ -10,6 +10,9 @@ sealed interface TabRoute : Route {
     data object StoreManagement : TabRoute
 
     @Serializable
+    data object AI : TabRoute
+
+    @Serializable
     data object Setting : TabRoute
 }
 

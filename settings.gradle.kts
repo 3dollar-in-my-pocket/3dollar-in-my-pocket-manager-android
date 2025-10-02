@@ -31,5 +31,6 @@ include(
     ":feature:setting",
     ":feature:storemanagement",
     ":feature:review",
+    ":feature:ai",
     ":navigation"
 )
