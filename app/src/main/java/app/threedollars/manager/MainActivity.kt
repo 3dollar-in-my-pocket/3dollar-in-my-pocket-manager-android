@@ -60,12 +60,15 @@ fun MainScreenView(screenType: String? = "") {
     val navigator: MainNavigator = rememberMainNavigator()
     val showMaintenanceDialog by MaintenanceStateManager.showMaintenanceDialog.collectAsState()
     val context = LocalContext.current
+    val mainViewModel: MainViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+    val enableSalesAIRecommendation by mainViewModel.enableSalesAIRecommendation.collectAsState()
 
     Scaffold(
         bottomBar = {
             BottomNavigation(
                 currentTab = navigator.currentTab,
                 visible = navigator.shouldShowBottomBar(),
+                enableSalesAIRecommendation = enableSalesAIRecommendation,
                 onTabSelected = {
                     navigator.navController.navigateTab(it)
                 }

@@ -58,7 +58,7 @@ fun SettingScreen(
             .verticalScroll(scrollState)
     ) {
         var isSignOutDialog by remember { mutableStateOf(false) }
-        var switchOn by remember(bossAccountInfo.isSetupNotification) { mutableStateOf(bossAccountInfo.isSetupNotification) }
+        var switchOn by remember(bossAccountInfo.settings.enableActivitiesPush) { mutableStateOf(bossAccountInfo.settings.enableActivitiesPush) }
 
         if (isSignOutDialog) {
             BaseDialog(

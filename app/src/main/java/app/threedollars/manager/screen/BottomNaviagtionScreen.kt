@@ -19,9 +19,12 @@ import kotlinx.collections.immutable.toPersistentList
 fun BottomNavigation(
     visible: Boolean,
     currentTab: TabType?,
+    enableSalesAIRecommendation: Boolean,
     onTabSelected: (TabType) -> Unit,
 ) {
-    val tabs = TabType.entries.toPersistentList()
+    val tabs = TabType.entries.filter {
+        it != TabType.AI || enableSalesAIRecommendation
+    }.toPersistentList()
 
     if (visible) {
         NavigationBar(
