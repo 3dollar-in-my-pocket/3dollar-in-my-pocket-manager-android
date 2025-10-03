@@ -98,13 +98,40 @@ class SplashViewModel @Inject constructor(
 
     private fun autoLogin() {
         viewModelScope.launch {
+            val demoCode = authUseCase.getDemoCode().firstOrNull()?.data
 
-            val token = authUseCase.getSocialAccessToken().firstOrNull()?.data
-
-            if (token.isNullOrBlank()) {
-                _loginNavItem.emit(LoginNavItem.Login)
+            if (!demoCode.isNullOrBlank()) {
+                demoLogin(demoCode)
             } else {
-                login(token)
+                val token = authUseCase.getSocialAccessToken().firstOrNull()?.data
+
+                if (token.isNullOrBlank()) {
+                    _loginNavItem.emit(LoginNavItem.Login)
+                } else {
+                    login(token)
+                }
+            }
+        }
+    }
+
+    private fun demoLogin(code: String) {
+        viewModelScope.launch(exceptionHandler) {
+            authUseCase.demoLogin(code).collect {
+                when (it.code.toString()) {
+                    "200" -> {
+                        it.data?.token?.let { token ->
+                            authUseCase.saveAccessToken(token).collect {
+                                checkMyInfo()
+                            }
+                        }
+                    }
+                    "503" -> {
+                        // 503 에러는 MaintenanceInterceptor에서 처리됨
+                    }
+                    "404", "400" -> {
+                        _loginNavItem.emit(LoginNavItem.Login)
+                    }
+                }
             }
         }
     }

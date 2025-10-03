@@ -9,9 +9,11 @@ interface UserRepository {
 
     suspend fun saveSocialAccessToken(token: String): Flow<Unit>
     suspend fun saveAccessToken(token: String): Flow<Unit>
+    suspend fun saveDemoCode(code: String): Flow<Unit>
 
     fun getSocialAccessToken(): Flow<Resource<String>>
     fun getAccessToken(): Flow<Resource<String>>
+    fun getDemoCode(): Flow<Resource<String>>
 
     fun login(socialType: String, token: String): Flow<Resource<LoginDto>>
 

@@ -22,12 +22,20 @@ internal class UserRepositoryImpl @Inject constructor(
         localDataSource.saveSocialAccessToken(token)
 
     override suspend fun saveAccessToken(token: String) = localDataSource.saveAccessToken(token)
+
+    override suspend fun saveDemoCode(code: String): Flow<Unit> =
+        localDataSource.saveDemoCode(code)
+
     override fun getSocialAccessToken(): Flow<Resource<String>> =
         localDataSource.getSocialAccessToken().map {
             Resource.Success(data = it, code = null)
         }
 
     override fun getAccessToken(): Flow<Resource<String>> = localDataSource.getAccessToken().map {
+        Resource.Success(data = it, code = null)
+    }
+
+    override fun getDemoCode(): Flow<Resource<String>> = localDataSource.getDemoCode().map {
         Resource.Success(data = it, code = null)
     }
 

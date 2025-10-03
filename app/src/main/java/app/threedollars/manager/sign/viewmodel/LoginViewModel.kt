@@ -45,16 +45,16 @@ class LoginViewModel @Inject constructor(
     fun demoLogin(code: String) {
         viewModelScope.launch(exceptionHandler) {
             authUseCase.demoLogin(code).collect { loginDto ->
-                authUseCase.saveSocialAccessToken(code).collect {
-                    if (loginDto.code.toString() == "200") {
-                        loginDto.data?.token?.let { token ->
-                            authUseCase.saveAccessToken(token).collect {
+                if (loginDto.code.toString() == "200") {
+                    loginDto.data?.token?.let { token ->
+                        authUseCase.saveAccessToken(token).collect {
+                            authUseCase.saveDemoCode(code).collect {
                                 checkMyInfo()
                             }
                         }
-                    } else if (loginDto.code.toString() == "404") {
-                        _loginNavItem.emit(LoginNavItem.Sign)
                     }
+                } else if (loginDto.code.toString() == "404") {
+                    _loginNavItem.emit(LoginNavItem.Sign)
                 }
             }
         }

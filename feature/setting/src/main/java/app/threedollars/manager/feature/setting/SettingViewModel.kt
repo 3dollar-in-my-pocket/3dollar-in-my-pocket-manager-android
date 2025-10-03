@@ -81,8 +81,9 @@ class SettingViewModel @Inject constructor(
 
                     val accessTokenDeferred = async { authUseCase.saveAccessToken("") }
                     val socialAccessTokenDeferred = async { authUseCase.saveSocialAccessToken("") }
+                    val demoCodeDeferred = async { authUseCase.saveDemoCode("") }
 
-                    awaitAll(accessTokenDeferred, socialAccessTokenDeferred).forEach { flow ->
+                    awaitAll(accessTokenDeferred, socialAccessTokenDeferred, demoCodeDeferred).forEach { flow ->
                         flow.collect()
                     }
                     _stateFlow.update { state ->
@@ -101,8 +102,9 @@ class SettingViewModel @Inject constructor(
                 if (it.data == "OK") {
                     val accessTokenDeferred = async { authUseCase.saveAccessToken("") }
                     val socialAccessTokenDeferred = async { authUseCase.saveSocialAccessToken("") }
+                    val demoCodeDeferred = async { authUseCase.saveDemoCode("") }
 
-                    awaitAll(accessTokenDeferred, socialAccessTokenDeferred).forEach { flow ->
+                    awaitAll(accessTokenDeferred, socialAccessTokenDeferred, demoCodeDeferred).forEach { flow ->
                         flow.collect()
                     }
                     _stateFlow.update { state ->

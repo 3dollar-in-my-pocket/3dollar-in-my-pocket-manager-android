@@ -11,9 +11,14 @@ class AuthUseCase @Inject constructor(private val userRepository: UserRepository
     suspend fun saveSocialAccessToken(token: String): Flow<Unit> = userRepository.saveSocialAccessToken(token)
 
     suspend fun saveAccessToken(token: String) = userRepository.saveAccessToken(token)
+
+    suspend fun saveDemoCode(code: String): Flow<Unit> = userRepository.saveDemoCode(code)
+
     fun getAccessToken(): Flow<Resource<String>> = userRepository.getAccessToken()
 
     fun getSocialAccessToken(): Flow<Resource<String>> = userRepository.getSocialAccessToken()
+
+    fun getDemoCode(): Flow<Resource<String>> = userRepository.getDemoCode()
 
     fun login(socialType: String, token: String): Flow<Resource<LoginDto>> =
         userRepository.login(socialType, token)
