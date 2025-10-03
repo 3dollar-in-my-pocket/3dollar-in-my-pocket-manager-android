@@ -19,4 +19,5 @@ dependencies {
     implementation(libs.dialog.compose)
     implementation(libs.dialog.time.compose)
     implementation(libs.paging.compose)
+    implementation(libs.compose.markdown)
 }

@@ -8,18 +8,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.threedollars.common.ui.CircleProgressBar
 import app.threedollars.manager.feature.ai.components.AiChatBubble
+import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 internal fun AiScreen(
@@ -29,6 +29,7 @@ internal fun AiScreen(
         modifier = Modifier
             .systemBarsPadding()
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(20.dp),
         horizontalAlignment = Alignment.Start,
     ) {
@@ -45,25 +46,24 @@ internal fun AiScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (uiState.isLoading) {
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 CircleProgressBar()
-            } else {
-                Text(
-                    text = uiState.recommendationText,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        textAlign = TextAlign.Center,
-                        color = Color.Black
-                    ),
-                )
             }
+        } else {
+            MarkdownText(
+                markdown = uiState.recommendationText,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.Black
+                )
+            )
         }
     }
 }

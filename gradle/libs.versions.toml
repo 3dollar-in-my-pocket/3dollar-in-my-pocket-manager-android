@@ -64,6 +64,7 @@ moshi = "1.15.1"
 moshi-converter = "2.4.0"
 dialog-compose = "0.9.0"
 playServicesMeasurementApi = "22.1.2"
+compose-markdown = "0.5.7"
 
 [libraries]
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
@@ -160,6 +161,7 @@ moshi-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", v
 dialog-compose = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "dialog-compose" }
 dialog-time-compose = { group = "io.github.vanpra.compose-material-dialogs", name = "datetime", version.ref = "dialog-compose" }
 play-services-measurement-api = { group = "com.google.android.gms", name = "play-services-measurement-api", version.ref = "playServicesMeasurementApi" }
+compose-markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "compose-markdown" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -49,7 +49,7 @@ fun AiChatBubble(
                         style = SpanStyle(
                             color = White,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 20.sp
+                            fontSize = 16.sp
                         )
                     ) {
                         append(fullText.substring(0, startIndex))
@@ -60,7 +60,7 @@ fun AiChatBubble(
                     style = SpanStyle(
                         color = White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = 16.sp
                     )
                 ) {
                     append(boldText)
@@ -71,7 +71,7 @@ fun AiChatBubble(
                         style = SpanStyle(
                             color = White,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 20.sp
+                            fontSize = 16.sp
                         )
                     ) {
                         append(fullText.substring(endIndex))
@@ -82,21 +82,11 @@ fun AiChatBubble(
             Text(
                 text = annotatedString,
                 color = White,
-                style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Black
-                ),
             )
         } else {
             Text(
                 text = fullText,
                 color = White,
-                style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Black
-                )
             )
         }
     }
