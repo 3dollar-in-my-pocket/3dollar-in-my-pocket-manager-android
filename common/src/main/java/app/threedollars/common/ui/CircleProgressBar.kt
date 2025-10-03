@@ -11,7 +11,6 @@ import app.threedollars.common.ui.Green
 fun CircleProgressBar(modifier: Modifier = Modifier) {
     CircularProgressIndicator(
         modifier = modifier.size(50.dp),
-        color = Green,
         strokeWidth = 5.dp
     )
 }

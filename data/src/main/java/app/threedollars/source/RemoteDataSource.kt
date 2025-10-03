@@ -20,6 +20,7 @@ import app.threedollars.data.response.ImageUploadResponse
 import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.data.response.StoreReviewResponse.StoreReview
 import kotlinx.coroutines.flow.Flow
@@ -85,6 +86,8 @@ internal interface RemoteDataSource {
         orderType: String,
         size: Int,
     ): Flow<Resource<List<BossStoreRetrieveAroundResponse>>>
+
+    fun getStoreRecommendation(storeId: String, date: String): Flow<Resource<StoreRecommendationResponse>>
 
     // enum-mapper-controller
     fun getBossEnums(): Flow<Resource<BossEnumsResponse>>

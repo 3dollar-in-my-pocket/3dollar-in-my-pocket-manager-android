@@ -25,6 +25,7 @@ import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StickersReplaceRequest
 import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.network.NetworkService
 import kotlinx.coroutines.flow.Flow
@@ -147,6 +148,10 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
                 )
             )
         )
+    }
+
+    override fun getStoreRecommendation(storeId: String, date: String): Flow<Resource<StoreRecommendationResponse>> = flow {
+        emit(safeApiCall(networkService.getStoreRecommendation(storeId, date)))
     }
 
     override fun getBossEnums(): Flow<Resource<BossEnumsResponse>> = flow {

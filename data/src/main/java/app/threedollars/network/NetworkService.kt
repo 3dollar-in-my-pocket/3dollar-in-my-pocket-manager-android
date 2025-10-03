@@ -26,6 +26,7 @@ import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StickersReplaceRequest
 import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.data.response.StoreReviewResponse.StoreReview
 import okhttp3.MultipartBody
@@ -121,6 +122,12 @@ internal interface NetworkService {
         @Query("orderType") orderType: String = "DISTANCE_ASC",
         @Query("size") size: Int = 30,
     ): Response<BaseResponse<List<BossStoreRetrieveAroundResponse>>>
+
+    @GET("v1/store/{storeId}/recommendation")
+    suspend fun getStoreRecommendation(
+        @Path("storeId") storeId: String,
+        @Query("date") date: String
+    ): Response<BaseResponse<StoreRecommendationResponse>>
 
     // enum-mapper-controller
     @GET("v1/enums")

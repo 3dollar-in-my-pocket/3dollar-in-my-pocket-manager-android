@@ -24,6 +24,7 @@ import app.threedollars.domain.dto.FeedbackTypesDto
 import app.threedollars.domain.dto.ImageUploadDto
 import app.threedollars.domain.dto.MenusDto
 import app.threedollars.domain.dto.StoreCategoriesDto
+import app.threedollars.domain.dto.StoreRecommendationDto
 import app.threedollars.domain.repository.StoreRepository
 import app.threedollars.network.NetworkService
 import app.threedollars.source.FeedbackSpecificDataSource
@@ -156,6 +157,15 @@ internal class StoreRepositoryImpl @Inject constructor(
                 }
             }
     }
+
+    override fun getStoreRecommendation(storeId: String, date: String): Flow<Resource<StoreRecommendationDto>> =
+        remoteDataSource.getStoreRecommendation(storeId, date).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
+            } else {
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
+            }
+        }
 
     override fun getBossEnums(): Flow<Resource<BossEnumsDto>> =
         remoteDataSource.getBossEnums().map {

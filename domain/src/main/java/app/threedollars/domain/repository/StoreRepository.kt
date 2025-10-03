@@ -53,6 +53,8 @@ interface StoreRepository {
         size: Int
     ): Flow<Resource<List<BossStoreRetrieveAroundDto>>>
 
+    fun getStoreRecommendation(storeId: String, date: String): Flow<Resource<StoreRecommendationDto>>
+
     // enum-mapper-controller
     fun getBossEnums(): Flow<Resource<BossEnumsDto>>
 
