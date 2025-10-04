@@ -9,6 +9,7 @@ import app.threedollars.domain.dto.BankDto
 import app.threedollars.domain.dto.BossEnumsDto
 import app.threedollars.domain.dto.BossStoreRetrieveDto
 import app.threedollars.domain.dto.CategoriesDto
+import app.threedollars.domain.dto.ContactNumbersDto
 import app.threedollars.domain.dto.EnumsDto
 import app.threedollars.domain.dto.FeedbackFullDto
 import app.threedollars.domain.dto.FeedbackTypesDto
@@ -42,6 +43,7 @@ internal fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
     snsUrl = this?.snsUrl.toStringDefault(),
     updatedAt = this?.updatedAt.toStringDefault(),
     accountNumbers = this?.accountNumbersDto?.map { it.dtoToVo() } ?: listOf(),
+    contactNumbers = this?.contactNumbersDto?.map { it.dtoToVo() } ?: listOf(),
     subscriberCount = this?.favoriteDto?.subscriberCount ?: 0,
     rating = this?.rating.toDoubleDefault(),
     reviewTotalCount = this?.reviewTotalCount.toIntDefault()
@@ -86,6 +88,11 @@ internal fun AccountNumbersDto.dtoToVo() = AccountNumbersVo(
 
 internal fun BankDto.dtoToVo() = BankVo(
     key = key,
+    description = description,
+)
+
+internal fun ContactNumbersDto.dtoToVo() = ContactNumbersVo(
+    number = number,
     description = description,
 )
 

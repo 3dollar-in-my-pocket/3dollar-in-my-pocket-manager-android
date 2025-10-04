@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,7 @@ import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.MildGreen
+import app.threedollars.common.util.PhoneNumberUtils
 import app.threedollars.manager.feature.storemanagement.DialogType
 import app.threedollars.manager.feature.storemanagement.R
 import app.threedollars.manager.feature.storemanagement.ScreenType
@@ -63,12 +66,26 @@ internal fun ProfileEditScreen(
     var name by remember { mutableStateOf(bossStoreRetrieve.name.toStringDefault()) }
     var imageRequestBody by remember { mutableStateOf<RequestBody?>(null) }
     var sns by remember { mutableStateOf(bossStoreRetrieve.snsUrl.toStringDefault()) }
+    var contactNumberValue by remember {
+        val initialText = bossStoreRetrieve.contactNumbers.firstOrNull()?.number.toStringDefault()
+        mutableStateOf(
+            TextFieldValue(
+                text = initialText,
+                selection = TextRange(initialText.length)
+            )
+        )
+    }
     val imageUrl by remember { mutableStateOf(bossStoreRetrieve.imageUrl.toStringDefault()) }
 
-    isEnable = (name.isNotEmpty() && name != bossStoreRetrieve.name) ||
+    val originalContactNumber = bossStoreRetrieve.contactNumbers.firstOrNull()?.number.toStringDefault()
+    val isContactNumberChanged = contactNumberValue.text != originalContactNumber
+    val isContactNumberValid = contactNumberValue.text.isEmpty() || PhoneNumberUtils.isValidPhoneNumber(contactNumberValue.text)
+
+    isEnable = ((name.isNotEmpty() && name != bossStoreRetrieve.name) ||
             (selectedStoreCategories.isNotEmpty() && selectedStoreCategories != bossStoreRetrieve.categories.map { it.categoryId }) ||
             imageRequestBody != null ||
-            sns != bossStoreRetrieve.snsUrl
+            sns != bossStoreRetrieve.snsUrl ||
+            isContactNumberChanged) && isContactNumberValid
 
 
     Column(
@@ -94,9 +111,11 @@ internal fun ProfileEditScreen(
             name = name,
             imageUrl = imageUrl,
             sns = sns,
+            contactNumberValue = contactNumberValue,
             onChangeName = { name = it },
             onChangeUri = { imageRequestBody = it },
             onChangeSNS = { sns = it },
+            onChangeContactNumber = { contactNumberValue = it },
             onStoreCategorySelected = onStoreCategorySelected
         )
 
@@ -106,13 +125,18 @@ internal fun ProfileEditScreen(
                 .height(64.dp),
             isEnable = isEnable,
             onClick = {
+                val validContactNumber = if (PhoneNumberUtils.isValidPhoneNumber(contactNumberValue.text)) {
+                    PhoneNumberUtils.toApiFormat(contactNumberValue.text)
+                } else ""
+
                 onBossStorePatch(
                     BossStorePatchModel(
                         bossStoreId = bossStoreRetrieve.bossStoreId,
                         name = name,
                         snsUrl = sns,
                         categoriesIds = selectedStoreCategories,
-                        imageRequestBody = imageRequestBody
+                        imageRequestBody = imageRequestBody,
+                        contactNumber = validContactNumber
                     )
                 )
             }
@@ -184,9 +208,11 @@ fun ProfileEditContents(
     name: String,
     imageUrl: String,
     sns: String,
+    contactNumberValue: TextFieldValue,
     onChangeName: (String) -> Unit,
     onChangeUri: (RequestBody) -> Unit,
     onChangeSNS: (String) -> Unit,
+    onChangeContactNumber: (TextFieldValue) -> Unit,
     onStoreCategorySelected: (Int) -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -224,6 +250,15 @@ fun ProfileEditContents(
             hint = "SNS를 입력해 주세요.",
             maxLength = 50,
             onChangeText = onChangeSNS
+        )
+        ProFileTitleTextContent(
+            titleText = "연락처",
+            isExplanationText = false,
+            isRequired = false
+        )
+        PhoneNumberTextField(
+            phoneNumberValue = contactNumberValue,
+            onPhoneNumberChange = onChangeContactNumber
         )
         Spacer(modifier = Modifier.height(44.dp))
     }
@@ -278,6 +313,53 @@ fun CategoryGrid(
                     textAlign = TextAlign.Center
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun PhoneNumberTextField(
+    phoneNumberValue: TextFieldValue,
+    onPhoneNumberChange: (TextFieldValue) -> Unit,
+) {
+    val phoneNumber = phoneNumberValue.text
+    val isValid = phoneNumber.isEmpty() || PhoneNumberUtils.isValidPhoneNumber(phoneNumber)
+    val isComplete = PhoneNumberUtils.isCompletePhoneNumber(phoneNumber)
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        DefaultTextFieldContent(
+            value = phoneNumberValue,
+            hint = "고객들에게 알리고 싶은 연락처를 적어주세요!",
+            maxLength = 13,
+            onValueChange = { newValue ->
+                if (PhoneNumberUtils.isValidPhoneNumberInput(newValue.text)) {
+                    val formattedText = PhoneNumberUtils.formatPhoneNumber(newValue.text)
+                    // 포맷팅 후 커서를 맨 뒤로 설정
+                    val newTextFieldValue = TextFieldValue(
+                        text = formattedText,
+                        selection = TextRange(formattedText.length)
+                    )
+                    onPhoneNumberChange(newTextFieldValue)
+                }
+            }
+        )
+
+        if (phoneNumber.isNotEmpty() && !isValid) {
+            Text(
+                text = "올바른 휴대폰번호 형식이 아닙니다",
+                color = androidx.compose.ui.graphics.Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp, start = 24.dp, end = 24.dp)
+            )
+        } else if (phoneNumber.isNotEmpty() && !isComplete) {
+            Text(
+                text = "휴대폰번호를 완성해주세요",
+                color = Gray30,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp, start = 24.dp, end = 24.dp)
+            )
         }
     }
 }
