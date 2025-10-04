@@ -12,7 +12,11 @@ import app.threedollars.manager.feature.storemanagement.navigation.navigateStore
 fun NavController.navigateTab(tab: TabType) {
     val navOptions = navOptions {
         launchSingleTop = true
-        restoreState = false
+        restoreState = true
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+
     }
 
     when (tab) {
