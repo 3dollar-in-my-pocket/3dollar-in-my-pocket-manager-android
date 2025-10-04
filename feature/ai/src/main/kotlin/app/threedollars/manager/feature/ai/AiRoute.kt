@@ -11,6 +11,7 @@ fun AiRoute() {
     val uiState by viewModel.stateFlow.collectAsStateWithLifecycle()
 
     AiScreen(
-        uiState = uiState
+        uiState = uiState,
+        onRetry = { viewModel.retry() }
     )
 }

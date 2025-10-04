@@ -1,5 +1,6 @@
 package app.threedollars.manager.feature.ai
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.domain.usecase.BossAccountUseCase
@@ -20,16 +21,33 @@ import javax.inject.Inject
 internal class AiViewModel @Inject constructor(
     private val bossAccountUseCase: BossAccountUseCase,
     private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
-    private val storeRecommendationUseCase: StoreRecommendationUseCase
+    private val storeRecommendationUseCase: StoreRecommendationUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
     private val _stateFlow: MutableStateFlow<AiState> = MutableStateFlow(AiState())
 
     val stateFlow: StateFlow<AiState> = _stateFlow.asStateFlow()
 
+    private var hasLoadedData: Boolean
+        get() = savedStateHandle.get<Boolean>(KEY_HAS_LOADED_DATA) ?: false
+        set(value) = savedStateHandle.set(KEY_HAS_LOADED_DATA, value)
+
+    companion object {
+        private const val KEY_HAS_LOADED_DATA = "has_loaded_data"
+    }
+
     init {
         fetchBossAccount()
         setCurrentDate()
+        fetchBossStoreInfo()
+    }
+
+    fun retry() {
+        hasLoadedData = false
+        _stateFlow.update { state ->
+            state.copy(isError = false, errorMessage = "")
+        }
         fetchBossStoreInfo()
     }
 
@@ -64,7 +82,7 @@ internal class AiViewModel @Inject constructor(
                         _stateFlow.update { state ->
                             state.copy(bossStoreId = storeId)
                         }
-                        if (storeId.isNotEmpty()) {
+                        if (storeId.isNotEmpty() && !hasLoadedData) {
                             fetchRecommendation(storeId)
                         }
                     }
@@ -74,7 +92,7 @@ internal class AiViewModel @Inject constructor(
     }
 
     private fun fetchRecommendation(storeId: String) {
-        _stateFlow.update { it.copy(isLoading = true) }
+        _stateFlow.update { it.copy(isLoading = true, isError = false, errorMessage = "") }
 
         viewModelScope.launch(exceptionHandler) {
             val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -87,9 +105,25 @@ internal class AiViewModel @Inject constructor(
 
                 if (resource.code.toString() == "200") {
                     resource.data?.let { recommendation ->
+                        hasLoadedData = true
                         _stateFlow.update { state ->
-                            state.copy(recommendationText = recommendation.text)
+                            state.copy(
+                                recommendationText = recommendation.text,
+                                isError = false,
+                                errorMessage = ""
+                            )
                         }
+                    }
+                } else {
+                    hasLoadedData = true
+                    val errorMsg = resource.errorMessage?.takeIf { it.isNotBlank() }
+                        ?: "추천 정보를 불러오는데 실패했습니다.\n(오류 코드: ${resource.code})"
+
+                    _stateFlow.update { state ->
+                        state.copy(
+                            isError = true,
+                            errorMessage = errorMsg
+                        )
                     }
                 }
             }
