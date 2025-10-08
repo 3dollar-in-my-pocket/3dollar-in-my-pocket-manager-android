@@ -116,8 +116,14 @@ internal class AiViewModel @Inject constructor(
                     }
                 } else {
                     hasLoadedData = true
-                    val errorMsg = resource.errorMessage?.takeIf { it.isNotBlank() }
-                        ?: "추천 정보를 불러오는데 실패했습니다.\n(오류 코드: ${resource.code})"
+                    val errorMsg = resource.errorMessage?.takeIf { it.isNotBlank() }?.let { errorMessage ->
+                        try {
+                            val jsonObject = org.json.JSONObject(errorMessage)
+                            jsonObject.optString("message", "").takeIf { it.isNotBlank() }
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } ?: "추천 정보를 불러오는데 실패했습니다.\n(오류 코드: ${resource.code})"
 
                     _stateFlow.update { state ->
                         state.copy(

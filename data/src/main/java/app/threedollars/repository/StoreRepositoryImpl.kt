@@ -108,7 +108,7 @@ internal class StoreRepositoryImpl @Inject constructor(
                     description = "string"
                 )
             )
-        } else null
+        } else listOf()
 
         val bossStoreRequest = BossStoreRequest(
             appearanceDaysModel,
