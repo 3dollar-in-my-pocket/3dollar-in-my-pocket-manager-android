@@ -5,17 +5,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -115,29 +116,12 @@ internal fun ReviewDetailScreen(
         },
         bottomBar = {
             if (reviewVo.comment == null) {
-                BottomAppBar(
-                    modifier = Modifier
-                        .height(64.dp)
-                        .clickable {
-                            if (commentText.length > 9) {
-                                onCommentClick(commentText)
-                            }
-                        },
-                    containerColor = if (commentText.length > 9) {
-                        Green
-                    } else {
-                        Gray30
-                    },
-                ) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "답글 등록하기",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = White,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                BottomButton(
+                    enabled = commentText.length > 9,
+                    onPressed = {
+                        onCommentClick.invoke(commentText)
+                    }
+                )
             }
         }
     ) { paddingValues ->
@@ -409,6 +393,37 @@ private fun ReviewDetailTopBar(
     }
 }
 
+@Composable
+private fun BottomButton(
+    enabled: Boolean,
+    onPressed: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clickable(enabled) {
+                onPressed.invoke()
+            }
+            .fillMaxWidth()
+            .heightIn(min = 64.dp)
+            .background(
+                color = if (enabled) {
+                    Green
+                } else {
+                    Gray30
+                },
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "답글 등록하기",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = White,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Preview(
     name = "ReviewDetailScreen",
     showBackground = true,
@@ -426,6 +441,40 @@ fun PreviewReviewDetailScreen_EmptyComment() {
             content = "내용",
             status = "",
         )
+    )
+    ReviewDetailScreen(
+        reviewVo = dummyReview,
+        commentPresets = listOf(),
+        dialogType = DialogType.NONE,
+        selectEditPresetText = "",
+        selectEditPresetId = "",
+        onScreenTypeUpdate = {},
+        onDialogTypeUpdate = {},
+        onReportClick = { _, _ -> },
+        onCommentClick = { },
+        onCommentDeleteClick = {},
+        onPresetClick = {},
+        onPresetWriteClick = {},
+        onPresetEditClick = { _, _ -> },
+        onPresetDeleteClick = {},
+        onPresetEditMenuClick = { _, _ -> },
+        onStickerClick = { _, _, _ -> }
+    )
+}
+
+@Preview(
+    name = "ReviewDetailScreen",
+    showBackground = true,
+)
+@Composable
+fun PreviewReviewDetailScreen_NullComment() {
+    val dummyReview = ReviewVo(
+        reviewId = "rev1",
+        rating = 4,
+        contents = "아주 맛있었어요!",
+        images = listOf(),
+        writer = ReviewVo.Writer(name = "홍길동", medal = ReviewVo.Writer.Medal()),
+        comment = null
     )
     ReviewDetailScreen(
         reviewVo = dummyReview,
