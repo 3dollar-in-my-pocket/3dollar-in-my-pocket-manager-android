@@ -9,15 +9,23 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import app.threedollars.common.ui.Gray70
 import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.White
+
+@Immutable
+class BaseDialogStyle(
+    val titleFontSize: TextUnit = TextUnit.Unspecified,
+    val messageFontSize: TextUnit = TextUnit.Unspecified,
+)
 
 @Composable
 fun BaseDialog(
@@ -25,6 +33,7 @@ fun BaseDialog(
     message: String,
     confirmText: String,
     dismissText: String? = null,
+    style: BaseDialogStyle = BaseDialogStyle(),
     onConfirm: () -> Unit,
     onDismiss: (() -> Unit)? = null,
 ) {
@@ -40,8 +49,8 @@ fun BaseDialog(
                     onDismiss()
                 }
             },
-            title = { Text(modifier = Modifier.fillMaxWidth(), text = title, textAlign = TextAlign.Center) },
-            text = { Text(modifier = Modifier.fillMaxWidth(), text = annotatedMessage, textAlign = TextAlign.Center) },
+            title = { Text(modifier = Modifier.fillMaxWidth(), text = title, textAlign = TextAlign.Center, fontSize = style.titleFontSize) },
+            text = { Text(modifier = Modifier.fillMaxWidth(), text = annotatedMessage, textAlign = TextAlign.Center, fontSize = style.messageFontSize) },
             confirmButton = {
                 Button(
                     modifier = Modifier
