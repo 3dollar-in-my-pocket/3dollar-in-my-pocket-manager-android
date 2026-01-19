@@ -80,6 +80,9 @@ class SplashViewModel @Inject constructor(
                         "404", "400" -> {
                             _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
                         }
+                        else -> {
+                            _effect.send(SplashEffect.OnUnexpectedError)
+                        }
                     }
                 }
             }
@@ -113,6 +116,9 @@ class SplashViewModel @Inject constructor(
                         }
                         "404" -> {
                             _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
+                        }
+                        else -> {
+                            _effect.send(SplashEffect.OnUnexpectedError)
                         }
                     }
                 }
@@ -165,6 +171,9 @@ class SplashViewModel @Inject constructor(
                         }
                         "404", "400" -> {
                             _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
+                        }
+                        else -> {
+                            _effect.send(SplashEffect.OnUnexpectedError)
                         }
                     }
                 }
