@@ -6,11 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 open class BaseViewModel : ViewModel() {
 
     val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         Log.e("BaseViewModel", throwable.message.toString())
+        onCoroutineException(coroutineContext, throwable)
     }
 
     private val _isLoading: MutableEventFlow<Boolean> = MutableEventFlow()
@@ -18,6 +20,8 @@ open class BaseViewModel : ViewModel() {
 
     private val _errorMessage: MutableEventFlow<ValueWrapper<String>> = MutableEventFlow()
     val errorMessage: EventFlow<ValueWrapper<String>> = _errorMessage.asEventFlow()
+
+    open fun onCoroutineException(context: CoroutineContext, throwable: Throwable) = Unit
 
     fun setLoading(value: Boolean) {
         viewModelScope.launch {

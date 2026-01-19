@@ -5,6 +5,7 @@ import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.domain.dto.BossAccountInfoDto
 import app.threedollars.domain.dto.LoginDto
 import app.threedollars.domain.repository.UserRepository
 import app.threedollars.source.LocalDataSource
@@ -91,7 +92,7 @@ internal class UserRepositoryImpl @Inject constructor(
 
     override fun signOut(): Flow<Resource<String>> = remoteDataSource.signOut()
 
-    override fun getBossAccount(): Flow<Resource<app.threedollars.domain.dto.BossAccountInfoDto>> =
+    override fun getBossAccount(): Flow<Resource<BossAccountInfoDto>> =
         remoteDataSource.getBossAccount().map {
             if (it.data != null) {
                 Resource.Success(data = it.data!!.toDto(), code = it.code)
