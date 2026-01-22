@@ -28,6 +28,7 @@ import app.threedollars.data.response.StoreCategoriesResponse
 import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.network.NetworkService
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -356,7 +357,11 @@ fun <T> safeApiCall(response: Response<BaseResponse<T>>): Resource<T> {
                 code = response.code().toString()
             )
         }
-
+    } catch (e: CancellationException) {
+        /**
+         * 코루틴 취소를 위해 필요합니다.
+         */
+        throw e
     } catch (e: HttpException) {
         Resource.Error(errorMessage = e.message ?: "Something went wrong", code = null)
     } catch (e: IOException) {
