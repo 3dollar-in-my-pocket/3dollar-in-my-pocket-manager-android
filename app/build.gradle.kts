@@ -24,7 +24,7 @@ android {
     defaultConfig {
         targetSdk = 35
         applicationId = "app.threedollars.manager"
-        versionCode = 20
+        versionCode = 21
         versionName = "1.1.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
