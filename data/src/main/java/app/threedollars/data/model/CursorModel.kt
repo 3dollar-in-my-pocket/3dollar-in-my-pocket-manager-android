@@ -2,15 +2,21 @@ package app.threedollars.data.model
 
 
 import app.threedollars.domain.dto.CursorDto
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class CursorModel(
-    @Json(name = "hasMore")
+    @SerialName("hasMore")
     val hasMore: Boolean = false,
-    @Json(name = "nextCursor")
-    val nextCursor: String? = null
-){
-    fun toDto() = CursorDto(hasMore, nextCursor)
+    @SerialName("nextCursor")
+    val nextCursor: String? = null,
+    @SerialName("totalCount")
+    val totalCount: Int? = null
+) {
+    fun toDto() = CursorDto(
+        hasMore = hasMore,
+        nextCursor = nextCursor,
+        totalCount = totalCount
+    )
 }

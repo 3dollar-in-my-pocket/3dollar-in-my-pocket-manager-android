@@ -11,8 +11,21 @@ import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.toDto
 import app.threedollars.data.request.AccountNumberRequest
 import app.threedollars.data.request.BossStoreRequest
-import app.threedollars.data.response.*
-import app.threedollars.domain.dto.*
+import app.threedollars.data.request.ContactNumberRequest
+import app.threedollars.data.response.toDto
+import app.threedollars.domain.dto.AppearanceDaysRequestDto
+import app.threedollars.domain.dto.BossEnumsDto
+import app.threedollars.domain.dto.BossStoreRetrieveAroundDto
+import app.threedollars.domain.dto.BossStoreRetrieveDto
+import app.threedollars.domain.dto.ContentsDto
+import app.threedollars.domain.dto.FaqCategoriesDto
+import app.threedollars.domain.dto.FaqDto
+import app.threedollars.domain.dto.FeedbackFullDto
+import app.threedollars.domain.dto.FeedbackTypesDto
+import app.threedollars.domain.dto.ImageUploadDto
+import app.threedollars.domain.dto.MenusDto
+import app.threedollars.domain.dto.StoreCategoriesDto
+import app.threedollars.domain.dto.StoreRecommendationDto
 import app.threedollars.domain.repository.StoreRepository
 import app.threedollars.network.NetworkService
 import app.threedollars.source.FeedbackSpecificDataSource
@@ -22,9 +35,9 @@ import kotlinx.coroutines.flow.map
 import okhttp3.RequestBody
 import javax.inject.Inject
 
-class StoreRepositoryImpl @Inject constructor(
+internal class StoreRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val networkService: NetworkService
+    private val networkService: NetworkService,
 ) : StoreRepository {
     override fun putBossStore(
         bossStoreId: String,
@@ -34,7 +47,7 @@ class StoreRepositoryImpl @Inject constructor(
         introduction: String?,
         menus: List<MenusDto>,
         name: String?,
-        snsUrl: String?
+        snsUrl: String?,
     ): Flow<Resource<String>> {
         val appearanceDaysModel = appearanceDays.map {
             AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
@@ -65,7 +78,8 @@ class StoreRepositoryImpl @Inject constructor(
         snsUrl: String?,
         accountNumber: String?,
         accountHolder: String?,
-        accountBank: String?
+        accountBank: String?,
+        contactNumber: String?,
     ): Flow<Resource<String>> {
         val appearanceDaysModel = appearanceDays?.map {
             AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
@@ -86,6 +100,16 @@ class StoreRepositoryImpl @Inject constructor(
                 )
             )
         } else null
+
+        val contactNumberRequest = if (contactNumber?.isNotEmpty() == true) {
+            listOf(
+                ContactNumberRequest(
+                    number = contactNumber,
+                    description = "string"
+                )
+            )
+        } else listOf()
+
         val bossStoreRequest = BossStoreRequest(
             appearanceDaysModel,
             categoriesIds,
@@ -94,7 +118,8 @@ class StoreRepositoryImpl @Inject constructor(
             menusModel,
             name,
             snsUrl,
-            accountNumbers = accountNumberRequest
+            accountNumbers = accountNumberRequest,
+            contactNumbers = contactNumberRequest
         )
         return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest)
     }
@@ -108,7 +133,7 @@ class StoreRepositoryImpl @Inject constructor(
     override fun getBossStoreRetrieveSpecific(
         bossStoreId: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
     ): Flow<Resource<BossStoreRetrieveDto>> {
         return remoteDataSource.getBossStoreRetrieveSpecific(bossStoreId, latitude, longitude).map {
             if (it.data != null) {
@@ -134,7 +159,7 @@ class StoreRepositoryImpl @Inject constructor(
         mapLatitude: Double,
         mapLongitude: Double,
         orderType: String,
-        size: Int
+        size: Int,
     ): Flow<Resource<List<BossStoreRetrieveAroundDto>>> {
         return remoteDataSource.getBossStoreRetrieveAround(categoryId, distanceKm, mapLatitude, mapLongitude, orderType, size)
             .map {
@@ -145,6 +170,15 @@ class StoreRepositoryImpl @Inject constructor(
                 }
             }
     }
+
+    override fun getStoreRecommendation(storeId: String, date: String): Flow<Resource<StoreRecommendationDto>> =
+        remoteDataSource.getStoreRecommendation(storeId, date).map {
+            if (it.data != null) {
+                Resource.Success(data = it.data!!.toDto(), code = it.code)
+            } else {
+                Resource.Error(errorMessage = it.errorMessage, code = it.code)
+            }
+        }
 
     override fun getBossEnums(): Flow<Resource<BossEnumsDto>> =
         remoteDataSource.getBossEnums().map {

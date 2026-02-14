@@ -11,7 +11,6 @@ import app.threedollars.manager.sign.LoginNavItem
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -43,7 +42,25 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun checkMyInfo() {
+    fun demoLogin(code: String) {
+        viewModelScope.launch(exceptionHandler) {
+            authUseCase.demoLogin(code).collect { loginDto ->
+                if (loginDto.code.toString() == "200") {
+                    loginDto.data?.token?.let { token ->
+                        authUseCase.saveAccessToken(token).collect {
+                            authUseCase.saveDemoCode(code).collect {
+                                checkMyInfo()
+                            }
+                        }
+                    }
+                } else if (loginDto.code.toString() == "404") {
+                    _loginNavItem.emit(LoginNavItem.Sign)
+                }
+            }
+        }
+    }
+
+    fun checkMyInfo() {
         viewModelScope.launch(exceptionHandler) {
             bossAccountUseCase.getBossAccount().collect {
                 if (it.code.toString() == "200") {

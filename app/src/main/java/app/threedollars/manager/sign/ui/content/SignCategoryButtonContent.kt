@@ -2,9 +2,9 @@ package app.threedollars.manager.sign.ui.content
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.MildGreen
-import app.threedollars.manager.vo.StoreCategoriesVo
+import app.threedollars.manager.feature.storemanagement.model.StoreCategoriesVo
 
 @Composable
 fun SignCategoryButtonContent(storeCategoriesVo: StoreCategoriesVo, onClick: () -> Unit) {
@@ -23,7 +23,7 @@ fun SignCategoryButtonContent(storeCategoriesVo: StoreCategoriesVo, onClick: () 
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             contentColor = if (storeCategoriesVo.isSelected) Color.White else Green,
-            backgroundColor = if (storeCategoriesVo.isSelected) Green else MildGreen
+            containerColor = if (storeCategoriesVo.isSelected) Green else MildGreen
         )
     ) {
         Text(

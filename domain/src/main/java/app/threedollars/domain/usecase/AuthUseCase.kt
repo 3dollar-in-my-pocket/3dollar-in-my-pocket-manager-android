@@ -2,19 +2,32 @@ package app.threedollars.domain.usecase
 
 import app.threedollars.common.Resource
 import app.threedollars.domain.dto.LoginDto
+import app.threedollars.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-interface AuthUseCase {
+class AuthUseCase @Inject constructor(private val userRepository: UserRepository) {
 
-    suspend fun saveSocialAccessToken(token: String) : Flow<Unit>
-    suspend fun saveAccessToken(token: String) : Flow<Unit>
+    suspend fun saveSocialAccessToken(token: String): Flow<Unit> = userRepository.saveSocialAccessToken(token)
 
-    fun getSocialAccessToken(): Flow<Resource<String>>
-    fun getAccessToken(): Flow<Resource<String>>
+    suspend fun saveAccessToken(token: String) = userRepository.saveAccessToken(token)
 
-    fun login(socialType: String, token: String): Flow<Resource<LoginDto>>
+    suspend fun saveDemoCode(code: String): Flow<Unit> = userRepository.saveDemoCode(code)
 
-    fun logout(): Flow<Resource<String>>
+    fun getAccessToken(): Flow<Resource<String>> = userRepository.getAccessToken()
+
+    fun getSocialAccessToken(): Flow<Resource<String>> = userRepository.getSocialAccessToken()
+
+    fun getDemoCode(): Flow<Resource<String>> = userRepository.getDemoCode()
+
+    fun login(socialType: String, token: String): Flow<Resource<LoginDto>> =
+        userRepository.login(socialType, token)
+
+    fun demoLogin(code: String): Flow<Resource<LoginDto>> =
+        userRepository.demoLogin(code)
+
+    fun logout(): Flow<Resource<String>> =
+        userRepository.logout()
 
     fun signUp(
         bossName: String,
@@ -23,9 +36,11 @@ interface AuthUseCase {
         socialType: String,
         storeCategoriesIds: List<String>,
         storeName: String,
-        token: String
-    ): Flow<Resource<LoginDto>>
+        token: String,
+    ): Flow<Resource<LoginDto>> =
+        userRepository.signUp(bossName, businessNumber, certificationPhotoUrl, socialType, storeCategoriesIds, storeName, token)
 
-    fun signOut(): Flow<Resource<String>>
+    fun signOut(): Flow<Resource<String>> =
+        userRepository.signOut()
 
 }

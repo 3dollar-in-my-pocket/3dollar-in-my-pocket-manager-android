@@ -1,19 +1,17 @@
-import Dependencies.common
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    id("threedollars.android.application")
     id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.appdistribution")
+    id("kotlinx-serialization")
 }
 
 android {
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
 
-    compileSdk = 33
+    compileSdk = 35
     signingConfigs {
         create("release") {
             storeFile = file("ThreeDollarsManager.jks")
@@ -24,66 +22,83 @@ android {
     }
 
     defaultConfig {
+        targetSdk = 35
         applicationId = "app.threedollars.manager"
-        minSdk = 23
-        targetSdk = 33
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 21
+        versionName = "1.1.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")
+            manifestPlaceholders["appName3dollar"] = "@string/app_name"
             applicationIdSuffix = ""
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
-            buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_release"] as? String ?: "")
-            manifestPlaceholders["kakao_key"] = (gradleLocalProperties(rootDir)["kakao_key_release"] as String).replace("\"","")
-            manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
+            buildConfigField("String", "KAKAO_KEY", "${localProperties["kakao_key_release"]}")
+            buildConfigField("String", "BASE_URL", "${localProperties["base_url_release"]}")
+            manifestPlaceholders["kakao_key"] = (localProperties["kakao_key_release"] as String).replace("\"", "")
+            manifestPlaceholders["naver_map_client_id"] = localProperties["naver_map_client_id"] as String
         }
         getByName("debug") {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
-            // resValue("string", "app_name", "@string/app_name_debug")
+            manifestPlaceholders["appName3dollar"] = "@string/app_name_debug"
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            firebaseAppDistribution {
-                releaseNotesFile = "./release_note.txt"
-                testers = "android"
-            }
-            buildConfigField("String", "KAKAO_KEY", gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
-            buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir)["base_url_dev"] as? String ?: "")
-            manifestPlaceholders["kakao_key"] = (gradleLocalProperties(rootDir)["kakao_key_dev"] as String).replace("\"","")
-            manifestPlaceholders["naver_map_client_id"] = gradleLocalProperties(rootDir)["naver_map_client_id"] as String
+            buildConfigField("String", "KAKAO_KEY", "${localProperties["kakao_key_dev"]}")
+            buildConfigField("String", "BASE_URL", "${localProperties["base_url_dev"]}")
+            manifestPlaceholders["kakao_key"] = (localProperties["kakao_key_dev"] as String).replace("\"", "")
+            manifestPlaceholders["naver_map_client_id"] = localProperties["naver_map_client_id"] as String
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0-alpha02"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
     namespace = "app.threedollars.manager"
 }
 
 dependencies {
-    common()
-    implementation(project(":common"))
-    implementation(project(":data"))
-    implementation(project(":domain"))
+    implementation(projects.common)
+    implementation(projects.data)
+    implementation(projects.domain)
+    implementation(projects.feature.home)
+    implementation(projects.feature.storemanagement)
+    implementation(projects.feature.setting)
+    implementation(projects.feature.review)
+    implementation(projects.feature.ai)
+    implementation(projects.navigation)
+
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.kakao.login)
+    implementation(libs.naver.map.compose)
+    implementation(libs.google.location)
+    implementation(libs.compose.permissions)
+    implementation(libs.lottie)
+    implementation(libs.compose.coil)
+    implementation(libs.paging.compose)
+    implementation(libs.dialog.compose)
+    implementation(libs.dialog.time.compose)
+
+    implementation(libs.moshi.kotlin)
+    implementation(libs.kotlinx.serialization.json)
 }

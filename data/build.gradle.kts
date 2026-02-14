@@ -1,21 +1,17 @@
-import Dependencies.common
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    id("threedollars.android.library")
+    id("kotlinx-serialization")
 }
 
 android {
-    compileSdk = 33
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
 
-    defaultConfig {
-        minSdk = 23
-        targetSdk = 33
-    }
     buildFeatures {
-        compose = true
+        buildConfig = true
     }
     buildTypes {
         getByName("release") {
@@ -24,31 +20,35 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "KAKAO_KEY", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["kakao_key_release"] as? String ?: "")
-            buildConfigField("String", "BASE_URL", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["base_url_release"] as? String ?: "")
+            buildConfigField("String", "KAKAO_KEY","${localProperties["kakao_key_release"]}")
+            buildConfigField("String", "BASE_URL", "${localProperties["base_url_release"]}")
         }
 
         getByName("debug") {
-            buildConfigField("String", "KAKAO_KEY", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["kakao_key_dev"] as? String ?: "")
-            buildConfigField("String", "BASE_URL", com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir)["base_url_dev"] as? String ?: "")
+            buildConfigField("String", "KAKAO_KEY","${localProperties["kakao_key_dev"]}")
+            buildConfigField("String", "BASE_URL", "${localProperties["base_url_dev"]}")
         }
-    }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0-alpha02"
     }
     namespace = "app.threedollars.data"
 }
 
 dependencies {
-    common()
-    implementation(project(":common"))
-    implementation(project(":domain"))
+    implementation(projects.common)
+    implementation(projects.domain)
+
+    implementation(libs.okhttp3)
+    implementation(libs.okhttp3.logging)
+    implementation(libs.retrofit)
+    implementation(libs.moshi)
+    implementation(libs.moshi.converter)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.moshi.codegen)
+    implementation(libs.datastore)
+    implementation(libs.datastore.preferences)
+    implementation(libs.paging)
+    implementation(libs.gson)
+    implementation(libs.gson.converter)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit.kotlin.serialization)
+
 }

@@ -22,6 +22,10 @@ class LocalDataSourceImpl @Inject constructor(private val dataStoreManager: Data
         emit(dataStoreManager.saveStringData(APPLICATION_ID, applicationId))
     }
 
+    override suspend fun saveDemoCode(code: String) = flow {
+        emit(dataStoreManager.saveStringData(DEMO_CODE, code))
+    }
+
     override fun getSocialAccessToken(): Flow<String> = dataStoreManager.getStringData(SOCIAL_ACCESS_TOKEN)
     override fun getAccessToken(): Flow<String> = dataStoreManager.getStringData(ACCESS_TOKEN)
 
@@ -30,10 +34,13 @@ class LocalDataSourceImpl @Inject constructor(private val dataStoreManager: Data
 
     override fun getApplicationId(): Flow<String> = dataStoreManager.getStringData(APPLICATION_ID)
 
+    override fun getDemoCode(): Flow<String> = dataStoreManager.getStringData(DEMO_CODE)
+
     companion object {
         const val SOCIAL_ACCESS_TOKEN = "social_access_token"
         const val ACCESS_TOKEN = "access_token"
         const val VERSION_NAME = "version_name"
         const val APPLICATION_ID = "application_id"
+        const val DEMO_CODE = "demo_code"
     }
 }

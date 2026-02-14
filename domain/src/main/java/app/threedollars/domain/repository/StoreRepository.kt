@@ -4,9 +4,7 @@ import androidx.paging.PagingData
 import app.threedollars.common.Resource
 import app.threedollars.domain.dto.*
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.File
 
 interface StoreRepository {
 
@@ -33,7 +31,8 @@ interface StoreRepository {
         snsUrl: String? = null,
         accountNumber: String? = null,
         accountHolder: String? = null,
-        accountBank: String? = null
+        accountBank: String? = null,
+        contactNumber: String? = null
     ): Flow<Resource<String>>
 
     // boss-store-open-controller
@@ -54,6 +53,8 @@ interface StoreRepository {
         orderType: String,
         size: Int
     ): Flow<Resource<List<BossStoreRetrieveAroundDto>>>
+
+    fun getStoreRecommendation(storeId: String, date: String): Flow<Resource<StoreRecommendationDto>>
 
     // enum-mapper-controller
     fun getBossEnums(): Flow<Resource<BossEnumsDto>>

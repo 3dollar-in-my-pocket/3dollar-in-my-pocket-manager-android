@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +52,7 @@ fun SignScreen(navController: NavHostController, viewModel: SignViewModel = hilt
     }
     Column(
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize(1f)
             .background(Gray5)
             .verticalScroll(scrollState)
@@ -211,7 +212,7 @@ fun InitSignUpButton(onClick: () -> Unit) {
         onClick = { onClick() },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            backgroundColor = Green
+            containerColor = Green
         )
     ) {
         Text(

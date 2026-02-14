@@ -7,7 +7,7 @@ import app.threedollars.network.NetworkService
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FeedbackSpecificDataSource(
+internal class FeedbackSpecificDataSource(
     private val networkService: NetworkService,
     private val targetId: String
 ) : PagingSource<String, ContentsModel>() {

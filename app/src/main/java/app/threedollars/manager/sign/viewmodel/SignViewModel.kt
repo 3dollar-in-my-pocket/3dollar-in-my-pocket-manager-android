@@ -9,14 +9,13 @@ import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
+import app.threedollars.manager.feature.storemanagement.model.StoreCategoriesVo
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.util.dtoToVo
-import app.threedollars.manager.vo.StoreCategoriesVo
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okhttp3.RequestBody
