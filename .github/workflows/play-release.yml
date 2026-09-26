@@ -6,10 +6,6 @@ name: Play Release
 # 버전(versionCode/versionName)은 사람이 app/build.gradle.kts 에서 올린다. 이 워크플로는 버전을 바꾸거나 커밋하지 않는다.
 # 필요한 시크릿과 Play Console 설정: docs/process/play-release.md
 on:
-  # TODO(TH-1385): 머지 전 제거. PR 브랜치에서 수동 실행을 검증하려고 워크플로를 등록시키는 임시 트리거.
-  pull_request:
-    paths:
-      - '.github/workflows/play-release.yml'
   push:
     branches:
       - 'release/**'
@@ -35,7 +31,6 @@ permissions:
 
 jobs:
   release:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
