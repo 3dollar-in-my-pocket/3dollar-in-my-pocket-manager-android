@@ -49,12 +49,13 @@ gh secret set GOOGLE_PLAY_SERVICE_ACCOUNT_JSON < play-service-account.json
 
 **권장: 사장님앱 전용 서비스 계정**
 
-1. GCP 콘솔에서 사용할 프로젝트를 고르고 **Google Play Android Developer API**를 사용 설정한다.
-   https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com
+1. GCP 콘솔에서 **릴리즈(운영) 프로젝트**를 고르고 **Google Play Android Developer API**를 사용 설정한다.
+   스토어 배포 권한을 가진 운영 자격증명이므로 dev 프로젝트(`dollars-manager-dev`)에 만들지 않는다. 릴리즈 프로젝트 ID는 release용 `google-services.json`의 `project_id`.
+   `https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com?project=<릴리즈프로젝트ID>`
 2. 같은 프로젝트에서 서비스 계정 생성(GCP 역할은 필요 없음) → 키 → 새 키 → JSON 다운로드.
-3. Play Console → **사용자 및 권한** → 새 사용자 초대 → 이메일에 서비스 계정 주소(`…@….iam.gserviceaccount.com`) 입력.
-   - 앱 권한: **사장님앱만** 추가
-   - 권한: 앱 정보 보기, **프로덕션 트랙에 앱 출시**, **테스트 트랙에 앱 출시**(출시 관리)
+3. Play Console → **모든 앱** → **사용자 및 권한** → 새 사용자 초대 → 이메일에 서비스 계정 주소(`…@….iam.gserviceaccount.com`) 입력.
+   - **앱 권한** 탭: **가슴속 3천원 사장님**만 추가 → 앱 정보 보기, **프로덕션 트랙에 앱 출시**, **테스트 트랙에 앱 출시**(출시 관리)
+   - **계정 권한** 탭은 비워 둔다(여기 주면 유저앱 포함 모든 앱에 적용된다)
 4. 다운로드한 JSON을 `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`에 등록한다.
 
 **대안: 유저앱이 쓰는 서비스 계정에 키만 추가**
