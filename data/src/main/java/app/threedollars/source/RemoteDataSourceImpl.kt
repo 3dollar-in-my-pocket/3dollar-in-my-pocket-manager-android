@@ -10,6 +10,7 @@ import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.request.StorePostRequest
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -26,6 +27,9 @@ import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StickersReplaceRequest
 import app.threedollars.data.response.StoreCategoriesResponse
 import app.threedollars.data.response.StoreRecommendationResponse
+import app.threedollars.data.response.StorePostCreateResponse
+import app.threedollars.data.response.StorePostListResponse
+import app.threedollars.data.response.StorePostResponse
 import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.network.NetworkService
 import kotlinx.coroutines.CancellationException
@@ -345,6 +349,22 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
                 storeId = storeId
             )
         )
+
+    override suspend fun getStorePosts(storeId: String, size: Int, cursor: String?): Resource<StorePostListResponse> = safeApiCall(
+        networkService.getStorePosts(storeId = storeId, size = size, cursor = cursor)
+    )
+
+    override suspend fun postStorePost(storeId: String, request: StorePostRequest): Resource<StorePostCreateResponse> = safeApiCall(
+        networkService.postStorePost(storeId = storeId, storePostRequest = request)
+    )
+
+    override suspend fun patchStorePost(storeId: String, postId: String, request: StorePostRequest): Resource<StorePostResponse> = safeApiCall(
+        networkService.patchStorePost(storeId = storeId, postId = postId, storePostRequest = request)
+    )
+
+    override suspend fun deleteStorePost(storeId: String, postId: String): Resource<String> = safeApiCall(
+        networkService.deleteStorePost(storeId = storeId, postId = postId)
+    )
 }
 
 fun <T> safeApiCall(response: Response<BaseResponse<T>>): Resource<T> {

@@ -6,6 +6,7 @@ import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.request.StorePostRequest
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -21,6 +22,9 @@ import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StoreCategoriesResponse
 import app.threedollars.data.response.StoreRecommendationResponse
+import app.threedollars.data.response.StorePostCreateResponse
+import app.threedollars.data.response.StorePostListResponse
+import app.threedollars.data.response.StorePostResponse
 import app.threedollars.data.response.StoreReviewResponse
 import app.threedollars.data.response.StoreReviewResponse.StoreReview
 import kotlinx.coroutines.flow.Flow
@@ -176,4 +180,12 @@ internal interface RemoteDataSource {
     suspend fun getStoreCommentPresets(
         storeId: String,
     ): Resource<CommentPresetResponse>
+
+    suspend fun getStorePosts(storeId: String, size: Int, cursor: String?): Resource<StorePostListResponse>
+
+    suspend fun postStorePost(storeId: String, request: StorePostRequest): Resource<StorePostCreateResponse>
+
+    suspend fun patchStorePost(storeId: String, postId: String, request: StorePostRequest): Resource<StorePostResponse>
+
+    suspend fun deleteStorePost(storeId: String, postId: String): Resource<String>
 }
