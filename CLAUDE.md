@@ -106,6 +106,7 @@ UI (Compose) → ViewModel → UseCase → Repository → DataSource → API/Dat
 - 모듈 의존성 현황·규칙: `docs/context/module-dependencies-current.md`
 - PR 생성은 `/3dollars:pr-body`, 본문 형식은 `.github/PULL_REQUEST_TEMPLATE.md`
 - 개발 빌드 배포: `firebase-distribution.yml` (`docs/process/dev-build-distribution.md`)
+- Play 업로드: `play-release.yml` (`docs/process/play-release.md`)
 - 기본 응답 언어는 한국어. 버전 변경·의존성 추가·`build-logic` 변경은 사용자 승인 없이 하지 않는다.
 - **신규 UI는 Jetpack Compose로만 작성한다.** XML 레이아웃·Fragment·ViewBinding을 새로 만들지 않는다(`scripts/check-compose-only.sh`). 세부 규칙은 `AGENTS.md` "UI".
 

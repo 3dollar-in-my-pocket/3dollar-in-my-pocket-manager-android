@@ -33,6 +33,7 @@
 - 테스트 결과 요약(PR 코멘트 형식): `scripts/test-summary.sh`
 - 의존성 확인: `./gradlew dependencies`
 - 개발 빌드 배포: `gh workflow run "Firebase App Distribution" --ref <브랜치>` (`docs/process/dev-build-distribution.md`)
+- Play 업로드: `release/**`에서 버전 변경 push 시 프로덕션 초안 자동, 수동은 `gh workflow run "Play Release" --ref <브랜치>` (`docs/process/play-release.md`)
 - 로컬 빌드에는 `local.properties`와 `google-services.json`이 필요하다(`CLAUDE.md` "Local Development Setup").
 - 필요한 범위의 최소 Gradle task를 우선 사용하고, full clean build는 필요한 경우에만 실행한다.
 

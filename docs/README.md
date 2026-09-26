@@ -14,7 +14,7 @@
 ## Directory Map
 
 - `context/`: 현재 프로젝트 사실 — 모듈 의존성, 검증 매트릭스
-- `process/`: AI 개발 프로세스 — 테크스펙, 테스트 세 계층, 자동화·수동 체크리스트, 검증 장치 변경, PR 프로세스, 개발 빌드 배포
+- `process/`: AI 개발 프로세스 — 테크스펙, 테스트 세 계층, 자동화·수동 체크리스트, 검증 장치 변경, PR 프로세스, 개발 빌드 배포, Play 업로드
 - `agents/`: 에이전트용 skill 인덱스
 
 ## Documentation Rules

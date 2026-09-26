@@ -62,7 +62,7 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 ## 예외
 
 - **핫픽스**(`fix/`, `hotfix/`): 테크스펙 생략 가능. 대신 본문 "의도"에 장애 내용 1줄 + 재현 경로, 풀코스 취급.
-- **릴리즈 브랜치**(`release/`): `versionCode`·`versionName`·릴리즈 노트 변경만이면 경량.
+- **릴리즈 브랜치**(`release/`): `versionCode`·`versionName`·릴리즈 노트 변경만이면 경량. 버전 변경을 push하면 `play-release.yml`이 프로덕션 초안을 올린다.
 - **의존성 업데이트**: `gradle/libs.versions.toml`·`build-logic/**` 변경은 **풀코스**이며, `AGENTS.md` "버전 변경이나 의존성 업그레이드는 사용자 승인 없이 하지 않는다"가 그대로 적용된다.
 
 ## 규칙을 바꾸고 싶을 때
@@ -81,4 +81,5 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 | 유닛 테스트 | `xcodebuild test` / XCTest | `./gradlew testDebugUnitTest` / JUnit4 | 동일 (JUnit4는 `build-logic`의 `configureKotlinAndroid`가 모든 Android 모듈에 넣는다) |
 | 자동화 TC 실행체 | iOS 시뮬레이터 | Android 에뮬레이터 | Android 에뮬레이터 |
 | 아키텍처 규칙 문서 | `docs/architecture/RULES.md` | `docs/context/architecture-current.md` + `module-dependencies-current.md` | `docs/context/module-dependencies-current.md` |
-| Dev 빌드 배포 | Xcode Cloud → TestFlight | `firebase-distribution.yml` | `firebase-distribution.yml` (수동 실행만, 시크릿 등록 필요 — `docs/process/dev-build-distribution.md`) |
+| Dev 빌드 배포 | Xcode Cloud → TestFlight | `firebase-distribution.yml` | `firebase-distribution.yml` (수동 실행 — `docs/process/dev-build-distribution.md`) |
+| 스토어 업로드 | — | develop 머지 시 내부 테스트(버전 자동 증가) + `release/**` push 시 프로덕션 초안 | `play-release.yml` — 버전은 사람이 올리고 `release/**` 버전 변경 push 시 프로덕션 초안, 내부 테스트는 수동 (`docs/process/play-release.md`) |
