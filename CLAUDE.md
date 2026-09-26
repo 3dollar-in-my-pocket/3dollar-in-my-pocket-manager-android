@@ -20,9 +20,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Run Tests
 ```bash
-./gradlew test                    # All unit tests
-./gradlew testDebugUnitTest      # Debug unit tests only
-./gradlew connectedAndroidTest   # Instrumentation tests (requires device)
+./gradlew testDebugUnitTest      # Unit tests (CI 기준, test.yml)
+./gradlew test                    # All variants
+./gradlew connectedAndroidTest   # Instrumentation tests (requires device, CI 미실행)
+```
+
+### Module Boundary Check
+```bash
+scripts/check-module-deps.sh     # 모듈 의존 방향 검사 (CI 기준, lint.yml)
+scripts/test-summary.sh          # 테스트 결과를 PR 코멘트 형식으로 요약
 ```
 
 ### Code Quality
@@ -50,7 +56,8 @@ app/                    # Main application module (Activities, Application class
     ├── home/         # Map-based store operations and status management
     ├── storemanagement/ # Store info, menu, schedule, account management
     ├── review/       # Review management with paging and comments
-    └── setting/      # User settings and account management
+    ├── setting/      # User settings and account management
+    └── ai/           # AI recommendation
 ```
 
 ### Key Architectural Patterns
@@ -86,10 +93,23 @@ UI (Compose) → ViewModel → UseCase → Repository → DataSource → API/Dat
 
 **DataStore Integration**: Local data persistence using AndroidX DataStore with JSON serialization via Moshi.
 
+## AI Development Process
+
+유저앱 iOS/AOS 레포와 같은 프로세스(테크스펙 → 테스트 → 증거 → PR)를 쓴다. 세션 시작 시 `AGENTS.md`와 `docs/README.md`를 먼저 읽는다.
+
+- 전체 흐름과 PR 위험도(경량/풀코스) 기준: `docs/process/pr-process.md`
+- 의도 문서(테크스펙): `docs/process/tech-spec-process.md` — 지라 `테크스펙` 필드가 단일 진실 소스, iOS/AOS 공유
+- 테스트 세 계층과 `` `TH{티켓}_TC{n}_…` `` 네이밍: `docs/process/testing.md`
+- 자동화·수동 체크리스트: `docs/process/e2e-and-manual-tests.md`
+- 검증 장치 변경 라벨: `docs/process/verification-change.md`
+- 모듈 의존성 현황·규칙: `docs/context/module-dependencies-current.md`
+- PR 생성은 `/3dollars:pr-body`, 본문 형식은 `.github/PULL_REQUEST_TEMPLATE.md`
+- 기본 응답 언어는 한국어. 버전 변경·의존성 추가·`build-logic` 변경은 사용자 승인 없이 하지 않는다.
+
 ## Module Dependencies
 
 - `app` depends on all feature modules, navigation, common
-- Feature modules depend on domain, common  
+- Feature modules depend on domain, common (feature 간 직접 의존 금지, `:data` 의존 금지 — `scripts/check-module-deps.sh`)
 - Domain defines repository interfaces implemented in data
 - Data layer handles API calls and local storage
 - Common provides shared utilities and base classes
@@ -121,4 +141,4 @@ UI (Compose) → ViewModel → UseCase → Repository → DataSource → API/Dat
 
 ## Testing Strategy
 
-Unit tests use JUnit4. Instrumentation tests use Espresso. Repository tests mock data sources. ViewModel tests verify state changes and use case interactions.
+Unit tests use JUnit4 (`build-logic`의 `configureKotlinAndroid`가 모든 Android 모듈에 주입). 테스트 작성 규칙은 `docs/process/testing.md`. Instrumentation tests use Espresso. Repository tests mock data sources. ViewModel tests verify state changes and use case interactions.
