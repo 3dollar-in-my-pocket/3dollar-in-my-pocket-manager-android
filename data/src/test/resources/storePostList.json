@@ -1,0 +1,31 @@
+{
+  "contents": [
+    {
+      "postId": "post-1",
+      "body": "오늘은 새 메뉴가 나왔어요!\n많이 찾아주세요.",
+      "sections": [
+        { "sectionType": "IMAGE", "url": "https://cdn.threedollars.co.kr/store-post/1.jpg", "ratio": 1.5 },
+        { "sectionType": "VIDEO", "url": "https://cdn.threedollars.co.kr/store-post/1.mp4", "ratio": 1.0 }
+      ],
+      "isOwner": true,
+      "store": {
+        "storeName": "붕어빵 트럭",
+        "categories": [ { "imageUrl": "https://cdn.threedollars.co.kr/category/bungeoppang.png" } ]
+      },
+      "stickers": [ { "stickerId": "LIKE", "emoji": "❤️", "count": 3, "reactedByMe": false } ],
+      "createdAt": "2026-09-26T10:00:00",
+      "updatedAt": "2026-09-26T10:00:00"
+    },
+    {
+      "postId": "post-2",
+      "body": "사진 없는 소식",
+      "sections": [],
+      "isOwner": true,
+      "store": { "storeName": "붕어빵 트럭", "categories": [] },
+      "stickers": [],
+      "createdAt": "2026-09-25T10:00:00",
+      "updatedAt": "2026-09-25T10:00:00"
+    }
+  ],
+  "cursor": { "hasMore": true, "nextCursor": "post-2", "totalCount": 25 }
+}
