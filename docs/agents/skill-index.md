@@ -17,8 +17,9 @@
 | `3dollars:review-digest` | 반복 리뷰 지적을 스크립트·문서 규칙으로 승격 제안 | `docs/process/pr-process.md` |
 | `3dollars:code-cleanup` | 변경된 파일의 정리·코드 스멜·성능·메모리 점검 | — |
 | `3dollars:bug-fix` / `3dollars:feature-implementer` | 지라 티켓 → 구현 → 검증 → PR 파이프라인 | `docs/process/pr-process.md` |
+| `3dollars:deploy-dev-build` | 개발 빌드 배포 (`firebase-distribution.yml` 실행) | `docs/process/dev-build-distribution.md` |
 
-- `3dollars:deploy-dev-build`는 이 레포에서 쓸 수 없다. 사장님앱 AOS에는 개발 빌드 배포 워크플로가 아직 없다.
+- `3dollars:deploy-dev-build`는 레포 시크릿이 모두 등록된 뒤에만 성공한다(`docs/process/dev-build-distribution.md`). 테스터 그룹은 유저앱의 `android-소지자`가 아니라 워크플로 입력 `groups`(기본 `android`)를 쓴다.
 - 플랫폼별 명령·경로 차이는 플러그인의 `docs/platform-profiles.md` 에 정의되어 있다. 사장님앱 AOS는 유저앱 AOS 프로필을 따르되, 패키지(`app.threedollars.manager.debug`)·딥링크 스킴(`dollars-manager-dev://`)·모듈 구성(`:feature:*`)이 다르다.
 
 ## 레포 내 에이전트

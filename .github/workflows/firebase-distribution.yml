@@ -1,0 +1,157 @@
+name: Firebase App Distribution
+
+# 개발 빌드(debug, app.threedollars.manager.debug)를 Firebase App Distribution 으로 배포한다.
+# 실행: gh workflow run "Firebase App Distribution" --ref <브랜치>   (3dollars:deploy-dev-build 스킬이 이 이름으로 호출)
+# 필요한 시크릿과 최초 설정: docs/process/dev-build-distribution.md
+# 시크릿이 준비되기 전 자동 실행으로 실패가 쌓이지 않도록 지금은 수동 실행만 연다.
+# 준비가 끝나면 유저앱처럼 release/** 로 향하는 PR 머지 트리거를 추가할 수 있다.
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: '배포 노트 (비우면 해당 브랜치 최근 커밋 20개를 사용)'
+        required: false
+        type: string
+      groups:
+        description: 'Firebase 테스터 그룹 (쉼표 구분)'
+        required: false
+        default: 'android'
+        type: string
+
+concurrency:
+  group: firebase-distribution-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-distribute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 필수 시크릿 확인
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          missing=""
+          for name in KEYSTORE_BASE64 LOCAL_PROPERTIES GOOGLE_SERVICES_JSON FIREBASE_APP_ID FIREBASE_SERVICE_ACCOUNT; do
+            [ -n "${!name}" ] || missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::레포 Actions 시크릿이 없습니다:$missing — docs/process/dev-build-distribution.md 참고"
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      # debug 빌드도 release signingConfig(app/ThreeDollarsManager.jks)로 서명한다 (app/build.gradle.kts).
+      - name: Decode Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: printf '%s' "$KEYSTORE_BASE64" | base64 -d > app/ThreeDollarsManager.jks
+
+      # 필요한 키: kakao_key_dev, kakao_key_release, base_url_dev, base_url_release, naver_map_client_id
+      - name: Create local.properties
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          printf '%s\n' "$LOCAL_PROPERTIES" > local.properties
+          grep -q '^sdk.dir=' local.properties || echo "sdk.dir=${ANDROID_HOME}" >> local.properties
+          for key in kakao_key_dev kakao_key_release base_url_dev base_url_release naver_map_client_id; do
+            grep -q "^${key}=" local.properties || { echo "::error::LOCAL_PROPERTIES 시크릿에 ${key} 가 없습니다"; exit 1; }
+          done
+
+      # debug variant 용. app.threedollars.manager.debug 클라이언트가 들어 있어야 한다.
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          mkdir -p app/src/debug
+          printf '%s' "$GOOGLE_SERVICES_JSON" > app/src/debug/google-services.json
+          grep -q '"app.threedollars.manager.debug"' app/src/debug/google-services.json \
+            || { echo "::error::GOOGLE_SERVICES_JSON 에 app.threedollars.manager.debug 패키지가 없습니다"; exit 1; }
+
+      - name: gradlew 실행 권한
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Find APK path
+        id: apk
+        run: echo "path=$(find app/build/outputs/apk/debug -name '*.apk' -type f | head -1)" >> "$GITHUB_OUTPUT"
+
+      - name: Build release notes
+        id: notes
+        env:
+          MANUAL_NOTES: ${{ github.event.inputs.release_notes }}
+        run: |
+          VERSION=$(grep -E 'versionName *=' app/build.gradle.kts | head -1 | sed -E 's/.*"(.*)".*/\1/')
+          VERSION_CODE=$(grep -E 'versionCode *=' app/build.gradle.kts | head -1 | grep -oE '[0-9]+')
+          if [ -n "$MANUAL_NOTES" ]; then BODY="$MANUAL_NOTES"; else BODY=$(git log --pretty=format:"- %s" -20); fi
+          {
+            echo "notes<<EOF"
+            echo "수동 배포: ${GITHUB_REF_NAME}"
+            echo "Version: ${VERSION} (${VERSION_CODE})"
+            echo
+            echo "Changes:"
+            echo "$BODY"
+            echo "EOF"
+            echo "version=${VERSION} (${VERSION_CODE})"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          groups: ${{ github.event.inputs.groups }}
+          file: ${{ steps.apk.outputs.path }}
+          releaseNotes: ${{ steps.notes.outputs.notes }}
+
+      - name: Notify Slack
+        if: always()
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          STATUS: ${{ job.status }}
+          VERSION: ${{ steps.notes.outputs.version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -n "$SLACK_WEBHOOK_URL" ] || { echo "SLACK_WEBHOOK_URL 없음 — 알림 생략"; exit 0; }
+          if [ "$STATUS" = "success" ]; then TITLE="[사장님앱 AOS] Firebase App Distribution 배포 완료"; else TITLE="[사장님앱 AOS] Firebase App Distribution 배포 실패"; fi
+          PAYLOAD=$(jq -n --arg t "$TITLE" --arg v "${VERSION:--}" --arg b "$GITHUB_REF_NAME" --arg u "$RUN_URL" \
+            '{text: ($t + "\nVersion: " + $v + "\nBranch: " + $b + "\n<" + $u + "|워크플로 실행>")}')
+          curl --fail-with-body --silent --show-error -H 'Content-Type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" > /dev/null
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          STATUS: ${{ job.status }}
+          VERSION: ${{ steps.notes.outputs.version }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -n "$DISCORD_WEBHOOK_URL" ] || { echo "DISCORD_WEBHOOK_URL 없음 — 알림 생략"; exit 0; }
+          if [ "$STATUS" = "success" ]; then TITLE="🤖 [사장님앱 AOS] Firebase App Distribution 업로드"; COLOR=5814783; else TITLE="❌ [사장님앱 AOS] Firebase App Distribution 실패"; COLOR=15158332; fi
+          PAYLOAD=$(jq -n --arg t "$TITLE" --argjson c "$COLOR" --arg v "${VERSION:--}" --arg b "$GITHUB_REF_NAME" --arg u "$RUN_URL" \
+            '{username: "GitHub Actions", allowed_mentions: {parse: []},
+              embeds: [{title: $t, color: $c, url: $u,
+                fields: [{name: "버전", value: $v, inline: true}, {name: "브랜치", value: $b, inline: true}]}]}')
+          curl --fail-with-body --silent --show-error --retry 2 -H 'Content-Type: application/json' --data "$PAYLOAD" "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null

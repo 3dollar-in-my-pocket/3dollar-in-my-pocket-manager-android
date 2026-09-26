@@ -45,13 +45,14 @@ jobs:
           naver_map_client_id=ci-placeholder
           EOF
 
-      # google-services 플러그인(:app, :feature:home)이 google-services.json 을 요구한다 (gitignore 대상).
+      # :app 의 google-services 플러그인이 debug variant 용 google-services.json 을 요구한다 (gitignore 대상).
+      # (:feature:home 에도 플러그인이 적용돼 있지만 library 라 경고만 내고 파일을 요구하지 않는다.)
       # 유닛 테스트는 Firebase 에 접속하지 않으므로 패키지명만 맞춘 자리표시 파일을 만든다.
       - name: Create placeholder google-services.json
         run: |
           python3 - << 'PY'
-          import json
-          pkgs = ["app.threedollars.manager", "app.threedollars.manager.debug", "app.threedollars.manager.feature.home"]
+          import json, os
+          pkgs = ["app.threedollars.manager.debug"]
           conf = {
               "project_info": {"project_number": "000000000000", "project_id": "ci-placeholder", "storage_bucket": "ci-placeholder.appspot.com"},
               "client": [{
@@ -61,9 +62,9 @@ jobs:
               } for i, p in enumerate(pkgs, 1)],
               "configuration_version": "1",
           }
-          for path in ["app/google-services.json", "feature/home/google-services.json"]:
-              with open(path, "w") as f:
-                  json.dump(conf, f)
+          os.makedirs("app/src/debug", exist_ok=True)
+          with open("app/src/debug/google-services.json", "w") as f:
+              json.dump(conf, f)
           PY
 
       - name: gradlew 실행 권한

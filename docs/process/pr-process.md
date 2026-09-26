@@ -81,4 +81,4 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 | 유닛 테스트 | `xcodebuild test` / XCTest | `./gradlew testDebugUnitTest` / JUnit4 | 동일 (JUnit4는 `build-logic`의 `configureKotlinAndroid`가 모든 Android 모듈에 넣는다) |
 | 자동화 TC 실행체 | iOS 시뮬레이터 | Android 에뮬레이터 | Android 에뮬레이터 |
 | 아키텍처 규칙 문서 | `docs/architecture/RULES.md` | `docs/context/architecture-current.md` + `module-dependencies-current.md` | `docs/context/module-dependencies-current.md` |
-| Dev 빌드 배포 | Xcode Cloud → TestFlight | `firebase-distribution.yml` | **워크플로 없음** — 로컬 `./gradlew assembleDebug` 후 수동 배포 (`3dollars:deploy-dev-build` 미지원) |
+| Dev 빌드 배포 | Xcode Cloud → TestFlight | `firebase-distribution.yml` | `firebase-distribution.yml` (수동 실행만, 시크릿 등록 필요 — `docs/process/dev-build-distribution.md`) |
