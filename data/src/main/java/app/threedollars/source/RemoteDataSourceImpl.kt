@@ -6,6 +6,7 @@ import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CommentPresetRequest
+import app.threedollars.data.request.CouponRegisterRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
@@ -17,6 +18,8 @@ import app.threedollars.data.response.BossStoreRetrieveAroundResponse
 import app.threedollars.data.response.BossStoreRetrieveResponse
 import app.threedollars.data.response.CommentCreateResponse
 import app.threedollars.data.response.CommentPresetResponse
+import app.threedollars.data.response.CouponListResponse
+import app.threedollars.data.response.CouponResponse
 import app.threedollars.data.response.FaqCategoriesResponse
 import app.threedollars.data.response.FaqResponse
 import app.threedollars.data.response.FeedbackFullResponse
@@ -364,6 +367,19 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override suspend fun deleteStorePost(storeId: String, postId: String): Resource<String> = safeApiCall {
         networkService.deleteStorePost(storeId = storeId, postId = postId)
+    }
+
+
+    override suspend fun getCoupons(storeId: String, statuses: List<String>, size: Int, cursor: String?): Resource<CouponListResponse> = safeApiCall {
+        networkService.getCoupons(storeId = storeId, statuses = statuses, size = size, cursor = cursor)
+    }
+
+    override suspend fun postCoupon(storeId: String, nonce: String, request: CouponRegisterRequest): Resource<CouponResponse> = safeApiCall {
+        networkService.postCoupon(storeId = storeId, nonce = nonce, couponRegisterRequest = request)
+    }
+
+    override suspend fun putCouponClose(storeId: String, couponId: String): Resource<String> = safeApiCall {
+        networkService.putCouponClose(storeId = storeId, couponId = couponId)
     }
 }
 

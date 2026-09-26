@@ -11,4 +11,12 @@ class AppConfigRepositoryImpl @Inject constructor(
     override suspend fun saveVersionName(version: String): Flow<Unit> = localDataSource.saveVersionName(version)
 
     override suspend fun saveApplicationId(applicationId: String): Flow<Unit> = localDataSource.saveApplicationId(applicationId)
+
+    override fun isCouponNewBadgeShown(): Flow<Boolean> = localDataSource.isCouponNewBadgeShown()
+
+    override suspend fun saveCouponNewBadgeShown() = localDataSource.saveCouponNewBadgeShown()
+
+    override fun isCouponTooltipShown(): Flow<Boolean> = localDataSource.isCouponTooltipShown()
+
+    override suspend fun saveCouponTooltipShown() = localDataSource.saveCouponTooltipShown()
 }

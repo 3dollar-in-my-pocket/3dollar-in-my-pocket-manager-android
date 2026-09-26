@@ -5,18 +5,21 @@ import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CommentPresetRequest
-import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.request.CouponRegisterRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.NonceRequest
 import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.request.StorePostRequest
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
 import app.threedollars.data.response.BossStoreRetrieveResponse
 import app.threedollars.data.response.CommentCreateResponse
 import app.threedollars.data.response.CommentPresetResponse
+import app.threedollars.data.response.CouponListResponse
+import app.threedollars.data.response.CouponResponse
 import app.threedollars.data.response.FaqCategoriesResponse
 import app.threedollars.data.response.FaqResponse
 import app.threedollars.data.response.FeedbackFullResponse
@@ -279,5 +282,27 @@ internal interface NetworkService {
     suspend fun deleteStorePost(
         @Path("storeId") storeId: String,
         @Path("postId") postId: String,
+    ): Response<BaseResponse<String>>
+
+    // coupon-controller
+    @GET("v1/store/{storeId}/coupons")
+    suspend fun getCoupons(
+        @Path("storeId") storeId: String,
+        @Query("statuses") statuses: List<String>,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<CouponListResponse>>
+
+    @POST("v1/store/{storeId}/coupon")
+    suspend fun postCoupon(
+        @Path("storeId") storeId: String,
+        @Header("X-Nonce-Token") nonce: String,
+        @Body couponRegisterRequest: CouponRegisterRequest,
+    ): Response<BaseResponse<CouponResponse>>
+
+    @PUT("v1/store/{storeId}/coupon/{couponId}/close")
+    suspend fun putCouponClose(
+        @Path("storeId") storeId: String,
+        @Path("couponId") couponId: String,
     ): Response<BaseResponse<String>>
 }
