@@ -23,7 +23,7 @@ internal fun Project.configureKotlinAndroid() {
     // Android settings
     androidExtension.apply {
 
-        compileSdk = 35
+        compileSdk = 36
 
         defaultConfig {
             minSdk = 29
@@ -62,5 +62,6 @@ internal fun Project.configureKotlinAndroid() {
 
     dependencies {
         add("coreLibraryDesugaring", libs.findLibrary("android.desugarJdkLibs").get())
+        add("testImplementation", libs.findLibrary("junit").get())
     }
 }

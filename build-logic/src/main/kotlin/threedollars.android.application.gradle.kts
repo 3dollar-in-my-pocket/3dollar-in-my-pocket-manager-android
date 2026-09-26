@@ -1,7 +1,6 @@
 import app.threedollars.manager.configureHiltAndroid
 import app.threedollars.manager.configureKotlinAndroid
 import app.threedollars.manager.libs
-import gradle.kotlin.dsl.accessors._2fb5859a04200edaf14b854c40b2e363.implementation
 
 plugins {
     id("com.android.application")
