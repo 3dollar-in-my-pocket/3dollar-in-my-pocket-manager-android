@@ -3,14 +3,8 @@ name: Firebase App Distribution
 # 개발 빌드(debug, app.threedollars.manager.debug)를 Firebase App Distribution 으로 배포한다.
 # 실행: gh workflow run "Firebase App Distribution" --ref <브랜치>   (3dollars:deploy-dev-build 스킬이 이 이름으로 호출)
 # 필요한 시크릿과 최초 설정: docs/process/dev-build-distribution.md
-# 시크릿이 준비되기 전 자동 실행으로 실패가 쌓이지 않도록 지금은 수동 실행만 연다.
-# 준비가 끝나면 유저앱처럼 release/** 로 향하는 PR 머지 트리거를 추가할 수 있다.
+# 지금은 수동 실행만 연다. 필요하면 유저앱처럼 release/** 로 향하는 PR 머지 트리거를 추가한다.
 on:
-  # TODO(TH-1385): 머지 전 제거. workflow_dispatch 전용 워크플로는 기본 브랜치에 있어야 등록되므로,
-  # PR 브랜치에서 수동 실행을 검증하려고 임시로 넣은 트리거다. PR 이벤트에서는 아래 job if 로 건너뛴다.
-  pull_request:
-    paths:
-      - '.github/workflows/firebase-distribution.yml'
   workflow_dispatch:
     inputs:
       release_notes:
@@ -29,7 +23,6 @@ concurrency:
 
 jobs:
   build-and-distribute:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
