@@ -1,6 +1,6 @@
 [versions]
 ksp = "2.0.0-1.0.21"
-agp = "8.7.2"
+agp = "8.10.1"
 gson = "2.10.1"
 androidDesugarJdkLibs = "2.1.1"
 

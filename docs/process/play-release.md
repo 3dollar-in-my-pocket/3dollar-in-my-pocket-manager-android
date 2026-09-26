@@ -27,11 +27,11 @@ release 브랜치에 버전 변경 없이 추가 커밋만 push하면 자동 업
 
 "새로운 기능" 문구는 `origin/master..HEAD`(지난 릴리즈 이후) 커밋 제목으로 만들고 Play 제한(500자)에 맞춰 자른다. 스토어에 공개되는 문구이므로 출시 전에 Play Console에서 다듬는다.
 
-## 현재 막힌 것: targetSdk 36
+## targetSdk 요구사항
 
-Google Play는 2026-08-31부터 업데이트에 **targetSdk 36(Android 16)** 을 요구한다. 현재 `targetSdk = 35`라 업로드 마지막 단계(commit)에서
-`Target SDK of artifact is too low: <versionCode>`로 거부된다(2026-09-26 확인 — 인증·권한·AAB 업로드까지는 정상).
-targetSdk/compileSdk 36 상향(AGP 업그레이드 포함)과 Android 16 동작 변경 QA가 끝나야 이 워크플로로 실제 출시할 수 있다.
+Google Play는 2026-08-31부터 업데이트에 **targetSdk 36(Android 16)** 을 요구한다. 낮으면 업로드 마지막 단계(commit)에서
+`Target SDK of artifact is too low: <versionCode>`로 거부된다(2026-09-26, targetSdk 35 상태에서 확인).
+TH-1385에서 compileSdk/targetSdk 36, AGP 8.10.1, Gradle 8.11.1로 올렸다. 다음 요구 수준 상향 때도 같은 오류가 나면 이 절을 먼저 본다.
 
 ## 필요한 레포 시크릿
 

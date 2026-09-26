@@ -19,7 +19,8 @@
 ## Current Toolchain
 
 - 버전 원천은 `gradle/libs.versions.toml`이다.
-- 현재 확인된 값: AGP `8.7.2`, Kotlin `2.0.0`, Gradle `8.9`, compileSdk `35`, targetSdk `35`, minSdk `29`.
+- 현재 확인된 값: AGP `8.10.1`, Kotlin `2.0.0`, Gradle `8.11.1`, compileSdk `36`, targetSdk `36`, minSdk `29`.
+- targetSdk는 Google Play 요구 수준(2026-08-31부터 36)을 따라야 업로드된다. compileSdk를 올릴 때는 그 API를 공식 지원하는 AGP로 함께 올린다(API 36 → AGP 8.10+).
 - Java/Kotlin toolchain은 JDK 17 기준이다.
 - 버전 변경이나 의존성 업그레이드는 사용자 승인 없이 하지 않는다.
 
