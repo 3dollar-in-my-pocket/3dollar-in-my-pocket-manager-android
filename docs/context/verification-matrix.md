@@ -26,6 +26,7 @@ PR 위험도별 요구 수준은 `docs/process/pr-process.md`를 따른다.
 ./gradlew :feature:home:testDebugUnitTest          # 모듈만
 ./gradlew assembleDebug
 scripts/check-module-deps.sh                       # CI(lint.yml)와 같은 범위
+scripts/check-compose-only.sh                      # CI(lint.yml)와 같은 범위
 scripts/test-summary.sh                            # 로컬 테스트 결과를 PR 코멘트 형식으로
 ```
 

@@ -29,6 +29,7 @@
 - Release APK: `./gradlew assembleRelease`
 - 단위 테스트: `./gradlew testDebugUnitTest` (CI 기준. `./gradlew test`는 전체 variant)
 - 모듈 의존 방향 검사: `scripts/check-module-deps.sh`
+- Compose 전용 UI 검사: `scripts/check-compose-only.sh`
 - 테스트 결과 요약(PR 코멘트 형식): `scripts/test-summary.sh`
 - 의존성 확인: `./gradlew dependencies`
 - 로컬 빌드에는 `local.properties`와 `google-services.json`이 필요하다(`CLAUDE.md` "Local Development Setup").
@@ -64,6 +65,15 @@
 - Clean Architecture + MVVM(Compose) 흐름: UI → ViewModel → UseCase → Repository(`:domain` 인터페이스) → DataSource(`:data`) → API/DataStore.
 - feature는 `:domain`·`:common`만 쓴다. feature 간 직접 의존은 금지이고, 화면 간 이동은 `:navigation`·`:app`이 조립한다.
 - 공통 UI·`BaseViewModel`·`EventFlow`·`Resource`는 `:common`에 있다. 새 추상화보다 기존 유틸리티와 패턴을 우선한다.
+
+## UI
+
+- **신규 UI는 Jetpack Compose로만 작성한다.** XML 레이아웃(`res/layout*/`), Fragment 기반 화면, ViewBinding/DataBinding을 새로 만들지 않는다.
+- 현재 앱에는 XML 레이아웃이 하나도 없다. `scripts/check-compose-only.sh`가 CI(`lint.yml`)에서 이를 강제한다.
+- 화면은 기존 feature 패턴을 따른다: `XxxRoute`(ViewModel 연결) → `XxxScreen`(상태를 받는 순수 Composable) + `XxxContract`(State/Effect) + `XxxViewModel`. 하위 UI는 `components/`에 둔다.
+- 다이얼로그는 `:common`의 `BaseDialog` Composable을 쓴다. `:common`의 `BaseFragment`는 쓰이지 않는 레거시이므로 새 코드에서 쓰지 않는다.
+- Compose API가 없는 SDK 뷰만 `AndroidView { }`로 감싼다. 이때 사유를 PR 본문 "설명이 필요한 결정"에 남긴다. 네이버 지도는 `naver-map-compose`를 쓴다.
+- 리소스 XML(drawable, values, mipmap)은 대상이 아니다. 색·문자열은 기존 `res/values`와 `:common` 리소스를 먼저 확인한다.
 
 ## Safety
 

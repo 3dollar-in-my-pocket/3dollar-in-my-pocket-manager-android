@@ -28,6 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Module Boundary Check
 ```bash
 scripts/check-module-deps.sh     # 모듈 의존 방향 검사 (CI 기준, lint.yml)
+scripts/check-compose-only.sh    # XML 레이아웃·ViewBinding 금지 검사 (CI 기준, lint.yml)
 scripts/test-summary.sh          # 테스트 결과를 PR 코멘트 형식으로 요약
 ```
 
@@ -105,6 +106,7 @@ UI (Compose) → ViewModel → UseCase → Repository → DataSource → API/Dat
 - 모듈 의존성 현황·규칙: `docs/context/module-dependencies-current.md`
 - PR 생성은 `/3dollars:pr-body`, 본문 형식은 `.github/PULL_REQUEST_TEMPLATE.md`
 - 기본 응답 언어는 한국어. 버전 변경·의존성 추가·`build-logic` 변경은 사용자 승인 없이 하지 않는다.
+- **신규 UI는 Jetpack Compose로만 작성한다.** XML 레이아웃·Fragment·ViewBinding을 새로 만들지 않는다(`scripts/check-compose-only.sh`). 세부 규칙은 `AGENTS.md` "UI".
 
 ## Module Dependencies
 

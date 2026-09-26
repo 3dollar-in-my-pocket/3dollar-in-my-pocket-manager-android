@@ -10,7 +10,7 @@ AI가 코드를 많이 쓰는 환경에서 사람 리뷰어는 **diff 전체가 
 | 단계 | 하는 일 | 도구 | 산출물이 가는 곳 |
 |---|---|---|---|
 | 1. 의도 정의 | 지라 티켓에서 테크스펙 생성, 요약·요구사항·TC 작성 | 지라 Actions "테크스펙 생성" → 노션 | 지라 `테크스펙` 필드 (단일 진실 소스) |
-| 2. 코드 작성 | 모듈 경계 안에서 구현 | `AGENTS.md`, `docs/context/module-dependencies-current.md`, `scripts/check-module-deps.sh` | 로컬 + `lint.yml` |
+| 2. 코드 작성 | 모듈 경계 안에서, UI는 Compose로만 구현 | `AGENTS.md`, `docs/context/module-dependencies-current.md`, `scripts/check-module-deps.sh`, `scripts/check-compose-only.sh` | 로컬 + `lint.yml` |
 | 3. 테스트 | TC를 세 계층(유닛/자동화/수동)에 배정 → 승인 → 유닛만 코드 | `/3dollars:test-cases`, `docs/process/testing.md` | `*/src/test/**`, 메서드명 `` `TH1234_TC1_…` `` |
 | 4. 동작 증거 | 유닛 결과·TC 커버리지 표 / 자동화 TC 스크린샷·영상 | `test.yml` + `scripts/test-summary.sh`, `3dollars:simulator-test`(에뮬레이터) | PR 코멘트(자동), 본문 "증거" |
 | 5. 스코프 드리프트 | 요구사항 ↔ diff 대조, 스펙 밖 변경 목록 | `/3dollars:drift` | 본문 "스펙 밖 변경" |
@@ -21,7 +21,7 @@ AI가 코드를 많이 쓰는 환경에서 사람 리뷰어는 **diff 전체가 
 | PR 생성 | 위 결과를 템플릿에 채워 생성/갱신 | `/3dollars:pr-body` (`.github/PULL_REQUEST_TEMPLATE.md`) | GitHub PR |
 | 리뷰 | 의도·경계·증거 기준 리뷰 | `/3dollars:pr-code-review` + 사람 | PR 코멘트 |
 
-작성자 기준 순서: **테크스펙 → 구현 → `/3dollars:test-cases` → `./gradlew testDebugUnitTest` + `scripts/check-module-deps.sh` → (UI면) `simulator-test` → `/3dollars:pr-body`** (pr-body가 drift·ask-author·체크리스트를 안에서 호출).
+작성자 기준 순서: **테크스펙 → 구현 → `/3dollars:test-cases` → `./gradlew testDebugUnitTest` + `scripts/check-module-deps.sh` + `scripts/check-compose-only.sh` → (UI면) `simulator-test` → `/3dollars:pr-body`** (pr-body가 drift·ask-author·체크리스트를 안에서 호출).
 
 ## 위험도: 경량 / 풀코스
 
@@ -53,6 +53,12 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 
 둘 다 프로젝트 모듈 간선의 방향 문제가 아니라 이 스크립트 범위 밖이다.
 
+## Compose 전용 UI 검사
+
+`scripts/check-compose-only.sh`는 XML 레이아웃(`src/*/res/layout*/*.xml`), `viewBinding`·`dataBinding` 활성화, `setContentView(R.layout.…)`·`*Binding.inflate(…)`를 찾으면 실패한다.
+현재 레이아웃 XML이 0건이라 베이스라인이 없다. 예외가 필요하면 스크립트를 고치지 말고 먼저 Compose로 풀 수 있는지 검토한다.
+`AndroidView { }`는 막지 않는다 — Compose API가 없는 SDK 뷰를 감쌀 때만 쓰고 PR 본문에 사유를 남긴다.
+
 ## 예외
 
 - **핫픽스**(`fix/`, `hotfix/`): 테크스펙 생략 가능. 대신 본문 "의도"에 장애 내용 1줄 + 재현 경로, 풀코스 취급.
@@ -69,6 +75,7 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 | 항목 | 유저앱 iOS | 유저앱 AOS | 사장님앱 AOS (이 레포) |
 |---|---|---|---|
 | 스타일 린트 | SwiftLint + 베이스라인 | 없음 | **없음** — ktlint/detekt 도입은 의존성 추가라 별도 승인 필요(후속 과제) |
+| UI 기술 | UIKit(코드 UI) | Compose + XML View 혼재 | **Compose 전용** (`scripts/check-compose-only.sh`) |
 | 모듈 경계 검사 | Tuist `Project.swift` | `build.gradle.kts`의 `project(":…")` | `build.gradle.kts`의 `projects.…` + `project(":…")` |
 | 모듈 구성 | Tuist 모듈 | `:app` 중심 + `:core:*` | **feature별 Gradle 모듈**(`:feature:*`) + `:navigation` |
 | 유닛 테스트 | `xcodebuild test` / XCTest | `./gradlew testDebugUnitTest` / JUnit4 | 동일 (JUnit4는 `build-logic`의 `configureKotlinAndroid`가 모든 Android 모듈에 넣는다) |

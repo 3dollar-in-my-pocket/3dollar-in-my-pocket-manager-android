@@ -31,5 +31,5 @@ gh label create module-boundary     --color 1D76DB --description "모듈 경계�
 ## 경로 목록을 바꿀 때
 
 - `.github/labeler.yml`과 `labeler.yml` 워크플로의 grep 패턴을 **같이** 바꾼다.
-- 새 검증 장치(예: 새 CI 워크플로, 새 스크립트, ktlint/detekt 도입)를 추가하면 그 경로도 추가한다.
+- 새 검증 장치(예: 새 CI 워크플로, 새 스크립트, ktlint/detekt 도입)를 추가하면 그 경로도 추가한다. 현재 스크립트: `scripts/check-module-deps.sh`, `scripts/check-compose-only.sh`, `scripts/test-summary.sh`.
 - 스크린샷 테스트는 쓰지 않는다(자동화 TC가 대신한다 — `docs/process/testing.md`).
