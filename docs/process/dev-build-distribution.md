@@ -13,24 +13,33 @@ gh workflow run "Firebase App Distribution" --ref <브랜치> -f groups=android 
 ## 필요한 레포 시크릿
 
 워크플로 첫 스텝이 필수 시크릿이 비어 있는지 검사하고, 없으면 이름을 찍고 실패한다.
+`local.properties`는 유저앱 AOS처럼 **키별 시크릿**으로 만든다. 값에 따옴표를 넣든 안 넣든 워크플로가 맞춘다(`kakao_*`·`base_url_*`는 따옴표로 감싸고, `naver_map_client_id`는 벗긴다).
 
 | 시크릿 | 필수 | 내용 | 현재 상태 (TH-1385 확인) |
 |---|---|---|---|
-| `KEYSTORE_BASE64` | ✅ | `app/ThreeDollarsManager.jks` 를 base64로 인코딩한 값. debug 빌드도 이 키로 서명한다 | **없음** — 신규 등록 |
-| `LOCAL_PROPERTIES` | ✅ | `local.properties` 전체 내용. `kakao_key_dev`, `kakao_key_release`, `base_url_dev`, `base_url_release`, `naver_map_client_id` 필수(`sdk.dir`은 워크플로가 채움) | **없음** — 신규 등록. 기존 `LOCAL_PROPERTIRES`(오타, 2022-03)는 `base_url_*`(2023-02)·`naver_map_client_id`(2022-05) 도입 전 값이라 쓸 수 없다 |
+| `KEYSTORE_BASE64` | ✅ | 기존 `app/ThreeDollarsManager.jks`(release 서명 키)를 base64로 인코딩한 값. **새로 만들지 않는다.** debug 빌드도 이 키로 서명한다 | 등록됨 (2026-09-26) |
+| `KAKAO_KEY_DEV` | ✅ | `local.properties`의 `kakao_key_dev` 값 | 등록됨 (2026-09-26) |
+| `KAKAO_KEY_RELEASE` | ✅ | `kakao_key_release` 값. debug 빌드여도 Gradle 설정 단계에서 읽으므로 필요 | 등록됨 (2026-09-26) |
+| `BASE_URL_DEV` | ✅ | `base_url_dev` 값. debug 빌드의 서버 주소 | **없음** — 등록 필요 |
+| `BASE_URL_RELEASE` | ✅ | `base_url_release` 값 | 등록됨 (2026-09-26) |
+| `NAVER_MAP_CLIENT_ID` | ✅ | `naver_map_client_id` 값 | 등록됨 (2026-09-26) |
 | `GOOGLE_SERVICES_JSON` | ✅ | debug용 `google-services.json` 전체 내용(`app/src/debug/`에 놓이는 파일). `app.threedollars.manager.debug` 클라이언트가 있어야 한다 | 있음(2022-03) — **`.debug` suffix(2022-04) 도입 전 값이라 갱신 필요** |
 | `FIREBASE_APP_ID` | ✅ | Firebase 콘솔의 `app.threedollars.manager.debug` 앱 ID (`1:…:android:…`) | 있음(2022-03) — `.debug` 앱 ID가 맞는지 확인 후 갱신 |
 | `FIREBASE_SERVICE_ACCOUNT` | ✅ | App Distribution 권한(`Firebase App Distribution Admin`)이 있는 서비스 계정 JSON | **없음** — 신규 등록. 기존 `FIREBASE_TOKEN`(CLI 토큰 방식)은 Firebase가 폐기 예정이라 쓰지 않는다 |
 | `SLACK_WEBHOOK_URL` | 선택 | 배포 결과 알림 | 있음(2022-03) — 살아 있는지 모름. 실패해도 배포는 성공 처리 |
 | `DISCORD_WEBHOOK_URL` | 선택 | 배포 결과 알림 | 없음 — 비어 있으면 생략 |
 
-더 이상 쓰지 않는 시크릿: `LOCAL_PROPERTIRES`, `FIREBASE_TOKEN`, `SLACK_TOKEN` — 배포가 한 번 성공한 뒤 지운다.
+더 이상 쓰지 않는 시크릿: `LOCAL_PROPERTIRES`(2022-03, `base_url_*`·`naver_map_client_id` 도입 전 값), `FIREBASE_TOKEN`, `SLACK_TOKEN` — 배포가 한 번 성공한 뒤 지운다.
 
 ### 등록 명령 (레포 관리자, 로컬에 실제 파일이 있을 때)
 
 ```bash
 base64 -i app/ThreeDollarsManager.jks | gh secret set KEYSTORE_BASE64
-gh secret set LOCAL_PROPERTIES < local.properties
+gh secret set KAKAO_KEY_DEV --body "…"
+gh secret set KAKAO_KEY_RELEASE --body "…"
+gh secret set BASE_URL_DEV --body "https://…"
+gh secret set BASE_URL_RELEASE --body "https://…"
+gh secret set NAVER_MAP_CLIENT_ID --body "…"
 gh secret set GOOGLE_SERVICES_JSON < app/src/debug/google-services.json
 gh secret set FIREBASE_APP_ID --body "1:…:android:…"
 gh secret set FIREBASE_SERVICE_ACCOUNT < service-account.json

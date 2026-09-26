@@ -31,13 +31,18 @@ jobs:
       - name: 필수 시크릿 확인
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          KAKAO_KEY_DEV: ${{ secrets.KAKAO_KEY_DEV }}
+          KAKAO_KEY_RELEASE: ${{ secrets.KAKAO_KEY_RELEASE }}
+          BASE_URL_DEV: ${{ secrets.BASE_URL_DEV }}
+          BASE_URL_RELEASE: ${{ secrets.BASE_URL_RELEASE }}
+          NAVER_MAP_CLIENT_ID: ${{ secrets.NAVER_MAP_CLIENT_ID }}
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |
           missing=""
-          for name in KEYSTORE_BASE64 LOCAL_PROPERTIES GOOGLE_SERVICES_JSON FIREBASE_APP_ID FIREBASE_SERVICE_ACCOUNT; do
+          for name in KEYSTORE_BASE64 KAKAO_KEY_DEV KAKAO_KEY_RELEASE BASE_URL_DEV BASE_URL_RELEASE NAVER_MAP_CLIENT_ID \
+                      GOOGLE_SERVICES_JSON FIREBASE_APP_ID FIREBASE_SERVICE_ACCOUNT; do
             [ -n "${!name}" ] || missing="$missing $name"
           done
           if [ -n "$missing" ]; then
@@ -65,16 +70,27 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: printf '%s' "$KEYSTORE_BASE64" | base64 -d > app/ThreeDollarsManager.jks
 
-      # 필요한 키: kakao_key_dev, kakao_key_release, base_url_dev, base_url_release, naver_map_client_id
+      # 유저앱처럼 키별 시크릿으로 local.properties 를 만든다.
+      # kakao_*·base_url_* 는 app/data 의 buildConfigField("String", …) 에 그대로 들어가므로 따옴표로 감싸야 하고,
+      # naver_map_client_id 는 manifestPlaceholders 라 따옴표 없이 쓴다. 시크릿 값에 따옴표가 있든 없든 여기서 맞춘다.
       - name: Create local.properties
         env:
-          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+          KAKAO_KEY_DEV: ${{ secrets.KAKAO_KEY_DEV }}
+          KAKAO_KEY_RELEASE: ${{ secrets.KAKAO_KEY_RELEASE }}
+          BASE_URL_DEV: ${{ secrets.BASE_URL_DEV }}
+          BASE_URL_RELEASE: ${{ secrets.BASE_URL_RELEASE }}
+          NAVER_MAP_CLIENT_ID: ${{ secrets.NAVER_MAP_CLIENT_ID }}
         run: |
-          printf '%s\n' "$LOCAL_PROPERTIES" > local.properties
-          grep -q '^sdk.dir=' local.properties || echo "sdk.dir=${ANDROID_HOME}" >> local.properties
-          for key in kakao_key_dev kakao_key_release base_url_dev base_url_release naver_map_client_id; do
-            grep -q "^${key}=" local.properties || { echo "::error::LOCAL_PROPERTIES 시크릿에 ${key} 가 없습니다"; exit 1; }
-          done
+          unquote() { local v="$1"; v="${v#\"}"; v="${v%\"}"; printf '%s' "$v"; }
+          quote() { printf '"%s"' "$(unquote "$1")"; }
+          cat << EOF > local.properties
+          sdk.dir=${ANDROID_HOME}
+          kakao_key_dev=$(quote "$KAKAO_KEY_DEV")
+          kakao_key_release=$(quote "$KAKAO_KEY_RELEASE")
+          base_url_dev=$(quote "$BASE_URL_DEV")
+          base_url_release=$(quote "$BASE_URL_RELEASE")
+          naver_map_client_id=$(unquote "$NAVER_MAP_CLIENT_ID")
+          EOF
 
       # debug variant 용. app.threedollars.manager.debug 클라이언트가 들어 있어야 한다.
       - name: Create google-services.json
