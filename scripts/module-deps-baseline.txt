@@ -1,0 +1,16 @@
+# 동결된 의존 방향 위반. 한 줄에 "From -> To".
+# scripts/check-module-deps.sh 의 랭크 위반과 금지쌍 위반 모두 이 목록으로 예외를 둔다.
+# 새 항목을 추가할 때는 사유를 주석으로 함께 남기고, PR 본문 "설명이 필요한 결정"에 적는다.
+# 이 목록은 줄어들기만 해야 한다.
+#
+# 현재 동결 항목: 5건.
+#
+# feature -> :data (금지쌍). TH-1385 도입 시점에 이미 선언돼 있었다.
+# 5개 모듈 모두 app.threedollars.{data,repository,source,di,network,db} 패키지를 import 하지 않는 죽은 선언이다.
+# Hilt 바인딩은 :app 이 :data 를 의존해 모으므로 제거해도 동작이 바뀌지 않을 것으로 보이나,
+# Gradle 변경이라 별도 티켓에서 빌드 검증과 함께 제거한다.
+:feature:home -> :data
+:feature:storemanagement -> :data
+:feature:setting -> :data
+:feature:review -> :data
+:feature:ai -> :data
