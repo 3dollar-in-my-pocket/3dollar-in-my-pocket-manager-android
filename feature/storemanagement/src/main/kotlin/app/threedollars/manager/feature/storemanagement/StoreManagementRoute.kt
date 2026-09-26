@@ -65,6 +65,7 @@ fun StoreManagementRoute(
         BackHandler {
             when (currentScreenType) {
                 ScreenType.REVIEW_INFO,
+                ScreenType.STORE_POST,
                 ScreenType.PROFILE_EDIT,
                 ScreenType.BUSINESS_SCHEDULE_EDIT,
                 ScreenType.MENU_MANAGEMENT,
@@ -72,6 +73,7 @@ fun StoreManagementRoute(
                 ScreenType.ACCOUNT,
                     -> viewModel.updateScreenType(ScreenType.STORE_INFO)
                 ScreenType.FEEDBACK -> viewModel.updateScreenType(ScreenType.REVIEW_INFO)
+                ScreenType.UPLOAD_POST -> viewModel.updateScreenType(ScreenType.STORE_POST)
                 else -> {}
             }
         }

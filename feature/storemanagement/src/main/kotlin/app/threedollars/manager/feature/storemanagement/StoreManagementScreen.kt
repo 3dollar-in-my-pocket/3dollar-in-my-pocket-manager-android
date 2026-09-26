@@ -31,6 +31,8 @@ import app.threedollars.manager.feature.storemanagement.components.menumanagemen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.review.ReviewContent
+import app.threedollars.manager.feature.storemanagement.components.storepost.StorePostTab
+import app.threedollars.manager.feature.storemanagement.components.storepost.UploadPostRoute
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
@@ -79,7 +81,7 @@ internal fun StoreManagementScreen(
         modifier = Modifier.fillMaxSize(),
         containerColor = Gray0,
         topBar = {
-            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO) {
+            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO || screenType == ScreenType.STORE_POST) {
                 TopBar(
                     screenType = screenType,
                     onScreenTypeUpdate = onScreenTypeUpdate
@@ -113,6 +115,19 @@ internal fun StoreManagementScreen(
                         onScreenTypeUpdate = onScreenTypeUpdate,
                         onAllReviewNavigate = onAllReviewNavigate,
                         onStickerClick = onStickerClick
+                    )
+                }
+
+                ScreenType.STORE_POST -> {
+                    StorePostTab(
+                        storeId = bossStoreRetrieve.bossStoreId,
+                        onUploadNavigate = { onScreenTypeUpdate(ScreenType.UPLOAD_POST) }
+                    )
+                }
+
+                ScreenType.UPLOAD_POST -> {
+                    UploadPostRoute(
+                        onBack = { onScreenTypeUpdate(ScreenType.STORE_POST) }
                     )
                 }
 
@@ -214,6 +229,14 @@ private fun TopBar(
                     fontSize = 18.sp,
                     fontWeight = if (screenType == ScreenType.REVIEW_INFO) FontWeight.Bold else null,
                     color = if (screenType == ScreenType.REVIEW_INFO) Gray95 else Gray30
+                )
+            }
+            TextButton(onClick = { onScreenTypeUpdate(ScreenType.STORE_POST) }) {
+                Text(
+                    text = "가게소식",
+                    fontSize = 18.sp,
+                    fontWeight = if (screenType == ScreenType.STORE_POST) FontWeight.Bold else null,
+                    color = if (screenType == ScreenType.STORE_POST) Gray95 else Gray30
                 )
             }
         }
