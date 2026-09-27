@@ -42,6 +42,7 @@ internal class StorePostViewModel @Inject constructor(
     val uploadFinishedFlow = _uploadFinishedFlow.asSharedFlow()
 
     private var skipNextTabReload = false
+    private var scrollToTopAfterLoad = false
 
     fun onTabEntered(storeId: String) {
         if (skipNextTabReload) {
@@ -59,12 +60,14 @@ internal class StorePostViewModel @Inject constructor(
             when {
                 result is Resource.Success && result.data != null -> {
                     val data = result.data!!
+                    val scrollToTop = scrollToTopAfterLoad
+                    scrollToTopAfterLoad = false
                     _stateFlow.update {
                         it.withFirstPage(
                             page = data.contents,
                             nextCursor = data.cursor?.nextCursor,
                             hasMore = data.cursor?.hasMore ?: false,
-                        )
+                        ).copy(scrollToTopRequested = scrollToTop)
                     }
                 }
 
@@ -172,7 +175,7 @@ internal class StorePostViewModel @Inject constructor(
                 val result = postStorePostUseCase(storeId = storeId, body = uploadState.body, sections = sections)
                 if (result is Resource.Success) {
                     _uploadStateFlow.update { it.copy(isSaving = false) }
-                    _stateFlow.update { it.copy(scrollToTopRequested = true) }
+                    scrollToTopAfterLoad = true
                     loadFirstPage(storeId)
                     _uploadFinishedFlow.emit(Unit)
                 } else {
