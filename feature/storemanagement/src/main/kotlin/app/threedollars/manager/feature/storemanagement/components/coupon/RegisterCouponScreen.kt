@@ -333,7 +333,7 @@ private fun DateRow(label: String, date: LocalDate, onClick: () -> Unit) {
     ) {
         Text(text = label, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Gray50, modifier = Modifier.weight(1f))
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_calendar),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_calendar_line),
             contentDescription = null,
             modifier = Modifier.size(18.dp),
         )
