@@ -255,7 +255,10 @@ private fun TopBar(
                 onScreenTypeUpdate(ScreenType.STORE_POST)
             }
             Row(verticalAlignment = Alignment.Top) {
-                SubTab(title = "쿠폰 관리", selected = screenType == ScreenType.COUPON, onClick = onCouponTabClick)
+                SubTab(title = "쿠폰 관리", selected = screenType == ScreenType.COUPON) {
+                    logTapMyTopTab(context, StoreManagementLog.TAB_COUPON)
+                    onCouponTabClick()
+                }
                 if (showCouponNewBadge) {
                     Text(
                         text = "N",
