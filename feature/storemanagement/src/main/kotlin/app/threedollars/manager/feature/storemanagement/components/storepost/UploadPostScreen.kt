@@ -57,7 +57,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.ScreenViewLogEffect
 import app.threedollars.common.ui.CircleProgressBar
 import app.threedollars.common.ui.Gray0
@@ -146,12 +145,7 @@ internal fun UploadPostScreen(
     onErrorDismiss: () -> Unit,
 ) {
     if (uploadState.errorMessage != null) {
-        BaseDialog(
-            title = "Error",
-            message = uploadState.errorMessage,
-            confirmText = "확인",
-            onConfirm = onErrorDismiss,
-        )
+        SystemAlertDialog(message = uploadState.errorMessage, onConfirm = onErrorDismiss)
     }
 
     val focusManager = LocalFocusManager.current

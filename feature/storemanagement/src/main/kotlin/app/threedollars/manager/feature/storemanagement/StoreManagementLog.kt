@@ -13,4 +13,5 @@ internal object StoreManagementLog {
     const val TAB_STORE_INFO = "myStoreInfo"
     const val TAB_STATISTICS = "statistics"
     const val TAB_STORE_POST = "storePost"
+    const val TAB_COUPON = "coupon"
 }

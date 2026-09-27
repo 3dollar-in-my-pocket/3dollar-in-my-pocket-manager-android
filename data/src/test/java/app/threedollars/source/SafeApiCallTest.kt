@@ -3,6 +3,8 @@ package app.threedollars.source
 import app.threedollars.common.Resource
 import app.threedollars.data.BaseResponse
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -33,5 +35,20 @@ class SafeApiCallTest {
         assertTrue(result is Resource.Success)
         assertEquals("OK", result.data)
         assertEquals("200", result.code)
+    }
+
+    // TH-718 TC20
+    @Test
+    fun `TH718_TC20_서버_에러_응답은_message만_담긴_Resource_Error로_변환된다`() {
+        // Given
+        val body = """{"ok":false,"resultCode":"BR001","message":"사용 기간이 올바르지 않습니다"}"""
+            .toResponseBody("application/json".toMediaType())
+        val call: suspend () -> Response<BaseResponse<String>> = { Response.error(400, body) }
+        // When
+        val result = runBlocking { safeApiCall(call) }
+        // Then
+        assertTrue(result is Resource.Error)
+        assertEquals("사용 기간이 올바르지 않습니다", result.errorMessage)
+        assertEquals("400", result.code)
     }
 }

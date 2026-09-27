@@ -3,6 +3,7 @@ package app.threedollars.manager.feature.storemanagement
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,17 +27,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
-import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.AnalyticsLogger
+import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray95
+import app.threedollars.common.ui.Red
+import app.threedollars.common.ui.White
 import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.manager.feature.storemanagement.components.BossCommentScreen
 import app.threedollars.manager.feature.storemanagement.components.BusinessScheduleEditScreen
 import app.threedollars.manager.feature.storemanagement.components.MyScreen
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
+import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import app.threedollars.manager.feature.storemanagement.components.account.AccountScreen
+import app.threedollars.manager.feature.storemanagement.components.coupon.CouponTab
 import app.threedollars.manager.feature.storemanagement.components.menumanagement.MenuManagementScreen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
@@ -64,7 +71,10 @@ internal fun StoreManagementScreen(
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
     feedbackSpecific: LazyPagingItems<ContentsDto>,
+    showCouponNewBadge: Boolean,
+    showCouponTooltip: Boolean,
     onScreenTypeUpdate: (ScreenType) -> Unit,
+    onCouponTabClick: () -> Unit,
     onDialogTypeUpdate: (DialogType) -> Unit,
     onBossStorePatch: (BossStorePatchModel) -> Unit,
     onMenuPatch: (BossStorePatchModel) -> Unit,
@@ -75,13 +85,12 @@ internal fun StoreManagementScreen(
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
     onAllReviewNavigate: (String?) -> Unit,
     onUploadPostNavigate: () -> Unit,
+    onRegisterCouponNavigate: () -> Unit,
     onStickerClick: (String, String) -> Unit,
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
-        BaseDialog(
-            title = "Error",
-            message = errorMessage.toString(),
-            confirmText = "확인",
+        SystemAlertDialog(
+            message = errorMessage.toDisplayErrorMessage() ?: "요청에 실패했습니다. 잠시 후 다시 시도해주세요.",
             onConfirm = { onDialogTypeUpdate(DialogType.NONE) }
         )
     }
@@ -90,10 +99,13 @@ internal fun StoreManagementScreen(
         containerColor = Gray0,
         contentWindowInsets = WindowInsets.statusBars,
         topBar = {
-            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO || screenType == ScreenType.STORE_POST) {
+            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO || screenType == ScreenType.STORE_POST || screenType == ScreenType.COUPON) {
                 TopBar(
                     screenType = screenType,
-                    onScreenTypeUpdate = onScreenTypeUpdate
+                    showCouponNewBadge = showCouponNewBadge,
+                    showCouponTooltip = showCouponTooltip,
+                    onScreenTypeUpdate = onScreenTypeUpdate,
+                    onCouponTabClick = onCouponTabClick,
                 )
             }
         }
@@ -131,6 +143,13 @@ internal fun StoreManagementScreen(
                     StorePostTab(
                         storeId = bossStoreRetrieve.bossStoreId,
                         onUploadNavigate = onUploadPostNavigate
+                    )
+                }
+
+                ScreenType.COUPON -> {
+                    CouponTab(
+                        storeId = bossStoreRetrieve.bossStoreId,
+                        onRegisterNavigate = onRegisterCouponNavigate
                     )
                 }
 
@@ -203,7 +222,10 @@ internal fun StoreManagementScreen(
 @Composable
 private fun TopBar(
     onScreenTypeUpdate: (ScreenType) -> Unit,
+    onCouponTabClick: () -> Unit,
     screenType: ScreenType,
+    showCouponNewBadge: Boolean,
+    showCouponTooltip: Boolean,
 ) {
     val context = LocalContext.current
     Column(
@@ -232,6 +254,30 @@ private fun TopBar(
                 logTapMyTopTab(context, StoreManagementLog.TAB_STORE_POST)
                 onScreenTypeUpdate(ScreenType.STORE_POST)
             }
+            Row(verticalAlignment = Alignment.Top) {
+                SubTab(title = "쿠폰 관리", selected = screenType == ScreenType.COUPON) {
+                    logTapMyTopTab(context, StoreManagementLog.TAB_COUPON)
+                    onCouponTabClick()
+                }
+                if (showCouponNewBadge) {
+                    Text(
+                        text = "N",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = White,
+                        modifier = Modifier
+                            .padding(start = 2.dp)
+                            .background(Red, CircleShape)
+                            .padding(horizontal = 4.dp, vertical = 1.dp)
+                    )
+                }
+            }
+        }
+        if (showCouponTooltip) {
+            CouponTooltip(
+                modifier = Modifier.padding(start = 24.dp, bottom = 8.dp),
+                onClick = onCouponTabClick,
+            )
         }
     }
 }
@@ -262,4 +308,25 @@ private fun logTapMyTopTab(context: Context, tab: String) {
             StoreManagementLog.PARAM_TAB to tab,
         ),
     )
+}
+
+@Composable
+private fun CouponTooltip(modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End,
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "\uD83C\uDF9F\uFE0F 쿠폰으로 단골을 만들어보세요!",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = White,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .background(Gray95, RoundedCornerShape(8.dp))
+                .clickable(onClick = onClick)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        )
+    }
 }

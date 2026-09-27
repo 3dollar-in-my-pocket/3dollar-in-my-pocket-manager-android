@@ -13,10 +13,10 @@ import app.threedollars.common.ui.White
 @Composable
 internal fun SystemAlertDialog(
     message: String,
-    confirmText: String,
-    dismissText: String,
+    confirmText: String = "확인",
+    dismissText: String? = null,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit = onConfirm,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -25,8 +25,8 @@ internal fun SystemAlertDialog(
         confirmButton = {
             TextButton(onClick = onConfirm) { Text(text = confirmText, color = Green) }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(text = dismissText, color = Gray60) }
+        dismissButton = dismissText?.let { text ->
+            { TextButton(onClick = onDismiss) { Text(text = text, color = Gray60) } }
         },
     )
 }
