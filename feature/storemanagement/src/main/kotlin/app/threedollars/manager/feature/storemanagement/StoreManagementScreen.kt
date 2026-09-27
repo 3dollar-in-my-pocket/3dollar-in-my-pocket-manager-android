@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,7 +37,6 @@ import app.threedollars.manager.feature.storemanagement.components.profile.Profi
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.review.ReviewContent
 import app.threedollars.manager.feature.storemanagement.components.storepost.StorePostTab
-import app.threedollars.manager.feature.storemanagement.components.storepost.UploadPostRoute
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
@@ -69,6 +71,7 @@ internal fun StoreManagementScreen(
     onLocationDescriptionUpdate: (String, String) -> Unit,
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
     onAllReviewNavigate: (String?) -> Unit,
+    onUploadPostNavigate: () -> Unit,
     onStickerClick: (String, String) -> Unit,
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
@@ -82,6 +85,7 @@ internal fun StoreManagementScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Gray0,
+        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO || screenType == ScreenType.STORE_POST) {
                 TopBar(
@@ -123,13 +127,7 @@ internal fun StoreManagementScreen(
                 ScreenType.STORE_POST -> {
                     StorePostTab(
                         storeId = bossStoreRetrieve.bossStoreId,
-                        onUploadNavigate = { onScreenTypeUpdate(ScreenType.UPLOAD_POST) }
-                    )
-                }
-
-                ScreenType.UPLOAD_POST -> {
-                    UploadPostRoute(
-                        onBack = { onScreenTypeUpdate(ScreenType.STORE_POST) }
+                        onUploadNavigate = onUploadPostNavigate
                     )
                 }
 
@@ -212,8 +210,9 @@ private fun TopBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .horizontalScroll(rememberScrollState())
-                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 16.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.Bottom,
         ) {

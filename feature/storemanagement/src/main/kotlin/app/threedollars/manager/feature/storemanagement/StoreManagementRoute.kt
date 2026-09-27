@@ -14,6 +14,7 @@ import app.threedollars.common.ui.DoubleBackExitHandler
 @Composable
 fun StoreManagementRoute(
     onAllReviewNavigate: (String?) -> Unit,
+    onUploadPostNavigate: () -> Unit,
     screenType: String?
 ) {
     val viewModel: StoreManagementViewModel = hiltViewModel()
@@ -73,7 +74,6 @@ fun StoreManagementRoute(
                 ScreenType.ACCOUNT,
                     -> viewModel.updateScreenType(ScreenType.STORE_INFO)
                 ScreenType.FEEDBACK -> viewModel.updateScreenType(ScreenType.REVIEW_INFO)
-                ScreenType.UPLOAD_POST -> viewModel.updateScreenType(ScreenType.STORE_POST)
                 else -> {}
             }
         }
@@ -102,6 +102,7 @@ fun StoreManagementRoute(
         onLocationDescriptionUpdate = viewModel::updateDaysLocationDescription,
         onScheduleDayUpdate = viewModel::updateScheduleDay,
         onAllReviewNavigate = onAllReviewNavigate,
+        onUploadPostNavigate = onUploadPostNavigate,
         onStickerClick = viewModel::putStickersReplace
     )
 }

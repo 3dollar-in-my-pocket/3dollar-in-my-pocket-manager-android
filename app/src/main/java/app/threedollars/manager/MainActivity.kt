@@ -24,6 +24,7 @@ import app.threedollars.common.MaintenanceStateManager
 import app.threedollars.common.REVIEW_LIST
 import app.threedollars.common.TabRoute
 import app.threedollars.common.ui.MaintenanceDialog
+import app.threedollars.common.ui.White
 import app.threedollars.manager.ext.navigateTab
 import app.threedollars.manager.feature.ai.navigation.aiNavGraph
 import app.threedollars.manager.feature.home.navigation.homeNavGraph
@@ -64,6 +65,7 @@ fun MainScreenView(screenType: String? = "") {
     val enableSalesAIRecommendation by mainViewModel.enableSalesAIRecommendation.collectAsState()
 
     Scaffold(
+        containerColor = White,
         bottomBar = {
             BottomNavigation(
                 currentTab = navigator.currentTab,
@@ -112,6 +114,7 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screen
         homeNavGraph()
 
         storeManagementNavGraph(
+            navController = navigator.navController,
             onAllReviewNavigate = { reviewId ->
                 navigator.navController.navigateReview(
                     navOptions = navOptions,

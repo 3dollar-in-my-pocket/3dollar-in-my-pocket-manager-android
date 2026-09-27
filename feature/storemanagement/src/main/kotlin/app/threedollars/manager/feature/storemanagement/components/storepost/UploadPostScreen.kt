@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,7 +43,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -51,7 +56,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.ScreenViewLogEffect
@@ -72,9 +76,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun UploadPostRoute(
+    viewModel: StorePostViewModel,
     onBack: () -> Unit,
 ) {
-    val viewModel: StorePostViewModel = hiltViewModel()
     val uploadState by viewModel.uploadStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showCancelDialog by remember { mutableStateOf(false) }
@@ -150,7 +154,19 @@ internal fun UploadPostScreen(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(White)) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(White)
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
+            },
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             UploadPostHeader(onBackClick = onBackClick)
 
@@ -247,6 +263,7 @@ private fun UploadPostHeader(onBackClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Gray0, RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+            .statusBarsPadding()
             .padding(horizontal = 24.dp, vertical = 24.dp),
     ) {
         Image(
