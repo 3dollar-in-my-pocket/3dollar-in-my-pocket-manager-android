@@ -49,6 +49,7 @@ import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.White
 import app.threedollars.domain.dto.StorePostDto
 import app.threedollars.manager.feature.storemanagement.R
+import app.threedollars.manager.feature.storemanagement.StoreManagementLog
 import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -62,7 +63,7 @@ internal fun StorePostTab(
     val uiState by viewModel.stateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    ScreenViewLogEffect(screenName = "storePost")
+    ScreenViewLogEffect(screenName = StoreManagementLog.SCREEN_STORE_POST)
 
     LaunchedEffect(storeId) {
         if (storeId.isNotEmpty()) {
@@ -74,7 +75,11 @@ internal fun StorePostTab(
         uiState = uiState,
         onLoadMore = viewModel::loadNextPage,
         onUploadClick = {
-            AnalyticsLogger.logEvent(context, "clickUploadPost")
+            AnalyticsLogger.logEvent(
+                context,
+                StoreManagementLog.EVENT_CLICK_UPLOAD_POST,
+                mapOf(StoreManagementLog.PARAM_SCREEN to StoreManagementLog.SCREEN_STORE_POST),
+            )
             viewModel.startUpload()
             onUploadNavigate()
         },

@@ -1,5 +1,6 @@
 package app.threedollars.manager.feature.storemanagement
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -18,11 +19,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import app.threedollars.common.BaseDialog
+import app.threedollars.common.analytics.AnalyticsLogger
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray95
@@ -202,6 +205,7 @@ private fun TopBar(
     onScreenTypeUpdate: (ScreenType) -> Unit,
     screenType: ScreenType,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,9 +220,18 @@ private fun TopBar(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            SubTab(title = "가게정보", selected = screenType == ScreenType.STORE_INFO) { onScreenTypeUpdate(ScreenType.STORE_INFO) }
-            SubTab(title = "리뷰통계", selected = screenType == ScreenType.REVIEW_INFO) { onScreenTypeUpdate(ScreenType.REVIEW_INFO) }
-            SubTab(title = "가게소식", selected = screenType == ScreenType.STORE_POST) { onScreenTypeUpdate(ScreenType.STORE_POST) }
+            SubTab(title = "가게정보", selected = screenType == ScreenType.STORE_INFO) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_STORE_INFO)
+                onScreenTypeUpdate(ScreenType.STORE_INFO)
+            }
+            SubTab(title = "리뷰통계", selected = screenType == ScreenType.REVIEW_INFO) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_STATISTICS)
+                onScreenTypeUpdate(ScreenType.REVIEW_INFO)
+            }
+            SubTab(title = "가게소식", selected = screenType == ScreenType.STORE_POST) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_STORE_POST)
+                onScreenTypeUpdate(ScreenType.STORE_POST)
+            }
         }
     }
 }
@@ -237,5 +250,16 @@ private fun SubTab(
         maxLines = 1,
         softWrap = false,
         modifier = Modifier.noRippleClickable(onClick),
+    )
+}
+
+private fun logTapMyTopTab(context: Context, tab: String) {
+    AnalyticsLogger.logEvent(
+        context,
+        StoreManagementLog.EVENT_TAP_MY_TOP_TAB,
+        mapOf(
+            StoreManagementLog.PARAM_SCREEN to StoreManagementLog.SCREEN_MY_STORE_INFO,
+            StoreManagementLog.PARAM_TAB to tab,
+        ),
     )
 }
