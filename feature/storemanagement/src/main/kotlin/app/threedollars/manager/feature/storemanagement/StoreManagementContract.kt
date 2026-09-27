@@ -30,6 +30,7 @@ internal data class StoreManagementState(
 internal enum class ScreenType {
     STORE_INFO,
     REVIEW_INFO,
+    STORE_POST,
     FEEDBACK,
     PROFILE_EDIT,
     BOSS_COMMENT,

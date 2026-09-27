@@ -1,23 +1,31 @@
 package app.threedollars.manager.feature.storemanagement
 
+import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import app.threedollars.common.BaseDialog
+import app.threedollars.common.analytics.AnalyticsLogger
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray95
@@ -31,6 +39,7 @@ import app.threedollars.manager.feature.storemanagement.components.menumanagemen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.review.ReviewContent
+import app.threedollars.manager.feature.storemanagement.components.storepost.StorePostTab
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
@@ -65,6 +74,7 @@ internal fun StoreManagementScreen(
     onLocationDescriptionUpdate: (String, String) -> Unit,
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
     onAllReviewNavigate: (String?) -> Unit,
+    onUploadPostNavigate: () -> Unit,
     onStickerClick: (String, String) -> Unit,
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
@@ -78,8 +88,9 @@ internal fun StoreManagementScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Gray0,
+        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
-            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO) {
+            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO || screenType == ScreenType.STORE_POST) {
                 TopBar(
                     screenType = screenType,
                     onScreenTypeUpdate = onScreenTypeUpdate
@@ -93,7 +104,7 @@ internal fun StoreManagementScreen(
         ) {
             when (screenType) {
                 ScreenType.STORE_INFO -> {
-                    Spacer(modifier = Modifier.padding(top = 16.dp))
+                    Spacer(modifier = Modifier.padding(top = 12.dp))
                     MyScreen(
                         bossStoreRetrieve = bossStoreRetrieve,
                         onScreenTypeUpdate = onScreenTypeUpdate
@@ -101,7 +112,7 @@ internal fun StoreManagementScreen(
                 }
 
                 ScreenType.REVIEW_INFO -> {
-                    Spacer(modifier = Modifier.padding(top = 16.dp))
+                    Spacer(modifier = Modifier.padding(top = 12.dp))
                     ReviewContent(
                         subscriberCount = bossStoreRetrieve.subscriberCount,
                         rating = bossStoreRetrieve.rating,
@@ -113,6 +124,13 @@ internal fun StoreManagementScreen(
                         onScreenTypeUpdate = onScreenTypeUpdate,
                         onAllReviewNavigate = onAllReviewNavigate,
                         onStickerClick = onStickerClick
+                    )
+                }
+
+                ScreenType.STORE_POST -> {
+                    StorePostTab(
+                        storeId = bossStoreRetrieve.bossStoreId,
+                        onUploadNavigate = onUploadPostNavigate
                     )
                 }
 
@@ -187,6 +205,7 @@ private fun TopBar(
     onScreenTypeUpdate: (ScreenType) -> Unit,
     screenType: ScreenType,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,27 +214,52 @@ private fun TopBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    start = 12.dp,
-                    top = 24.dp
-                )
+                .statusBarsPadding()
+                .horizontalScroll(rememberScrollState())
+                .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.Bottom,
         ) {
-            TextButton(onClick = { onScreenTypeUpdate(ScreenType.STORE_INFO) }) {
-                Text(
-                    text = "가게정보",
-                    fontSize = 18.sp,
-                    fontWeight = if (screenType == ScreenType.STORE_INFO) FontWeight.Bold else null,
-                    color = if (screenType == ScreenType.STORE_INFO) Gray95 else Gray30
-                )
+            SubTab(title = "가게정보", selected = screenType == ScreenType.STORE_INFO) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_STORE_INFO)
+                onScreenTypeUpdate(ScreenType.STORE_INFO)
             }
-            TextButton(onClick = { onScreenTypeUpdate(ScreenType.REVIEW_INFO) }) {
-                Text(
-                    text = "리뷰통계",
-                    fontSize = 18.sp,
-                    fontWeight = if (screenType == ScreenType.REVIEW_INFO) FontWeight.Bold else null,
-                    color = if (screenType == ScreenType.REVIEW_INFO) Gray95 else Gray30
-                )
+            SubTab(title = "리뷰통계", selected = screenType == ScreenType.REVIEW_INFO) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_STATISTICS)
+                onScreenTypeUpdate(ScreenType.REVIEW_INFO)
+            }
+            SubTab(title = "가게소식", selected = screenType == ScreenType.STORE_POST) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_STORE_POST)
+                onScreenTypeUpdate(ScreenType.STORE_POST)
             }
         }
     }
+}
+
+@Composable
+private fun SubTab(
+    title: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = title,
+        fontSize = 18.sp,
+        fontWeight = if (selected) FontWeight.Bold else null,
+        color = if (selected) Gray95 else Gray30,
+        maxLines = 1,
+        softWrap = false,
+        modifier = Modifier.noRippleClickable(onClick),
+    )
+}
+
+private fun logTapMyTopTab(context: Context, tab: String) {
+    AnalyticsLogger.logEvent(
+        context,
+        StoreManagementLog.EVENT_TAP_MY_TOP_TAB,
+        mapOf(
+            StoreManagementLog.PARAM_SCREEN to StoreManagementLog.SCREEN_MY_STORE_INFO,
+            StoreManagementLog.PARAM_TAB to tab,
+        ),
+    )
 }
