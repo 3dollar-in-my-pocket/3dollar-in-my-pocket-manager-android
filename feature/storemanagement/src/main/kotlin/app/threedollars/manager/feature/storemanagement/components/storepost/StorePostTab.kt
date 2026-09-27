@@ -49,6 +49,7 @@ import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.White
 import app.threedollars.domain.dto.StorePostDto
 import app.threedollars.manager.feature.storemanagement.R
+import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
@@ -85,6 +86,7 @@ internal fun StorePostTab(
         onDeleteCancel = viewModel::cancelDelete,
         onDeleteConfirm = viewModel::confirmDelete,
         onErrorDismiss = viewModel::clearError,
+        onScrollToTopConsumed = viewModel::consumeScrollToTop,
     )
 }
 
@@ -98,10 +100,10 @@ internal fun StorePostScreen(
     onDeleteCancel: () -> Unit,
     onDeleteConfirm: () -> Unit,
     onErrorDismiss: () -> Unit,
+    onScrollToTopConsumed: () -> Unit,
 ) {
     if (uiState.deleteTargetPostId != null) {
-        BaseDialog(
-            title = "",
+        SystemAlertDialog(
             message = "게시글을 삭제하시겠습니까?",
             confirmText = "삭제",
             dismissText = "취소",
@@ -125,7 +127,13 @@ internal fun StorePostScreen(
     ) {
         when {
             uiState.isEmpty -> StorePostEmptyView()
-            uiState.posts.isNotEmpty() -> StorePostList(uiState = uiState, onLoadMore = onLoadMore, onEditClick = onEditClick, onDeleteClick = onDeleteClick)
+            uiState.posts.isNotEmpty() -> StorePostList(
+                uiState = uiState,
+                onLoadMore = onLoadMore,
+                onEditClick = onEditClick,
+                onDeleteClick = onDeleteClick,
+                onScrollToTopConsumed = onScrollToTopConsumed,
+            )
         }
         if (uiState.isLoading) {
             CircleProgressBar(modifier = Modifier.align(Alignment.Center))
@@ -145,8 +153,16 @@ private fun StorePostList(
     onLoadMore: () -> Unit,
     onEditClick: (StorePostDto) -> Unit,
     onDeleteClick: (StorePostDto) -> Unit,
+    onScrollToTopConsumed: () -> Unit,
 ) {
     val listState = rememberLazyListState()
+
+    LaunchedEffect(uiState.scrollToTopRequested) {
+        if (uiState.scrollToTopRequested) {
+            listState.scrollToItem(0)
+            onScrollToTopConsumed()
+        }
+    }
 
     LaunchedEffect(listState, uiState.posts.size, uiState.canLoadMore) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
@@ -158,7 +174,7 @@ private fun StorePostList(
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 80.dp),
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 80.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(uiState.posts, key = { it.postId }) { post ->

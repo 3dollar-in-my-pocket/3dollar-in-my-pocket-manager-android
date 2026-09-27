@@ -126,6 +126,10 @@ internal class StorePostViewModel @Inject constructor(
         }
     }
 
+    fun consumeScrollToTop() {
+        _stateFlow.update { it.copy(scrollToTopRequested = false) }
+    }
+
     fun clearError() {
         _stateFlow.update { it.copy(errorMessage = null) }
     }
@@ -168,6 +172,7 @@ internal class StorePostViewModel @Inject constructor(
                 val result = postStorePostUseCase(storeId = storeId, body = uploadState.body, sections = sections)
                 if (result is Resource.Success) {
                     _uploadStateFlow.update { it.copy(isSaving = false) }
+                    _stateFlow.update { it.copy(scrollToTopRequested = true) }
                     loadFirstPage(storeId)
                     _uploadFinishedFlow.emit(Unit)
                 } else {

@@ -17,6 +17,7 @@ internal data class StorePostState(
     val hasMore: Boolean = false,
     val deleteTargetPostId: String? = null,
     val errorMessage: String? = null,
+    val scrollToTopRequested: Boolean = false,
 ) {
     val isEmpty: Boolean get() = isInitialLoaded && posts.isEmpty()
 

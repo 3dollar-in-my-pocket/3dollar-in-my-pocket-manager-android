@@ -66,6 +66,7 @@ import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.White
 import app.threedollars.manager.feature.storemanagement.ContentUriToRequestBody
 import app.threedollars.manager.feature.storemanagement.R
+import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.collectLatest
 
@@ -90,8 +91,7 @@ internal fun UploadPostRoute(
     BackHandler(onBack = requestBack)
 
     if (showCancelDialog) {
-        BaseDialog(
-            title = "",
+        SystemAlertDialog(
             message = "작성 중인 소식을 취소하시겠습니까?",
             confirmText = "취소하기",
             dismissText = "계속 작성",

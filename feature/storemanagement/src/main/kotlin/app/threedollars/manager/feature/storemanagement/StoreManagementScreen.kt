@@ -1,6 +1,7 @@
 package app.threedollars.manager.feature.storemanagement
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,10 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -95,7 +97,7 @@ internal fun StoreManagementScreen(
         ) {
             when (screenType) {
                 ScreenType.STORE_INFO -> {
-                    Spacer(modifier = Modifier.padding(top = 16.dp))
+                    Spacer(modifier = Modifier.padding(top = 12.dp))
                     MyScreen(
                         bossStoreRetrieve = bossStoreRetrieve,
                         onScreenTypeUpdate = onScreenTypeUpdate
@@ -103,7 +105,7 @@ internal fun StoreManagementScreen(
                 }
 
                 ScreenType.REVIEW_INFO -> {
-                    Spacer(modifier = Modifier.padding(top = 16.dp))
+                    Spacer(modifier = Modifier.padding(top = 12.dp))
                     ReviewContent(
                         subscriberCount = bossStoreRetrieve.subscriberCount,
                         rating = bossStoreRetrieve.rating,
@@ -210,35 +212,31 @@ private fun TopBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    start = 12.dp,
-                    top = 24.dp
-                )
+                .horizontalScroll(rememberScrollState())
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.Bottom,
         ) {
-            TextButton(onClick = { onScreenTypeUpdate(ScreenType.STORE_INFO) }) {
-                Text(
-                    text = "가게정보",
-                    fontSize = 18.sp,
-                    fontWeight = if (screenType == ScreenType.STORE_INFO) FontWeight.Bold else null,
-                    color = if (screenType == ScreenType.STORE_INFO) Gray95 else Gray30
-                )
-            }
-            TextButton(onClick = { onScreenTypeUpdate(ScreenType.REVIEW_INFO) }) {
-                Text(
-                    text = "리뷰통계",
-                    fontSize = 18.sp,
-                    fontWeight = if (screenType == ScreenType.REVIEW_INFO) FontWeight.Bold else null,
-                    color = if (screenType == ScreenType.REVIEW_INFO) Gray95 else Gray30
-                )
-            }
-            TextButton(onClick = { onScreenTypeUpdate(ScreenType.STORE_POST) }) {
-                Text(
-                    text = "가게소식",
-                    fontSize = 18.sp,
-                    fontWeight = if (screenType == ScreenType.STORE_POST) FontWeight.Bold else null,
-                    color = if (screenType == ScreenType.STORE_POST) Gray95 else Gray30
-                )
-            }
+            SubTab(title = "가게정보", selected = screenType == ScreenType.STORE_INFO) { onScreenTypeUpdate(ScreenType.STORE_INFO) }
+            SubTab(title = "리뷰통계", selected = screenType == ScreenType.REVIEW_INFO) { onScreenTypeUpdate(ScreenType.REVIEW_INFO) }
+            SubTab(title = "가게소식", selected = screenType == ScreenType.STORE_POST) { onScreenTypeUpdate(ScreenType.STORE_POST) }
         }
     }
+}
+
+@Composable
+private fun SubTab(
+    title: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = title,
+        fontSize = 18.sp,
+        fontWeight = if (selected) FontWeight.Bold else null,
+        color = if (selected) Gray95 else Gray30,
+        maxLines = 1,
+        softWrap = false,
+        modifier = Modifier.noRippleClickable(onClick),
+    )
 }
