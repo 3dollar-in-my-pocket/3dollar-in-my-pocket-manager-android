@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.AnalyticsLogger
 import app.threedollars.common.analytics.ScreenViewLogEffect
 import app.threedollars.common.ui.CircleProgressBar
@@ -117,12 +116,7 @@ internal fun StorePostScreen(
         )
     }
     if (uiState.errorMessage != null) {
-        BaseDialog(
-            title = "Error",
-            message = uiState.errorMessage,
-            confirmText = "확인",
-            onConfirm = onErrorDismiss,
-        )
+        SystemAlertDialog(message = uiState.errorMessage, onConfirm = onErrorDismiss)
     }
 
     Box(

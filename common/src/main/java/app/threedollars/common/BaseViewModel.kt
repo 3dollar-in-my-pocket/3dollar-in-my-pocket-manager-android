@@ -3,7 +3,6 @@ package app.threedollars.common
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -31,10 +30,7 @@ open class BaseViewModel : ViewModel() {
 
     fun setErrorMessage(text: String) {
         viewModelScope.launch {
-            val gson = Gson()
-            val responseData = gson.fromJson(text, ErrorResponse::class.java)
-            val message = ValueWrapper(responseData.message)
-            _errorMessage.emit(message)
+            _errorMessage.emit(ValueWrapper(text.toDisplayErrorMessage() ?: text))
         }
     }
 }

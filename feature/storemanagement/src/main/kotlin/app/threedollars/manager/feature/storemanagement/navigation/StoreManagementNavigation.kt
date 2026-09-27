@@ -8,12 +8,17 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import app.threedollars.common.TabRoute
 import app.threedollars.manager.feature.storemanagement.StoreManagementRoute
+import app.threedollars.manager.feature.storemanagement.components.coupon.CouponViewModel
+import app.threedollars.manager.feature.storemanagement.components.coupon.RegisterCouponRoute as RegisterCouponScreenRoute
 import app.threedollars.manager.feature.storemanagement.components.storepost.StorePostViewModel
 import app.threedollars.manager.feature.storemanagement.components.storepost.UploadPostRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
 internal data object UploadStorePostRoute
+
+@Serializable
+internal data object RegisterCouponRoute
 
 fun NavController.navigateStoreManagement(
     navOptions: NavOptions,
@@ -33,6 +38,7 @@ fun NavGraphBuilder.storeManagementNavGraph(
         StoreManagementRoute(
             onAllReviewNavigate = onAllReviewNavigate,
             onUploadPostNavigate = { navController.navigate(UploadStorePostRoute) },
+            onRegisterCouponNavigate = { navController.navigate(RegisterCouponRoute) },
             screenType = screenType
         )
     }
@@ -40,6 +46,14 @@ fun NavGraphBuilder.storeManagementNavGraph(
         val storeManagementEntry = remember(entry) { navController.getBackStackEntry<TabRoute.StoreManagement>() }
         val viewModel: StorePostViewModel = hiltViewModel(storeManagementEntry)
         UploadPostRoute(
+            viewModel = viewModel,
+            onBack = { navController.popBackStack() },
+        )
+    }
+    composable<RegisterCouponRoute> { entry ->
+        val storeManagementEntry = remember(entry) { navController.getBackStackEntry<TabRoute.StoreManagement>() }
+        val viewModel: CouponViewModel = hiltViewModel(storeManagementEntry)
+        RegisterCouponScreenRoute(
             viewModel = viewModel,
             onBack = { navController.popBackStack() },
         )

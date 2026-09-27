@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -51,9 +52,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.ScreenViewLogEffect
 import app.threedollars.common.ext.toast
 import app.threedollars.common.ui.CircleProgressBar
@@ -68,6 +67,7 @@ import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.Red
 import app.threedollars.common.ui.White
 import app.threedollars.manager.feature.storemanagement.R
+import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import kotlinx.coroutines.flow.collectLatest
 import java.time.Instant
 import java.time.LocalDate
@@ -75,9 +75,9 @@ import java.time.ZoneOffset
 
 @Composable
 internal fun RegisterCouponRoute(
+    viewModel: CouponViewModel,
     onBack: () -> Unit,
 ) {
-    val viewModel: CouponViewModel = hiltViewModel()
     val registerState by viewModel.registerStateFlow.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -123,7 +123,7 @@ internal fun RegisterCouponScreen(
     var datePickerTarget by remember { mutableStateOf<DateTarget?>(null) }
 
     if (state.errorMessage != null) {
-        BaseDialog(title = "Error", message = state.errorMessage, confirmText = "확인", onConfirm = onErrorDismiss)
+        SystemAlertDialog(message = state.errorMessage, onConfirm = onErrorDismiss)
     }
     if (state.showConfirmDialog) {
         RegisterConfirmDialog(onDismiss = onConfirmDismiss, onConfirm = onConfirmRegister)
@@ -236,6 +236,7 @@ private fun RegisterHeader(onBackClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Gray0)
+            .statusBarsPadding()
             .padding(horizontal = 24.dp, vertical = 24.dp),
     ) {
         Image(

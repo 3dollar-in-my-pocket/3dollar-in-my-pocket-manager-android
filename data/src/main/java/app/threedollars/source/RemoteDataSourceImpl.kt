@@ -1,6 +1,7 @@
 package app.threedollars.source
 
 import app.threedollars.common.Resource
+import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossDeviceRequest
@@ -390,7 +391,7 @@ suspend fun <T> safeApiCall(call: suspend () -> Response<BaseResponse<T>>): Reso
             Resource.Success(data = response.body()?.data!!, code = response.code().toString())
         } else {
             Resource.Error(
-                errorMessage = response.errorBody()?.string(),
+                errorMessage = response.errorBody()?.string().toDisplayErrorMessage(),
                 code = response.code().toString()
             )
         }

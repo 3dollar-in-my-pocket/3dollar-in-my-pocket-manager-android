@@ -27,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
-import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.AnalyticsLogger
+import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray95
@@ -39,9 +39,9 @@ import app.threedollars.manager.feature.storemanagement.components.BossCommentSc
 import app.threedollars.manager.feature.storemanagement.components.BusinessScheduleEditScreen
 import app.threedollars.manager.feature.storemanagement.components.MyScreen
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
+import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import app.threedollars.manager.feature.storemanagement.components.account.AccountScreen
 import app.threedollars.manager.feature.storemanagement.components.coupon.CouponTab
-import app.threedollars.manager.feature.storemanagement.components.coupon.RegisterCouponRoute
 import app.threedollars.manager.feature.storemanagement.components.menumanagement.MenuManagementScreen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
@@ -85,13 +85,12 @@ internal fun StoreManagementScreen(
     onScheduleDayUpdate: (ScheduleDay) -> Unit,
     onAllReviewNavigate: (String?) -> Unit,
     onUploadPostNavigate: () -> Unit,
+    onRegisterCouponNavigate: () -> Unit,
     onStickerClick: (String, String) -> Unit,
 ) {
     if (dialogType == DialogType.ERROR_DIALOG) {
-        BaseDialog(
-            title = "Error",
-            message = errorMessage.toString(),
-            confirmText = "확인",
+        SystemAlertDialog(
+            message = errorMessage.toDisplayErrorMessage() ?: "요청에 실패했습니다. 잠시 후 다시 시도해주세요.",
             onConfirm = { onDialogTypeUpdate(DialogType.NONE) }
         )
     }
@@ -150,13 +149,7 @@ internal fun StoreManagementScreen(
                 ScreenType.COUPON -> {
                     CouponTab(
                         storeId = bossStoreRetrieve.bossStoreId,
-                        onRegisterNavigate = { onScreenTypeUpdate(ScreenType.REGISTER_COUPON) }
-                    )
-                }
-
-                ScreenType.REGISTER_COUPON -> {
-                    RegisterCouponRoute(
-                        onBack = { onScreenTypeUpdate(ScreenType.COUPON) }
+                        onRegisterNavigate = onRegisterCouponNavigate
                     )
                 }
 

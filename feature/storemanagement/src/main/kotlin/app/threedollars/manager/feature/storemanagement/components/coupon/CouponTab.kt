@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.threedollars.common.BaseDialog
 import app.threedollars.common.analytics.ScreenViewLogEffect
 import app.threedollars.common.ext.toast
 import app.threedollars.common.ui.CircleProgressBar
@@ -63,6 +62,7 @@ import app.threedollars.common.ui.Red
 import app.threedollars.common.ui.White
 import app.threedollars.domain.dto.CouponDto
 import app.threedollars.manager.feature.storemanagement.R
+import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -99,6 +99,7 @@ internal fun CouponTab(
         onCloseCancel = viewModel::cancelClose,
         onCloseConfirm = viewModel::confirmClose,
         onErrorDismiss = viewModel::clearError,
+        onScrollToTopConsumed = viewModel::consumeScrollToTop,
     )
 }
 
@@ -115,6 +116,7 @@ internal fun CouponScreen(
     onCloseCancel: () -> Unit,
     onCloseConfirm: () -> Unit,
     onErrorDismiss: () -> Unit,
+    onScrollToTopConsumed: () -> Unit = {},
 ) {
     ScreenViewLogEffect(screenName = "coupon")
 
@@ -127,7 +129,7 @@ internal fun CouponScreen(
         )
     }
     if (uiState.errorMessage != null) {
-        BaseDialog(title = "Error", message = uiState.errorMessage, confirmText = "확인", onConfirm = onErrorDismiss)
+        SystemAlertDialog(message = uiState.errorMessage, onConfirm = onErrorDismiss)
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Gray0)) {
@@ -151,6 +153,8 @@ internal fun CouponScreen(
                         page = uiState.currentPage,
                         onLoadMore = onLoadMore,
                         onCloseClick = onCloseClick,
+                        scrollToTopRequested = uiState.scrollToTopRequested,
+                        onScrollToTopConsumed = onScrollToTopConsumed,
                     )
                     else -> Spacer(modifier = Modifier.fillMaxSize())
                 }
@@ -208,8 +212,16 @@ private fun CouponList(
     page: CouponPage,
     onLoadMore: () -> Unit,
     onCloseClick: (CouponDto) -> Unit,
+    scrollToTopRequested: Boolean,
+    onScrollToTopConsumed: () -> Unit,
 ) {
     val listState = rememberLazyListState()
+    LaunchedEffect(scrollToTopRequested) {
+        if (scrollToTopRequested) {
+            listState.scrollToItem(0)
+            onScrollToTopConsumed()
+        }
+    }
     LaunchedEffect(listState, coupons.size, page.canLoadMore) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .distinctUntilChanged()

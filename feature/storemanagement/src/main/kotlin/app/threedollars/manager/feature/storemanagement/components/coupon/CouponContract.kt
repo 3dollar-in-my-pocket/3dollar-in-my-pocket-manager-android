@@ -51,6 +51,7 @@ internal data class CouponState(
     val closeTargetCouponId: String? = null,
     val isCloseConfirmChecked: Boolean = false,
     val errorMessage: String? = null,
+    val scrollToTopRequested: Boolean = false,
 ) {
     val currentPage: CouponPage get() = if (segment == CouponSegment.IN_USE) inUsePage else endedPage
 

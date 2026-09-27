@@ -55,7 +55,7 @@ internal class CouponViewModel @Inject constructor(
         }
     }
 
-    fun refresh() {
+    fun refresh(scrollToTop: Boolean = false) {
         val storeId = _stateFlow.value.storeId
         if (storeId.isEmpty()) return
         _stateFlow.update { it.copy(isRefreshing = true) }
@@ -76,7 +76,7 @@ internal class CouponViewModel @Inject constructor(
                     .withActiveCoupon(activeResult.data!!.contents.firstOrNull())
                     .withPage(CouponSegment.IN_USE, state.inUsePage.withFirstPage(inUseResult.data!!.contents, inUseResult.data!!.cursor?.nextCursor, inUseResult.data!!.cursor?.hasMore ?: false))
                     .withPage(CouponSegment.ENDED, state.endedPage.withFirstPage(endedResult.data!!.contents, endedResult.data!!.cursor?.nextCursor, endedResult.data!!.cursor?.hasMore ?: false))
-                    .copy(isRefreshing = false)
+                    .copy(isRefreshing = false, scrollToTopRequested = scrollToTop, segment = if (scrollToTop) CouponSegment.IN_USE else state.segment)
             }
         }
     }
@@ -141,6 +141,10 @@ internal class CouponViewModel @Inject constructor(
         }
     }
 
+    fun consumeScrollToTop() {
+        _stateFlow.update { it.copy(scrollToTopRequested = false) }
+    }
+
     fun clearError() {
         _stateFlow.update { it.copy(errorMessage = null) }
     }
@@ -188,7 +192,7 @@ internal class CouponViewModel @Inject constructor(
             if (result is Resource.Success) {
                 _registerStateFlow.update { it.copy(isSaving = false) }
                 _toastFlow.emit("쿠폰이 발급되었어요.")
-                refresh()
+                refresh(scrollToTop = true)
                 _registerFinishedFlow.emit(Unit)
             } else {
                 _registerStateFlow.update { it.copy(isSaving = false, errorMessage = result.errorMessage.orDefault()) }

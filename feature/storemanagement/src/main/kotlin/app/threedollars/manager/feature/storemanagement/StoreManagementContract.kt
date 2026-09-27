@@ -34,7 +34,6 @@ internal enum class ScreenType {
     REVIEW_INFO,
     STORE_POST,
     COUPON,
-    REGISTER_COUPON,
     FEEDBACK,
     PROFILE_EDIT,
     BOSS_COMMENT,
