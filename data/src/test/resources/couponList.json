@@ -1,0 +1,27 @@
+{
+  "contents": [
+    {
+      "couponId": "coupon-1",
+      "name": "1000원 할인",
+      "maxIssuableCount": 999,
+      "currentIssuedCount": 12,
+      "currentUsedCount": 3,
+      "validityPeriod": { "startDateTime": "2026-09-27T00:00:00", "endDateTime": "2026-10-27T23:59:59" },
+      "status": "ACTIVE",
+      "createdAt": "2026-09-27T10:00:00",
+      "updatedAt": "2026-09-27T10:00:00"
+    },
+    {
+      "couponId": "coupon-2",
+      "name": "5천원 이상 구매시 500원 할인!",
+      "maxIssuableCount": 30,
+      "currentIssuedCount": 30,
+      "currentUsedCount": 10,
+      "validityPeriod": { "startDateTime": "2026-08-01T00:00:00", "endDateTime": "2026-08-31T23:59:59" },
+      "status": "PAUSED_BY_ADMIN",
+      "createdAt": "2026-08-01T10:00:00",
+      "updatedAt": "2026-08-20T10:00:00"
+    }
+  ],
+  "cursor": { "hasMore": false, "nextCursor": null, "totalCount": 2 }
+}

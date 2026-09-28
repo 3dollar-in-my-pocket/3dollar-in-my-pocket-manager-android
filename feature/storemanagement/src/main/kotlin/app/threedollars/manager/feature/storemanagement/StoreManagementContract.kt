@@ -24,12 +24,16 @@ internal data class StoreManagementState(
     val feedbackTypes: List<FeedbackTypesVo> = listOf(),
     val reviews: List<ReviewVo> = listOf(),
     val reviewFilterType: ReviewFilterType = ReviewFilterType.LATEST,
-    val selectedReviewId: String = ""
+    val selectedReviewId: String = "",
+    val showCouponNewBadge: Boolean = false,
+    val showCouponTooltip: Boolean = false,
 )
 
 internal enum class ScreenType {
     STORE_INFO,
     REVIEW_INFO,
+    STORE_POST,
+    COUPON,
     FEEDBACK,
     PROFILE_EDIT,
     BOSS_COMMENT,

@@ -15,4 +15,9 @@ interface LocalDataSource {
     fun getVersionName(): Flow<String>
     fun getApplicationId(): Flow<String>
     fun getDemoCode(): Flow<String>
+
+    fun isCouponNewBadgeShown(): Flow<Boolean>
+    suspend fun saveCouponNewBadgeShown()
+    fun isCouponTooltipShown(): Flow<Boolean>
+    suspend fun saveCouponTooltipShown()
 }

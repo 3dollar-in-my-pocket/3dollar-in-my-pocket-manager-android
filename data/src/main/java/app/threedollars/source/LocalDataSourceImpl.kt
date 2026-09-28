@@ -36,11 +36,21 @@ class LocalDataSourceImpl @Inject constructor(private val dataStoreManager: Data
 
     override fun getDemoCode(): Flow<String> = dataStoreManager.getStringData(DEMO_CODE)
 
+    override fun isCouponNewBadgeShown(): Flow<Boolean> = dataStoreManager.getBooleanData(COUPON_NEW_BADGE_SHOWN)
+
+    override suspend fun saveCouponNewBadgeShown() = dataStoreManager.saveBooleanData(COUPON_NEW_BADGE_SHOWN, true)
+
+    override fun isCouponTooltipShown(): Flow<Boolean> = dataStoreManager.getBooleanData(COUPON_TOOLTIP_SHOWN)
+
+    override suspend fun saveCouponTooltipShown() = dataStoreManager.saveBooleanData(COUPON_TOOLTIP_SHOWN, true)
+
     companion object {
         const val SOCIAL_ACCESS_TOKEN = "social_access_token"
         const val ACCESS_TOKEN = "access_token"
         const val VERSION_NAME = "version_name"
         const val APPLICATION_ID = "application_id"
         const val DEMO_CODE = "demo_code"
+        const val COUPON_NEW_BADGE_SHOWN = "coupon_new_badge_shown"
+        const val COUPON_TOOLTIP_SHOWN = "coupon_tooltip_shown"
     }
 }

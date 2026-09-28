@@ -10,6 +10,7 @@ import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.domain.dto.MenusDto
 import app.threedollars.domain.usecase.BossStoreRetrieveUseCase
 import app.threedollars.domain.usecase.BossStoreUseCase
+import app.threedollars.domain.usecase.CouponGuideUseCase
 import app.threedollars.domain.usecase.EnumMapperUseCase
 import app.threedollars.domain.usecase.FeedbackUseCase
 import app.threedollars.domain.usecase.GetStoreReviewListUseCase
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +54,7 @@ internal class StoreManagementViewModel @Inject constructor(
     private val getStoreReviewListUseCase: GetStoreReviewListUseCase,
     private val getStoreReviewPagingUseCase: GetStoreReviewPagingUseCase,
     private val putStickersReplaceUseCase: PutStickersReplaceUseCase,
+    private val couponGuideUseCase: CouponGuideUseCase,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<StoreManagementState> =
@@ -82,6 +85,21 @@ internal class StoreManagementViewModel @Inject constructor(
         ).map {
             it.map { dto -> dto.dtoToVo() }
         }.cachedIn(viewModelScope)
+    }
+
+    fun loadCouponGuide() {
+        viewModelScope.launch {
+            val badgeShown = couponGuideUseCase.isNewBadgeShown().first()
+            val tooltipShown = couponGuideUseCase.isTooltipShown().first()
+            _stateFlow.update { it.copy(showCouponNewBadge = !badgeShown, showCouponTooltip = !tooltipShown) }
+            if (!badgeShown) couponGuideUseCase.markNewBadgeShown()
+        }
+    }
+
+    fun onCouponTabClicked() {
+        _stateFlow.update { it.copy(showCouponTooltip = false) }
+        viewModelScope.launch { couponGuideUseCase.markTooltipShown() }
+        updateScreenType(ScreenType.COUPON)
     }
 
     fun updateScreenType(screenType: ScreenType) {

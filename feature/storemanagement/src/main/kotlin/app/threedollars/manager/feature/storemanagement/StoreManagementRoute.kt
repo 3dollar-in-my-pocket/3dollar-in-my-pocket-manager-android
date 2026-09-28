@@ -14,6 +14,8 @@ import app.threedollars.common.ui.DoubleBackExitHandler
 @Composable
 fun StoreManagementRoute(
     onAllReviewNavigate: (String?) -> Unit,
+    onUploadPostNavigate: () -> Unit,
+    onRegisterCouponNavigate: () -> Unit,
     screenType: String?
 ) {
     val viewModel: StoreManagementViewModel = hiltViewModel()
@@ -25,6 +27,7 @@ fun StoreManagementRoute(
     val currentScreenType = uiState.screenType
 
     LaunchedEffect(Unit) {
+        viewModel.loadCouponGuide()
         screenType?.let {
             val defaultScreenType = when(screenType){
                 REVIEW_LIST -> ScreenType.REVIEW_INFO
@@ -65,6 +68,8 @@ fun StoreManagementRoute(
         BackHandler {
             when (currentScreenType) {
                 ScreenType.REVIEW_INFO,
+                ScreenType.STORE_POST,
+                ScreenType.COUPON,
                 ScreenType.PROFILE_EDIT,
                 ScreenType.BUSINESS_SCHEDULE_EDIT,
                 ScreenType.MENU_MANAGEMENT,
@@ -90,7 +95,10 @@ fun StoreManagementRoute(
         feedbackFulls = uiState.feedbackFulls,
         feedbackTypes = uiState.feedbackTypes,
         feedbackSpecific = feedbackSpecific,
+        showCouponNewBadge = uiState.showCouponNewBadge,
+        showCouponTooltip = uiState.showCouponTooltip,
         onScreenTypeUpdate = viewModel::updateScreenType,
+        onCouponTabClick = viewModel::onCouponTabClicked,
         onDialogTypeUpdate = viewModel::updateDialogType,
         onBossStorePatch = viewModel::patchBossStore,
         onMenuPatch = viewModel::patchMenu,
@@ -100,6 +108,8 @@ fun StoreManagementRoute(
         onLocationDescriptionUpdate = viewModel::updateDaysLocationDescription,
         onScheduleDayUpdate = viewModel::updateScheduleDay,
         onAllReviewNavigate = onAllReviewNavigate,
+        onUploadPostNavigate = onUploadPostNavigate,
+        onRegisterCouponNavigate = onRegisterCouponNavigate,
         onStickerClick = viewModel::putStickersReplace
     )
 }

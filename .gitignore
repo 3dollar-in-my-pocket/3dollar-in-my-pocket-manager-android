@@ -408,3 +408,6 @@ app/ThreeDollarsManager.jks
 *.salive
 
 *.flat
+
+# 모듈 의존 방향 검사 베이스라인 (scripts/check-module-deps.sh)
+!scripts/module-deps-baseline.txt
