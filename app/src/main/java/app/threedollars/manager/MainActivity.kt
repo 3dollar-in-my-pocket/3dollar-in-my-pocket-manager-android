@@ -170,7 +170,7 @@ fun NavigationGraph(navigator: MainNavigator, calculateBottomPadding: Dp, screen
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
-        homeNavGraph()
+        homeNavGraph(navController = navigator.navController)
 
         storeManagementNavGraph(
             navController = navigator.navController,

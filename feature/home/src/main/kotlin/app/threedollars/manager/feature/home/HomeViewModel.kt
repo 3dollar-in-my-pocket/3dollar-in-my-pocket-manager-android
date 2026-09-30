@@ -3,9 +3,11 @@ package app.threedollars.manager.feature.home
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
+import app.threedollars.common.Resource
 import app.threedollars.common.ext.toStringDefault
 import app.threedollars.domain.usecase.BossStoreOpenUseCase
 import app.threedollars.domain.usecase.BossStoreRetrieveUseCase
+import app.threedollars.domain.usecase.GetStorePreferenceUseCase
 import app.threedollars.manager.feature.home.model.dtoToVo
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,7 @@ import javax.inject.Inject
 internal class HomeViewModel @Inject constructor(
     private val bossStoreRetrieveUseCase: BossStoreRetrieveUseCase,
     private val bossStoreOpenUseCase: BossStoreOpenUseCase,
+    private val getStorePreferenceUseCase: GetStorePreferenceUseCase,
 ) : BaseViewModel() {
 
     private val _stateFlow: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
@@ -43,9 +46,40 @@ internal class HomeViewModel @Inject constructor(
                                 bossStoreRetrieveMe = data.dtoToVo()
                             )
                         }
+                        refreshPreference()
                     }
                 }
             }
+        }
+    }
+
+    fun refreshPreference() {
+        val storeId = _stateFlow.value.bossStoreRetrieveMe.bossStoreId
+        if (storeId.isEmpty()) return
+        viewModelScope.launch(exceptionHandler) {
+            val result = getStorePreferenceUseCase(storeId = storeId)
+            val preference = result.data
+            if (result is Resource.Success && preference != null) {
+                _stateFlow.update { state ->
+                    state.copy(autoOpenClose = state.autoOpenClose.withPreference(preference))
+                }
+            }
+        }
+    }
+
+    fun onShutterClick() {
+        when (_stateFlow.value.autoOpenClose.shutterAction) {
+            ShutterAction.SHOW_AUTO_OPEN_CLOSE_ALERT -> _stateFlow.update { state ->
+                state.copy(autoOpenClose = state.autoOpenClose.onShutterClick())
+            }
+
+            ShutterAction.CLOSE_STORE -> storeClosed()
+        }
+    }
+
+    fun dismissAutoOpenCloseAlert() {
+        _stateFlow.update { state ->
+            state.copy(autoOpenClose = state.autoOpenClose.dismissAlert())
         }
     }
 
@@ -96,7 +130,7 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun storeClosed() {
+    private fun storeClosed() {
         viewModelScope.launch(exceptionHandler) {
             val bossStoreId = _stateFlow.value.bossStoreRetrieveMe.bossStoreId.toStringDefault()
 

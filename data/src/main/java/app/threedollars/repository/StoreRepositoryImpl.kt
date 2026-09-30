@@ -13,6 +13,7 @@ import app.threedollars.data.request.accountNumbersRequestOf
 import app.threedollars.data.request.contactNumbersRequestOf
 import app.threedollars.data.request.deleteAccountNumbersRequest
 import app.threedollars.data.response.toDto
+import app.threedollars.data.request.withRepresentativeImages
 import app.threedollars.domain.dto.AppearanceDaysRequestDto
 import app.threedollars.domain.dto.BossEnumsDto
 import app.threedollars.domain.dto.BossStoreRetrieveAroundDto
@@ -80,6 +81,7 @@ internal class StoreRepositoryImpl @Inject constructor(
         accountHolder: String?,
         accountBank: String?,
         contactNumber: String?,
+        representativeImageUrls: List<String>?,
     ): Flow<Resource<String>> {
         val appearanceDaysModel = appearanceDays?.map {
             AppearanceDaysRequestModel(it.dayOfTheWeek, it.startTime, it.endTime, it.locationDescription)
@@ -99,7 +101,7 @@ internal class StoreRepositoryImpl @Inject constructor(
             accountNumbers = accountNumbersRequestOf(accountNumber, accountHolder, accountBank),
             contactNumbers = contactNumbersRequestOf(contactNumber)
         )
-        return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest)
+        return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest.withRepresentativeImages(representativeImageUrls))
     }
 
     override fun deleteBossStoreAccountNumbers(bossStoreId: String): Flow<Resource<String>> =

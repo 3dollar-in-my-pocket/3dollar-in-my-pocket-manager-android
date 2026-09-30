@@ -36,6 +36,7 @@ import app.threedollars.common.ext.toStringDefault
 import app.threedollars.manager.feature.home.components.HomeBottomOff
 import app.threedollars.manager.feature.home.components.HomeBottomOn
 import app.threedollars.manager.feature.home.components.MapView
+import app.threedollars.manager.feature.home.components.StorePreferenceButton
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveAroundVo
 import app.threedollars.manager.feature.home.model.BossStoreRetrieveVo
 import com.naver.maps.geometry.LatLng
@@ -51,7 +52,8 @@ internal fun HomeScreen(
     cameraPositionState: CameraPositionState,
     bossStoreRetrieveArounds: List<BossStoreRetrieveAroundVo>,
     onStoreStateUpdate: (StoreStateType, LatLng) -> Unit,
-    onCurrentLocationClick: () -> Unit
+    onCurrentLocationClick: () -> Unit,
+    onPreferenceClick: () -> Unit,
 ) {
 
     var isFoodTruckCheck by remember { mutableStateOf(false) }
@@ -71,21 +73,29 @@ internal fun HomeScreen(
                 bossStoreArounds = bossStoreRetrieveArounds,
                 openStatus = bossStoreRetrieveMe.openStatus.status
             )
-            Text(
-                text = address,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center,
-                    color = Color.Black
-                ),
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, top = 44.dp)
-                    .height(56.dp)
-                    .background(Color.White, shape = RoundedCornerShape(16.dp))
-                    .wrapContentHeight(Alignment.CenterVertically),
-            )
+                    .padding(start = 24.dp, end = 24.dp, top = 44.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = address,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp)
+                        .background(Color.White, shape = RoundedCornerShape(16.dp))
+                        .wrapContentHeight(Alignment.CenterVertically),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                StorePreferenceButton(onClick = onPreferenceClick)
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

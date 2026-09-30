@@ -1,0 +1,18 @@
+{
+  "storeId": "store-1",
+  "bossStoreId": "store-1",
+  "isOwner": true,
+  "name": "붕어빵 트럭",
+  "imageUrl": "https://cdn.threedollars.co.kr/store/first.png",
+  "representativeImages": [
+    { "imageUrl": "https://cdn.threedollars.co.kr/store/first.png", "width": 1080, "height": 720 },
+    { "imageUrl": "https://cdn.threedollars.co.kr/store/second.png", "width": null, "height": null },
+    { "imageUrl": "https://cdn.threedollars.co.kr/store/third.png" }
+  ],
+  "menus": [],
+  "categories": [],
+  "accountNumbers": [],
+  "contactsNumbers": [
+    { "number": "010-1234-5678", "description": null }
+  ]
+}

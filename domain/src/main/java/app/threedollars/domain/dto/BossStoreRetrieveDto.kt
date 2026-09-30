@@ -7,6 +7,7 @@ data class BossStoreRetrieveDto(
     val location: LocationDto? = null,
     val address: AddressDto = AddressDto(),
     val imageUrl: String? = null,
+    val representativeImages: List<StoreImageDto> = listOf(),
     val introduction: String? = null,
     val snsUrl: String? = null,
     val menus: List<MenusDto> = listOf(),

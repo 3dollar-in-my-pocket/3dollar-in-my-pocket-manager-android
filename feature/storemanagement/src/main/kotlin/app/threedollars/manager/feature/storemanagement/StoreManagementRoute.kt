@@ -114,6 +114,7 @@ fun StoreManagementRoute(
         onBossStorePatch = viewModel::patchBossStore,
         onAccountNumbersDelete = viewModel::deleteAccountNumbers,
         onMenuPatch = viewModel::patchMenu,
+        onProfileSave = viewModel::saveProfile,
         onStoreCategorySelected = viewModel::categorySelection,
         onStartTimeUpdate = viewModel::updateDaysStartTime,
         onEndTimeUpdate = viewModel::updateDaysEndTime,
