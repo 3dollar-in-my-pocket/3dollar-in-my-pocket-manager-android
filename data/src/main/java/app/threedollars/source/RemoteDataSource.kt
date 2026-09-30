@@ -7,6 +7,7 @@ import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CouponRegisterRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.request.StoreMessageCreateRequest
 import app.threedollars.data.request.StorePostRequest
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
@@ -24,6 +25,8 @@ import app.threedollars.data.response.ImageUploadResponse
 import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreMessageCreateResponse
+import app.threedollars.data.response.StoreMessageListResponse
 import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StorePostCreateResponse
 import app.threedollars.data.response.StorePostListResponse
@@ -197,4 +200,8 @@ internal interface RemoteDataSource {
     suspend fun postCoupon(storeId: String, nonce: String, request: CouponRegisterRequest): Resource<CouponResponse>
 
     suspend fun putCouponClose(storeId: String, couponId: String): Resource<String>
+
+    suspend fun getStoreMessages(storeId: String, size: Int, cursor: String?): Resource<StoreMessageListResponse>
+
+    suspend fun postStoreMessage(storeId: String, nonce: String, request: StoreMessageCreateRequest): Resource<StoreMessageCreateResponse>
 }

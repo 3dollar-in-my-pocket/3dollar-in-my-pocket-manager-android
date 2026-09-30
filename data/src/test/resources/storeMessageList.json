@@ -1,0 +1,27 @@
+{
+  "messages": {
+    "contents": [
+      {
+        "messageId": "message-2",
+        "body": "여러분 제가 왔습니다!\n여기는 망원 합정 사이 지에스 바로 앞!",
+        "isOwner": true,
+        "createdAt": "2024-10-24T20:56:00",
+        "updatedAt": "2024-10-24T20:56:00"
+      },
+      {
+        "messageId": "message-1",
+        "body": "오늘은 쉬는 날이에요",
+        "isOwner": true,
+        "createdAt": "2024-10-23T10:00:00",
+        "updatedAt": "2024-10-23T10:00:00"
+      }
+    ],
+    "cursor": { "nextCursor": "cursor-1", "hasMore": true }
+  },
+  "policy": {
+    "maxQuota": 1,
+    "remainingQuota": 0,
+    "canSendNow": false,
+    "nextAvailableSendDateTime": "2024-10-25T20:56:00"
+  }
+}
