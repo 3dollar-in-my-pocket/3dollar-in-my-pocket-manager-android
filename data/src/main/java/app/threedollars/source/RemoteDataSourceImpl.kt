@@ -13,6 +13,7 @@ import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.response.AppStatusResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -48,6 +49,10 @@ import javax.inject.Inject
 
 internal class RemoteDataSourceImpl @Inject constructor(private val networkService: NetworkService) :
     RemoteDataSource {
+    override suspend fun getAppStatus(): Resource<AppStatusResponse> = safeApiCall {
+        networkService.getAppStatus()
+    }
+
     override fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>> = flow {
         emit(safeApiCall { networkService.login(loginRequest) })
     }
