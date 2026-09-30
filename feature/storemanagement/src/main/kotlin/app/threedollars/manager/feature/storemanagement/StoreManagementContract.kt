@@ -27,12 +27,14 @@ internal data class StoreManagementState(
     val selectedReviewId: String = "",
     val showCouponNewBadge: Boolean = false,
     val showCouponTooltip: Boolean = false,
+    val showMessageTooltip: Boolean = false,
 )
 
 internal enum class ScreenType {
     STORE_INFO,
     REVIEW_INFO,
     STORE_POST,
+    MESSAGE,
     COUPON,
     FEEDBACK,
     PROFILE_EDIT,

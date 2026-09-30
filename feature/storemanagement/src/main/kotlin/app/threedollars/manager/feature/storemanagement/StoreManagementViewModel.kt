@@ -16,6 +16,7 @@ import app.threedollars.domain.usecase.FeedbackUseCase
 import app.threedollars.domain.usecase.GetStoreReviewListUseCase
 import app.threedollars.domain.usecase.GetStoreReviewPagingUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
+import app.threedollars.domain.usecase.MessageGuideUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
 import app.threedollars.domain.usecase.PutStickersReplaceUseCase
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
@@ -55,6 +56,7 @@ internal class StoreManagementViewModel @Inject constructor(
     private val getStoreReviewPagingUseCase: GetStoreReviewPagingUseCase,
     private val putStickersReplaceUseCase: PutStickersReplaceUseCase,
     private val couponGuideUseCase: CouponGuideUseCase,
+    private val messageGuideUseCase: MessageGuideUseCase,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<StoreManagementState> =
@@ -100,6 +102,19 @@ internal class StoreManagementViewModel @Inject constructor(
         _stateFlow.update { it.copy(showCouponTooltip = false) }
         viewModelScope.launch { couponGuideUseCase.markTooltipShown() }
         updateScreenType(ScreenType.COUPON)
+    }
+
+    fun loadMessageGuide() {
+        viewModelScope.launch {
+            val tooltipShown = messageGuideUseCase.isSubTabTooltipShown().first()
+            _stateFlow.update { it.copy(showMessageTooltip = !tooltipShown) }
+        }
+    }
+
+    fun onMessageTabClicked() {
+        _stateFlow.update { it.copy(showMessageTooltip = false) }
+        viewModelScope.launch { messageGuideUseCase.markSubTabTooltipShown() }
+        updateScreenType(ScreenType.MESSAGE)
     }
 
     fun updateScreenType(screenType: ScreenType) {

@@ -27,6 +27,7 @@ internal fun ReviewContent(
     feedbackFulls: List<FeedbackFullVo>,
     feedbackTypes: List<FeedbackTypesVo>,
     onScreenTypeUpdate: (ScreenType) -> Unit,
+    onSendMessageClick: () -> Unit,
     onAllReviewNavigate: (String?) -> Unit,
     onStickerClick: (String, String) -> Unit,
 ) {
@@ -36,7 +37,8 @@ internal fun ReviewContent(
             .verticalScroll(rememberScrollState())
     ) {
         BookmarkCardView(
-            subscriberCount = subscriberCount
+            subscriberCount = subscriberCount,
+            onSendMessageClick = onSendMessageClick,
         )
 
         Spacer(
