@@ -19,6 +19,7 @@ import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
 import app.threedollars.domain.usecase.PutStickersReplaceUseCase
 import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
+import app.threedollars.manager.feature.storemanagement.components.profile.ProfileSaveRequest
 import app.threedollars.manager.feature.storemanagement.model.AppearanceDaysVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
 import app.threedollars.manager.feature.storemanagement.model.OpeningHoursVo
@@ -28,9 +29,12 @@ import app.threedollars.manager.feature.storemanagement.model.toDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
@@ -61,6 +65,9 @@ internal class StoreManagementViewModel @Inject constructor(
         MutableStateFlow(StoreManagementState())
 
     val stateFlow: StateFlow<StoreManagementState> = _stateFlow.asStateFlow()
+
+    private val _toastFlow = MutableSharedFlow<Int>()
+    val toastFlow: SharedFlow<Int> = _toastFlow.asSharedFlow()
 
     private val _feedbackSpecific = MutableStateFlow<Flow<PagingData<ContentsDto>>>(emptyFlow())
 
@@ -544,6 +551,65 @@ internal class StoreManagementViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun saveProfile(request: ProfileSaveRequest) {
+        if (_stateFlow.value.dialogType == DialogType.LOADING_DIALOG) return
+        _stateFlow.update { it.copy(dialogType = DialogType.LOADING_DIALOG, errorMessage = null) }
+        viewModelScope.launch {
+            val imageUrls = if (request.patch.isPhotoChanged) {
+                uploadRepresentativeImages(request) ?: return@launch
+            } else {
+                null
+            }
+            bossStoreUseCase.patchBossStore(
+                bossStoreId = request.bossStoreId,
+                categoriesIds = request.patch.categoriesIds,
+                name = request.patch.name,
+                snsUrl = request.patch.snsUrl,
+                contactNumber = request.patch.contactNumber,
+                representativeImageUrls = imageUrls,
+            ).collect {
+                if (it.code == "200") {
+                    _toastFlow.emit(R.string.store_info_updated_toast)
+                    _stateFlow.update { state ->
+                        state.copy(
+                            screenType = ScreenType.STORE_INFO,
+                            dialogType = DialogType.NONE
+                        )
+                    }
+                } else {
+                    showProfileSaveError(it.errorMessage)
+                }
+            }
+        }
+    }
+
+    private suspend fun uploadRepresentativeImages(request: ProfileSaveRequest): List<String>? {
+        if (request.newPhotoBodies.isEmpty()) {
+            return request.photos.resolveImageUrls(listOf())
+        }
+        val result = imageUploadUseCase.postImageUploadBulk(
+            fileType = "BOSS_STORE_IMAGE",
+            requestBodyList = request.newPhotoBodies
+        ).first()
+        val uploadedUrls = result.data?.mapNotNull { it.imageUrl }
+        val imageUrls = if (result.code == "200" && uploadedUrls != null) {
+            request.photos.resolveImageUrls(uploadedUrls)
+        } else {
+            null
+        }
+        if (imageUrls == null) showProfileSaveError(result.errorMessage)
+        return imageUrls
+    }
+
+    private fun showProfileSaveError(errorMessage: String?) {
+        _stateFlow.update { state ->
+            state.copy(
+                dialogType = DialogType.ERROR_DIALOG,
+                errorMessage = errorMessage
+            )
         }
     }
 

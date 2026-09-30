@@ -44,6 +44,7 @@ import app.threedollars.manager.feature.storemanagement.components.account.Accou
 import app.threedollars.manager.feature.storemanagement.components.coupon.CouponTab
 import app.threedollars.manager.feature.storemanagement.components.menumanagement.MenuManagementScreen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
+import app.threedollars.manager.feature.storemanagement.components.profile.ProfileSaveRequest
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.review.ReviewContent
 import app.threedollars.manager.feature.storemanagement.components.storepost.StorePostTab
@@ -78,6 +79,7 @@ internal fun StoreManagementScreen(
     onDialogTypeUpdate: (DialogType) -> Unit,
     onBossStorePatch: (BossStorePatchModel) -> Unit,
     onMenuPatch: (BossStorePatchModel) -> Unit,
+    onProfileSave: (ProfileSaveRequest) -> Unit,
     onStoreCategorySelected: (Int) -> Unit,
     onStartTimeUpdate: (String, String) -> Unit,
     onEndTimeUpdate: (String, String) -> Unit,
@@ -168,8 +170,9 @@ internal fun StoreManagementScreen(
                         bossStoreRetrieve = bossStoreRetrieve,
                         storeCategories = storeCategories,
                         selectedStoreCategories = selectedStoreCategories,
+                        isSaving = dialogType == DialogType.LOADING_DIALOG,
                         onScreenTypeUpdate = onScreenTypeUpdate,
-                        onBossStorePatch = onBossStorePatch,
+                        onProfileSave = onProfileSave,
                         onStoreCategorySelected = onStoreCategorySelected
                     )
                 }

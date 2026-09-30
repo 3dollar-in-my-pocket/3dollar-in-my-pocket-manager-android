@@ -3,6 +3,7 @@ package app.threedollars.manager.feature.storemanagement.components.profile
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,7 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.TextRange
@@ -38,33 +41,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.threedollars.common.BaseDialog
 import app.threedollars.common.ext.toStringDefault
+import app.threedollars.common.ui.CircleProgressBar
 import app.threedollars.common.ui.FlowRow
 import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Green
 import app.threedollars.common.ui.MildGreen
 import app.threedollars.common.util.PhoneNumberUtils
-import app.threedollars.manager.feature.storemanagement.DialogType
+import app.threedollars.manager.feature.storemanagement.ContentUriToRequestBody
 import app.threedollars.manager.feature.storemanagement.R
 import app.threedollars.manager.feature.storemanagement.ScreenType
-import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
 import app.threedollars.manager.feature.storemanagement.model.BossStoreRetrieveVo
 import app.threedollars.manager.feature.storemanagement.model.StoreCategoriesVo
-import okhttp3.RequestBody
 
 @Composable
 internal fun ProfileEditScreen(
     bossStoreRetrieve: BossStoreRetrieveVo,
     storeCategories: List<StoreCategoriesVo>,
     selectedStoreCategories: List<String>,
+    isSaving: Boolean,
     onScreenTypeUpdate: (ScreenType) -> Unit,
-    onBossStorePatch: (BossStorePatchModel) -> Unit,
+    onProfileSave: (ProfileSaveRequest) -> Unit,
     onStoreCategorySelected: (Int) -> Unit,
 ) {
-    var isEnable by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     var name by remember { mutableStateOf(bossStoreRetrieve.name.toStringDefault()) }
-    var imageRequestBody by remember { mutableStateOf<RequestBody?>(null) }
+    var photoState by remember(bossStoreRetrieve.representativeImageUrls) {
+        mutableStateOf(RepresentativePhotoState.from(bossStoreRetrieve.representativeImageUrls))
+    }
     var sns by remember { mutableStateOf(bossStoreRetrieve.snsUrl.toStringDefault()) }
     var contactNumberValue by remember {
         val initialText = bossStoreRetrieve.contactNumbers.firstOrNull()?.number.toStringDefault()
@@ -75,72 +80,87 @@ internal fun ProfileEditScreen(
             )
         )
     }
-    val imageUrl by remember { mutableStateOf(bossStoreRetrieve.imageUrl.toStringDefault()) }
-
     val originalContactNumber = bossStoreRetrieve.contactNumbers.firstOrNull()?.number.toStringDefault()
     val isContactNumberChanged = contactNumberValue.text != originalContactNumber
     val isContactNumberValid = contactNumberValue.text.isEmpty() || PhoneNumberUtils.isValidPhoneNumber(contactNumberValue.text)
+    val contactNumberToSave = when {
+        !isContactNumberChanged -> originalContactNumber
+        PhoneNumberUtils.isValidPhoneNumber(contactNumberValue.text) -> PhoneNumberUtils.toApiFormat(contactNumberValue.text)
+        else -> ""
+    }
 
-    isEnable = ((name.isNotEmpty() && name != bossStoreRetrieve.name) ||
-            (selectedStoreCategories.isNotEmpty() && selectedStoreCategories != bossStoreRetrieve.categories.map { it.categoryId }) ||
-            imageRequestBody != null ||
-            sns != bossStoreRetrieve.snsUrl ||
-            isContactNumberChanged) && isContactNumberValid
+    val originalForm = ProfileEditForm(
+        name = bossStoreRetrieve.name,
+        snsUrl = bossStoreRetrieve.snsUrl,
+        categoryIds = bossStoreRetrieve.categories.map { it.categoryId },
+        contactNumber = originalContactNumber,
+        photos = RepresentativePhotoState.from(bossStoreRetrieve.representativeImageUrls),
+    )
+    val patch = ProfileEditForm(
+        name = name,
+        snsUrl = sns,
+        categoryIds = selectedStoreCategories,
+        contactNumber = contactNumberToSave,
+        photos = photoState,
+    ).toPatch(original = originalForm)
 
+    val isEnable = (patch.hasChanges || isContactNumberChanged) && isContactNumberValid && photoState.count > 0 && !isSaving
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .background(Gray0)
-    ) {
-        ProfileEditTop(
-            onScreenTypeUpdate = onScreenTypeUpdate
-        )
-        ProfileEditContents(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(
-                        topStart = 32.dp,
-                        topEnd = 32.dp
-                    )
-                ),
-            storeCategories = storeCategories,
-            name = name,
-            imageUrl = imageUrl,
-            sns = sns,
-            contactNumberValue = contactNumberValue,
-            onChangeName = { name = it },
-            onChangeUri = { imageRequestBody = it },
-            onChangeSNS = { sns = it },
-            onChangeContactNumber = { contactNumberValue = it },
-            onStoreCategorySelected = onStoreCategorySelected
-        )
+                .fillMaxSize(1f)
+                .background(Gray0)
+        ) {
+            ProfileEditTop(
+                onScreenTypeUpdate = onScreenTypeUpdate
+            )
+            ProfileEditContents(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(
+                            topStart = 32.dp,
+                            topEnd = 32.dp
+                        )
+                    ),
+                storeCategories = storeCategories,
+                name = name,
+                photoState = photoState,
+                sns = sns,
+                contactNumberValue = contactNumberValue,
+                onChangeName = { name = it },
+                onPhotosAdd = { photoState = photoState.add(it) },
+                onPhotoDelete = { photoState = photoState.remove(it) },
+                onChangeSNS = { sns = it },
+                onChangeContactNumber = { contactNumberValue = it },
+                onStoreCategorySelected = onStoreCategorySelected
+            )
 
-        ProfileEditBottom(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp),
-            isEnable = isEnable,
-            onClick = {
-                val validContactNumber = if (PhoneNumberUtils.isValidPhoneNumber(contactNumberValue.text)) {
-                    PhoneNumberUtils.toApiFormat(contactNumberValue.text)
-                } else ""
-
-                onBossStorePatch(
-                    BossStorePatchModel(
-                        bossStoreId = bossStoreRetrieve.bossStoreId,
-                        name = name,
-                        snsUrl = sns,
-                        categoriesIds = selectedStoreCategories,
-                        imageRequestBody = imageRequestBody,
-                        contactNumber = validContactNumber
+            ProfileEditBottom(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                isEnable = isEnable,
+                onClick = {
+                    onProfileSave(
+                        ProfileSaveRequest(
+                            bossStoreId = bossStoreRetrieve.bossStoreId,
+                            patch = patch,
+                            photos = photoState,
+                            newPhotoBodies = photoState.uploadTargets.map { photo ->
+                                ContentUriToRequestBody(context, Uri.parse(photo.uri))
+                            },
+                        )
                     )
-                )
-            }
-        )
+                }
+            )
+        }
+        if (isSaving) {
+            CircleProgressBar(modifier = Modifier.align(Alignment.Center))
+        }
     }
 }
 
@@ -202,15 +222,16 @@ fun ProfileEditBottom(
 
 
 @Composable
-fun ProfileEditContents(
+internal fun ProfileEditContents(
     modifier: Modifier = Modifier,
     storeCategories: List<StoreCategoriesVo>,
     name: String,
-    imageUrl: String,
+    photoState: RepresentativePhotoState,
     sns: String,
     contactNumberValue: TextFieldValue,
     onChangeName: (String) -> Unit,
-    onChangeUri: (RequestBody) -> Unit,
+    onPhotosAdd: (List<String>) -> Unit,
+    onPhotoDelete: (Int) -> Unit,
     onChangeSNS: (String) -> Unit,
     onChangeContactNumber: (TextFieldValue) -> Unit,
     onStoreCategorySelected: (Int) -> Unit,
@@ -233,12 +254,13 @@ fun ProfileEditContents(
             onStoreCategorySelected = onStoreCategorySelected
         )
         ProFileTitleTextContent(
-            titleText = "가게 인증 사진",
+            titleText = stringResource(id = R.string.store_photo_section_title),
             isExplanationText = false
         )
-        ProfileCertificationPhoto(
-            defaultImage = Uri.parse(imageUrl),
-            onChangeUri = onChangeUri
+        RepresentativePhotoSection(
+            state = photoState,
+            onPhotosAdd = onPhotosAdd,
+            onPhotoDelete = onPhotoDelete
         )
         ProFileTitleTextContent(
             titleText = "SNS",
