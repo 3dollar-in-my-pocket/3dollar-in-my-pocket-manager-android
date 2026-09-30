@@ -3,11 +3,10 @@ package app.threedollars.manager.sign.viewmodel
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.common.util.catchOrCancel
-import app.threedollars.domain.usecase.AppConfigUseCase
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
-import app.threedollars.manager.BuildConfig
+import app.threedollars.domain.usecase.GetAppStatusUseCase
 import app.threedollars.manager.sign.LoginNavItem
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +26,7 @@ class SplashViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val bossAccountUseCase: BossAccountUseCase,
     private val bossDeviceUseCase: BossDeviceUseCase,
-    private val appConfigUseCase: AppConfigUseCase
+    private val getAppStatusUseCase: GetAppStatusUseCase,
 ) : BaseViewModel() {
 
     private val _effect = Channel<SplashEffect>(
@@ -42,18 +41,27 @@ class SplashViewModel @Inject constructor(
     }
 
     init {
-        saveAppConfig()
-        autoLogin()
+        checkAppStatus()
     }
 
     fun retry() {
-        autoLogin()
+        checkAppStatus()
     }
 
-    private fun saveAppConfig() {
+    private fun checkAppStatus() {
         viewModelScope.launch {
-            appConfigUseCase.saveApplicationId(BuildConfig.APPLICATION_ID).collect()
-            appConfigUseCase.saveVersionName(BuildConfig.VERSION_NAME).collect()
+            catchOrCancel(
+                onCatch = {
+                    _effect.send(SplashEffect.OnUnexpectedError)
+                }
+            ) {
+                when (val result = getAppStatusUseCase().toAppStatusResult()) {
+                    AppStatusResult.Proceed -> autoLogin()
+                    is AppStatusResult.ForceUpdate -> _effect.send(SplashEffect.OnForceUpdate(result))
+                    AppStatusResult.Maintenance -> Unit
+                    AppStatusResult.Error -> _effect.send(SplashEffect.OnUnexpectedError)
+                }
+            }
         }
     }
 

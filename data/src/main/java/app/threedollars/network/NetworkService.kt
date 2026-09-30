@@ -12,6 +12,7 @@ import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.response.AppStatusResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -51,6 +52,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface NetworkService {
+
+    // app-controller
+    @GET("v1/app/status")
+    suspend fun getAppStatus(): Response<BaseResponse<AppStatusResponse>>
 
     // auth-controller
     @POST("v1/auth/login")
