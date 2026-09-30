@@ -32,7 +32,8 @@ interface StoreRepository {
         accountNumber: String? = null,
         accountHolder: String? = null,
         accountBank: String? = null,
-        contactNumber: String? = null
+        contactNumber: String? = null,
+        representativeImageUrls: List<String>? = null,
     ): Flow<Resource<String>>
 
     // boss-store-open-controller

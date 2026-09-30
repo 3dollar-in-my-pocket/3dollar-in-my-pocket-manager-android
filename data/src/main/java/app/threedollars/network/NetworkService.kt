@@ -12,6 +12,8 @@ import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.request.StorePreferenceRequest
+import app.threedollars.data.response.StorePreferenceResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -282,6 +284,18 @@ internal interface NetworkService {
     suspend fun deleteStorePost(
         @Path("storeId") storeId: String,
         @Path("postId") postId: String,
+    ): Response<BaseResponse<String>>
+
+    // store-preference-controller
+    @GET("v1/store/{storeId}/preference")
+    suspend fun getStorePreference(
+        @Path("storeId") storeId: String,
+    ): Response<BaseResponse<StorePreferenceResponse>>
+
+    @PATCH("v1/store/{storeId}/preference")
+    suspend fun patchStorePreference(
+        @Path("storeId") storeId: String,
+        @Body storePreferenceRequest: StorePreferenceRequest,
     ): Response<BaseResponse<String>>
 
     // coupon-controller

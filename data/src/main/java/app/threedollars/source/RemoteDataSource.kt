@@ -8,6 +8,8 @@ import app.threedollars.data.request.CouponRegisterRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.request.StorePreferenceRequest
+import app.threedollars.data.response.StorePreferenceResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -191,6 +193,10 @@ internal interface RemoteDataSource {
     suspend fun patchStorePost(storeId: String, postId: String, request: StorePostRequest): Resource<StorePostResponse>
 
     suspend fun deleteStorePost(storeId: String, postId: String): Resource<String>
+
+    suspend fun getStorePreference(storeId: String): Resource<StorePreferenceResponse>
+
+    suspend fun patchStorePreference(storeId: String, request: StorePreferenceRequest): Resource<String>
 
     suspend fun getCoupons(storeId: String, statuses: List<String>, size: Int, cursor: String?): Resource<CouponListResponse>
 

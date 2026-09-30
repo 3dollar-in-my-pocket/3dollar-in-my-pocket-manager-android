@@ -26,4 +26,6 @@ data class BossStoreRequest(
     val accountNumbers: List<AccountNumberRequest>? = null,
     @SerialName("contactsNumbers")
     val contactNumbers: List<ContactNumberRequest>? = null,
+    @SerialName("representativeImages")
+    val representativeImages: List<StoreImageRequest>? = null,
 )

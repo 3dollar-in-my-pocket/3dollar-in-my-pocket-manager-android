@@ -4,6 +4,8 @@ import app.threedollars.domain.repository.AppConfigRepository
 import app.threedollars.domain.repository.CouponRepository
 import app.threedollars.domain.repository.ReviewRepository
 import app.threedollars.domain.repository.StorePostRepository
+import app.threedollars.domain.repository.StorePreferenceRepository
+import app.threedollars.repository.StorePreferenceRepositoryImpl
 import app.threedollars.domain.repository.StoreRepository
 import app.threedollars.domain.repository.UserRepository
 import app.threedollars.repository.AppConfigRepositoryImpl
@@ -45,4 +47,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     internal abstract fun provideCouponRepository(impl: CouponRepositoryImpl): CouponRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun provideStorePreferenceRepository(impl: StorePreferenceRepositoryImpl): StorePreferenceRepository
 }
