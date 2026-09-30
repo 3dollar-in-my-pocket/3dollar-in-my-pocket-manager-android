@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -39,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +67,7 @@ import app.threedollars.manager.feature.storemanagement.model.BankTypeVo
 import app.threedollars.manager.feature.storemanagement.model.BankVo
 import app.threedollars.manager.feature.storemanagement.model.BossStorePatchModel
 import app.threedollars.manager.feature.storemanagement.model.BossStoreRetrieveVo
+import app.threedollars.manager.feature.storemanagement.model.hasRegisteredAccount
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +77,10 @@ internal fun AccountScreen(
     bankTypes: List<BankTypeVo>,
     onScreenTypeUpdate: (ScreenType) -> Unit,
     onBossStorePatch: (BossStorePatchModel) -> Unit,
+    onAccountNumbersDelete: () -> Unit,
 ) {
+    val hasRegisteredAccount = bossStoreRetrieve.accountNumbers.hasRegisteredAccount()
+    var isShowDeleteDialog by remember { mutableStateOf(false) }
     var accountNumber by remember { mutableStateOf(bossStoreRetrieve.accountNumbers.firstOrNull()?.accountNumber.toStringDefault()) }
     var accountHolder by remember { mutableStateOf(bossStoreRetrieve.accountNumbers.firstOrNull()?.accountHolder.toStringDefault()) }
     var accountBank by remember { mutableStateOf(bossStoreRetrieve.accountNumbers.firstOrNull()?.bankVo) }
@@ -106,6 +113,9 @@ internal fun AccountScreen(
                     onChangeAccountHolder = { accountHolder = it },
                     onIsShowDialogUpdate = { isShowDialog = it }
                 )
+                if (hasRegisteredAccount) {
+                    AccountDeleteButton(onClick = { isShowDeleteDialog = true })
+                }
             }
             BottomContent(
                 isEnable = (accountBank != null) && (accountHolder.isNotEmpty()) && (accountNumber.isNotEmpty()),
@@ -119,6 +129,15 @@ internal fun AccountScreen(
                         )
                     )
                 }
+            )
+        }
+        if (isShowDeleteDialog) {
+            AccountDeleteDialog(
+                onDelete = {
+                    isShowDeleteDialog = false
+                    onAccountNumbersDelete()
+                },
+                onDismiss = { isShowDeleteDialog = false }
             )
         }
         if (isShowDialog) {
@@ -265,6 +284,35 @@ private fun BodyContent(
             accountHolder = accountHolder,
             onChangeAccountHolder = onChangeAccountHolder
         )
+    }
+}
+
+@Composable
+private fun AccountDeleteButton(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp, start = 24.dp, end = 24.dp),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        Row(
+            modifier = Modifier.clickable(onClick = onClick),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.account_delete_button),
+                fontSize = 14.sp,
+                color = Gray50,
+            )
+            Icon(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(16.dp),
+                painter = painterResource(id = R.drawable.ic_delete),
+                contentDescription = null,
+                tint = Gray50,
+            )
+        }
     }
 }
 

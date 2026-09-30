@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_delete_button">계좌정보 삭제</string>
+    <string name="account_delete_dialog_title">계좌정보를 삭제할까요?</string>
+    <string name="account_delete_dialog_message">삭제 시 고객에게 계좌정보가 보이지 않습니다.</string>
+    <string name="account_delete_dialog_delete">삭제</string>
+    <string name="account_delete_dialog_close">닫기</string>
+    <string name="account_delete_toast">계좌번호가 삭제되었습니다</string>
+    <string name="account_empty_placeholder">계좌정보를 등록해주세요!\n손님들에게 바로 계좌번호를 알려줄 수 있습니다.</string>
+</resources>

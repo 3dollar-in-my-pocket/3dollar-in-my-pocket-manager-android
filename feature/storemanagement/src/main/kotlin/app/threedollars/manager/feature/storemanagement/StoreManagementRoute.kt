@@ -4,10 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.threedollars.common.REVIEW_LIST
+import app.threedollars.common.ext.toast
 import app.threedollars.common.ui.DoubleBackExitHandler
 
 
@@ -35,6 +37,11 @@ fun StoreManagementRoute(
             }
             viewModel.updateScreenType(defaultScreenType)
         }
+    }
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.toastFlow.collect { context.toast(it) }
     }
 
     LaunchedEffect(currentScreenType) {
@@ -101,6 +108,7 @@ fun StoreManagementRoute(
         onCouponTabClick = viewModel::onCouponTabClicked,
         onDialogTypeUpdate = viewModel::updateDialogType,
         onBossStorePatch = viewModel::patchBossStore,
+        onAccountNumbersDelete = viewModel::deleteAccountNumbers,
         onMenuPatch = viewModel::patchMenu,
         onStoreCategorySelected = viewModel::categorySelection,
         onStartTimeUpdate = viewModel::updateDaysStartTime,
