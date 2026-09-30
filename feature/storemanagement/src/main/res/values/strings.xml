@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="store_management_tab_message">메세지</string>
+    <string name="message_sub_tab_tooltip">고객님들께 첫 인사를 보내보세요!</string>
+    <string name="message_sub_tab_tooltip_emoji">🙋</string>
+
+    <string name="message_disable_banner">메세지를 보내려면 1명 이상의 북마크 고객이 필요해요.</string>
+    <string name="message_first_title_first">단골 고객님들께</string>
+    <string name="message_first_title_second">북마크를 요청해 보세요!</string>
+    <string name="message_first_title_second_colored">북마크</string>
+    <string name="message_first_title_third">하루에 한 번 메세지를\n전송할 수 있어요.</string>
+    <string name="message_first_title_third_colored">하루에 한 번 메세지</string>
+
+    <string name="message_overview_user_count">%d명</string>
+    <string name="message_overview_title_first">의 고객님에게</string>
+    <string name="message_overview_title_second">오늘의 메세지 보내기</string>
+    <string name="message_overview_description_first">가게를 즐겨찾기한 고객님들께 푸시 메세지가 전송돼요.</string>
+    <string name="message_overview_description_second">하루 1회 횟수 제한이 있으니 신중히 발송해 주세요.</string>
+    <string name="message_overview_description_second_colored">하루 1회</string>
+    <string name="message_overview_description_third">전송 24시간 이후 다음 메세지를 발송할 수 있어요.</string>
+    <string name="message_overview_description_third_colored">24시간 이후 다음 메세지를 발송</string>
+
+    <string name="message_history_header">이전 메세지 모두보기</string>
+    <string name="message_send_button">메세지 전송</string>
+    <string name="message_send_button_countdown">%s 후 발송 가능</string>
+    <string name="message_send_success_toast">💌 고객님께 메세지를 전달드렸어요\n다음 메세지는 24시간 후 전송할 수 있어요</string>
+
+    <string name="message_sending_title">고객님께 전송할 메세지를\n입력해 주세요.</string>
+    <string name="message_sending_description">한 번 전송 후 취소가 불가능하니 신중하게 작성해 주세요!</string>
+    <string name="message_sending_description_colored">취소가 불가능</string>
+    <string name="message_sending_placeholder">항상 찾아주셔서 감사합니다. 현재 강남구 XX 공원에서 영업을 시작하였습니다. 오늘 영업 시간은 7시까지 입니다.</string>
+    <string name="message_sending_counter_limit">/%d</string>
+    <string name="message_sending_warning">*최소 10자에서 최대 100자 이내로 입력해 주세요.</string>
+    <string name="message_sending_submit">오늘의 메세지 전송하기</string>
+    <string name="message_sending_close">닫기</string>
+
+    <string name="message_confirm_title">정말 아래의 메세지로 전송하시나요?\n다시 한 번 확인해 주세요.</string>
+    <string name="message_confirm_preview_emoji">💌</string>
+    <string name="message_confirm_preview_title">내가 즐겨 찾은 가게 %s의 메세지가 도착하였습니다.</string>
+    <string name="message_confirm_send">메세지 전송</string>
+    <string name="message_confirm_rewrite">다시 쓰기</string>
+
+    <string name="message_request_failed">요청에 실패했습니다. 잠시 후 다시 시도해주세요.</string>
+    <string name="message_bookmark_send_message">메세지 보내기</string>
+</resources>

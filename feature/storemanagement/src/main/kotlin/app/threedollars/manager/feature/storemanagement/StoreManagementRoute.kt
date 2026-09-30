@@ -30,6 +30,7 @@ fun StoreManagementRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadCouponGuide()
+        viewModel.loadMessageGuide()
         screenType?.let {
             val defaultScreenType = when(screenType){
                 REVIEW_LIST -> ScreenType.REVIEW_INFO
@@ -76,6 +77,7 @@ fun StoreManagementRoute(
             when (currentScreenType) {
                 ScreenType.REVIEW_INFO,
                 ScreenType.STORE_POST,
+                ScreenType.MESSAGE,
                 ScreenType.COUPON,
                 ScreenType.PROFILE_EDIT,
                 ScreenType.BUSINESS_SCHEDULE_EDIT,
@@ -104,8 +106,10 @@ fun StoreManagementRoute(
         feedbackSpecific = feedbackSpecific,
         showCouponNewBadge = uiState.showCouponNewBadge,
         showCouponTooltip = uiState.showCouponTooltip,
+        showMessageTooltip = uiState.showMessageTooltip,
         onScreenTypeUpdate = viewModel::updateScreenType,
         onCouponTabClick = viewModel::onCouponTabClicked,
+        onMessageTabClick = viewModel::onMessageTabClicked,
         onDialogTypeUpdate = viewModel::updateDialogType,
         onBossStorePatch = viewModel::patchBossStore,
         onAccountNumbersDelete = viewModel::deleteAccountNumbers,

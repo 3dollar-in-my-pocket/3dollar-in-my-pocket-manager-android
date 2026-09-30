@@ -19,4 +19,6 @@
     <string name="force_update_title">업데이트 안내</string>
     <string name="force_update_message">새로운 버전이 출시되었습니다.\n원활한 서비스 이용을 위해 업데이트해 주세요.</string>
     <string name="force_update_confirm">확인</string>
+    <string name="message_main_tab_tooltip">내 가게를 북마크한 고객님들께\n메세지를 보낼 수 있어요</string>
+    <string name="message_main_tab_tooltip_emoji">📢</string>
 </resources>
