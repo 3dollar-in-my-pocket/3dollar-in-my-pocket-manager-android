@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +56,7 @@ import app.threedollars.common.ui.White
 import app.threedollars.manager.feature.storemanagement.R
 import app.threedollars.manager.feature.storemanagement.ScreenType
 import app.threedollars.manager.feature.storemanagement.model.AccountNumbersVo
+import app.threedollars.manager.feature.storemanagement.model.hasRegisteredAccount
 import app.threedollars.manager.feature.storemanagement.model.BossStoreRetrieveVo
 import app.threedollars.manager.feature.storemanagement.model.BusinessScheduleModel
 import app.threedollars.manager.feature.storemanagement.model.MenuModel
@@ -145,9 +147,13 @@ internal fun MyScreen(
                         }
                     ),
                 )
-                AccountContents(
-                    accountNumber = bossStoreRetrieve.accountNumbers.firstOrNull() ?: AccountNumbersVo()
-                )
+                if (bossStoreRetrieve.accountNumbers.hasRegisteredAccount()) {
+                    AccountContents(
+                        accountNumber = bossStoreRetrieve.accountNumbers.firstOrNull() ?: AccountNumbersVo()
+                    )
+                } else {
+                    AccountEmptyContents()
+                }
                 Spacer(modifier = Modifier.height(36.dp))
                 TitleContents(
                     bottomPadding = 16.dp,
@@ -170,6 +176,19 @@ internal fun MyScreen(
                 Spacer(modifier = Modifier.height(64.dp))
             }
     }
+}
+
+@Composable
+private fun AccountEmptyContents() {
+    Text(
+        text = stringResource(R.string.account_empty_placeholder),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(White, shape = RoundedCornerShape(12.dp))
+            .padding(16.dp),
+        fontSize = 14.sp,
+        color = Gray40,
+    )
 }
 
 @Composable
