@@ -6,6 +6,7 @@ import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.FaqUseCase
+import app.threedollars.domain.usecase.MessageGuideUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -23,6 +24,7 @@ class SettingViewModel @Inject constructor(
     private val bossAccountUseCase: BossAccountUseCase,
     private val faqUseCase: FaqUseCase,
     private val bossDeviceUseCase: BossDeviceUseCase,
+    private val messageGuideUseCase: MessageGuideUseCase,
 ) : BaseViewModel() {
 
     private val _stateFlow: MutableStateFlow<SettingState> = MutableStateFlow(SettingState())
@@ -86,6 +88,7 @@ class SettingViewModel @Inject constructor(
                     awaitAll(accessTokenDeferred, socialAccessTokenDeferred, demoCodeDeferred).forEach { flow ->
                         flow.collect()
                     }
+                    messageGuideUseCase.reset()
                     _stateFlow.update { state ->
                         state.copy(
                             isSuccess = true
@@ -107,6 +110,7 @@ class SettingViewModel @Inject constructor(
                     awaitAll(accessTokenDeferred, socialAccessTokenDeferred, demoCodeDeferred).forEach { flow ->
                         flow.collect()
                     }
+                    messageGuideUseCase.reset()
                     _stateFlow.update { state ->
                         state.copy(
                             isSuccess = true
