@@ -9,6 +9,7 @@ import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.data.request.StoreMessageCreateRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.response.AppStatusResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -37,6 +38,8 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 
 internal interface RemoteDataSource {
+    suspend fun getAppStatus(): Resource<AppStatusResponse>
+
     fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>>
 
     fun demoLogin(code: String): Flow<Resource<LoginResponse>>

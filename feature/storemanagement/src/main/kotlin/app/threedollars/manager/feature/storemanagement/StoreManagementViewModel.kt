@@ -29,9 +29,12 @@ import app.threedollars.manager.feature.storemanagement.model.toDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
@@ -63,6 +66,9 @@ internal class StoreManagementViewModel @Inject constructor(
         MutableStateFlow(StoreManagementState())
 
     val stateFlow: StateFlow<StoreManagementState> = _stateFlow.asStateFlow()
+
+    private val _toastFlow = MutableSharedFlow<Int>()
+    val toastFlow: SharedFlow<Int> = _toastFlow.asSharedFlow()
 
     private val _feedbackSpecific = MutableStateFlow<Flow<PagingData<ContentsDto>>>(emptyFlow())
 
@@ -267,6 +273,31 @@ internal class StoreManagementViewModel @Inject constructor(
                                 errorMessage = it.errorMessage.toString(),
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteAccountNumbers() {
+        viewModelScope.launch {
+            bossStoreUseCase.deleteAccountNumbers(
+                bossStoreId = _stateFlow.value.bossStoreRetrieve.bossStoreId
+            ).collect {
+                if (it.code == "200") {
+                    _toastFlow.emit(R.string.account_delete_toast)
+                    _stateFlow.update { state ->
+                        state.copy(
+                            screenType = ScreenType.STORE_INFO
+                        )
+                    }
+                }
+                if (!it.errorMessage.isNullOrEmpty()) {
+                    _stateFlow.update { state ->
+                        state.copy(
+                            dialogType = DialogType.ERROR_DIALOG,
+                            errorMessage = it.errorMessage.toString()
+                        )
                     }
                 }
             }

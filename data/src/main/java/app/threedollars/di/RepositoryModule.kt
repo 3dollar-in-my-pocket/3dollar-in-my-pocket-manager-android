@@ -1,6 +1,7 @@
 package app.threedollars.di
 
 import app.threedollars.domain.repository.AppConfigRepository
+import app.threedollars.domain.repository.AppRepository
 import app.threedollars.domain.repository.CouponRepository
 import app.threedollars.domain.repository.ReviewRepository
 import app.threedollars.domain.repository.StoreMessageRepository
@@ -8,6 +9,7 @@ import app.threedollars.domain.repository.StorePostRepository
 import app.threedollars.domain.repository.StoreRepository
 import app.threedollars.domain.repository.UserRepository
 import app.threedollars.repository.AppConfigRepositoryImpl
+import app.threedollars.repository.AppRepositoryImpl
 import app.threedollars.repository.CouponRepositoryImpl
 import app.threedollars.repository.ReviewRepositoryImpl
 import app.threedollars.repository.StoreMessageRepositoryImpl
@@ -51,4 +53,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     internal abstract fun provideStoreMessageRepository(impl: StoreMessageRepositoryImpl): StoreMessageRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun provideAppRepository(impl: AppRepositoryImpl): AppRepository
 }
