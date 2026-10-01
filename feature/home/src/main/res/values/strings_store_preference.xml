@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="store_preference_title">영업 설정</string>
+    <string name="store_preference_open_button_description">영업 설정</string>
+    <string name="store_preference_retain_location_title">영업 종료 시 위치 노출</string>
+    <string name="store_preference_retain_location_description">영업 종료 시에도 위치가 손님들에게 공개됩니다.</string>
+    <string name="store_preference_auto_open_close_title">영업 상태 자동 변경</string>
+    <string name="store_preference_auto_open_close_description">설정한 영업 일정에 따라 자동으로 영업 상태가 변경됩니다.</string>
+    <string name="store_preference_error_default">요청에 실패했습니다. 잠시 후 다시 시도해주세요.</string>
+    <string name="store_preference_error_confirm">확인</string>
+    <string name="home_auto_alert_title">영업 상태 자동 변경이\n설정되어 있습니다!</string>
+    <string name="home_auto_alert_description">임의로 영업 상태를 변경하고 싶다면 영업 설정에서\n상태 자동 변경을 꺼주세요.</string>
+    <string name="home_auto_alert_go_preference">영업 설정으로 이동하기</string>
+    <string name="home_auto_alert_close">닫기</string>
+    <string name="store_preference_back_description">뒤로가기</string>
+</resources>

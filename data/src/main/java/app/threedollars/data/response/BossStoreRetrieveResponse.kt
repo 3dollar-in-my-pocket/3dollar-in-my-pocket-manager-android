@@ -10,6 +10,8 @@ import app.threedollars.data.model.FavoriteModel
 import app.threedollars.data.model.LocationModel
 import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.OpenStatusModel
+import app.threedollars.data.model.StoreImageModel
+import app.threedollars.data.model.toRepresentativeImageDtos
 import app.threedollars.data.model.toDto
 import app.threedollars.domain.dto.AddressDto
 import app.threedollars.domain.dto.BossStoreRetrieveDto
@@ -30,6 +32,8 @@ internal data class BossStoreRetrieveResponse(
     val address: Address? = Address(),
     @SerialName("imageUrl")
     val imageUrl: String? = null,
+    @SerialName("representativeImages")
+    val representativeImages: List<StoreImageModel>? = null,
     @SerialName("introduction")
     val introduction: String? = null,
     @SerialName("snsUrl")
@@ -66,6 +70,7 @@ internal data class BossStoreRetrieveResponse(
         location = location?.toDto(),
         address = address?.toDto() ?: AddressDto(),
         imageUrl = imageUrl,
+        representativeImages = representativeImages.toRepresentativeImageDtos(fallbackImageUrl = imageUrl),
         introduction = introduction,
         snsUrl = snsUrl,
         menus = menus?.toDto() ?: listOf(),

@@ -12,18 +12,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +41,8 @@ import app.threedollars.common.ui.Gray80
 import app.threedollars.common.ui.MainPink
 import app.threedollars.common.ui.Pink100
 import app.threedollars.common.ui.Pink200
+import app.threedollars.common.ui.photo.PhotoViewerDialog
+import app.threedollars.common.R as CommonR
 import app.threedollars.manager.feature.storemanagement.R
 import app.threedollars.manager.feature.storemanagement.formatDate
 import app.threedollars.manager.feature.storemanagement.model.ReviewVo
@@ -48,6 +55,8 @@ internal fun ReviewCardView(
     onReviewDetailClick: (String) -> Unit = {},
     onStickerClick: (String, String) -> Unit,
 ) {
+    var photoViewerIndex by remember { mutableStateOf<Int?>(null) }
+
     Column(
         modifier = Modifier
             .clickable { onReviewDetailClick(reviewVo.reviewId) }
@@ -91,17 +100,34 @@ internal fun ReviewCardView(
             )
         }
 
+        photoViewerIndex?.let { index ->
+            PhotoViewerDialog(
+                imageUrls = reviewVo.images.map { it.imageUrl },
+                initialIndex = index,
+                onDismiss = { photoViewerIndex = null },
+                imageContent = { imageUrl, modifier ->
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = stringResource(id = CommonR.string.photo_viewer_image),
+                        contentScale = ContentScale.Fit,
+                        modifier = modifier
+                    )
+                }
+            )
+        }
+
         if (reviewVo.images.isNotEmpty()) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             ) {
-                items(reviewVo.images) { image ->
+                itemsIndexed(reviewVo.images) { index, image ->
                     Card(
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .size(96.dp)
+                            .clickable { photoViewerIndex = index }
                     ) {
                         AsyncImage(
                             model = image.imageUrl,

@@ -14,6 +14,8 @@ import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.data.request.StoreMessageCreateRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.request.StorePreferenceRequest
+import app.threedollars.data.response.StorePreferenceResponse
 import app.threedollars.data.response.AppStatusResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
@@ -378,6 +380,14 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         networkService.deleteStorePost(storeId = storeId, postId = postId)
     }
 
+
+    override suspend fun getStorePreference(storeId: String): Resource<StorePreferenceResponse> = safeApiCall {
+        networkService.getStorePreference(storeId = storeId)
+    }
+
+    override suspend fun patchStorePreference(storeId: String, request: StorePreferenceRequest): Resource<String> = safeApiCall {
+        networkService.patchStorePreference(storeId = storeId, storePreferenceRequest = request)
+    }
 
     override suspend fun getCoupons(storeId: String, statuses: List<String>, size: Int, cursor: String?): Resource<CouponListResponse> = safeApiCall {
         networkService.getCoupons(storeId = storeId, statuses = statuses, size = size, cursor = cursor)

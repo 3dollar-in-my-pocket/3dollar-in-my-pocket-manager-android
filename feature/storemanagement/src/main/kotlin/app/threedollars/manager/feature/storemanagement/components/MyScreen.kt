@@ -62,6 +62,7 @@ import app.threedollars.manager.feature.storemanagement.model.BusinessScheduleMo
 import app.threedollars.manager.feature.storemanagement.model.MenuModel
 import app.threedollars.manager.feature.storemanagement.model.ProfileModel
 import app.threedollars.manager.feature.storemanagement.model.TitleModel
+import app.threedollars.manager.feature.storemanagement.components.profile.RepresentativePhotoCarousel
 import app.threedollars.manager.feature.storemanagement.model.toBusinessSchedule
 import app.threedollars.manager.feature.storemanagement.toWon
 import coil.compose.AsyncImage
@@ -81,7 +82,7 @@ internal fun MyScreen(
             val introduction = bossStoreRetrieve.introduction.ifEmpty { "손님들에게 감동을 드릴 한마디를 적어주세요!ex) 오전에 오시면 서비스가 있습니다!" }
             DisplayProfileInfo(
                 profile = ProfileModel(
-                    image = bossStoreRetrieve.imageUrl,
+                    images = bossStoreRetrieve.representativeImageUrls,
                     name = bossStoreRetrieve.name,
                     category = bossStoreRetrieve.categories.map { it.name.toStringDefault() },
                     snsLink = bossStoreRetrieve.snsUrl,
@@ -222,13 +223,11 @@ private fun DisplayProfileInfo(
     editClick: () -> Unit = {},
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
-        AsyncImage(
-            model = profile.image,
-            contentDescription = "대표 사진",
+        RepresentativePhotoCarousel(
+            imageUrls = profile.images,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(240.dp),
-            contentScale = ContentScale.Crop,
         )
         ProfileContents(profile, editClick)
     }

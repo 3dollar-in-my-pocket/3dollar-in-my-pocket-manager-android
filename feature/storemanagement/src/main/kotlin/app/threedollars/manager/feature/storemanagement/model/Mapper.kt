@@ -35,6 +35,7 @@ internal fun BossStoreRetrieveDto?.dtoToVo() = BossStoreRetrieveVo(
     createdAt = this?.createdAt.toStringDefault(),
     distance = this?.distance.toIntDefault(),
     imageUrl = this?.imageUrl.toStringDefault(),
+    representativeImageUrls = this?.representativeImages.orEmpty().map { it.imageUrl },
     introduction = this?.introduction.toStringDefault(),
     location = this?.location.dtoToVo(),
     menus = this?.menus.orEmpty().map { it.dtoToVo() },
