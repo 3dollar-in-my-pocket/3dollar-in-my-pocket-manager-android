@@ -77,6 +77,7 @@ internal fun StoreManagementScreen(
     onCouponTabClick: () -> Unit,
     onDialogTypeUpdate: (DialogType) -> Unit,
     onBossStorePatch: (BossStorePatchModel) -> Unit,
+    onAccountNumbersDelete: () -> Unit,
     onMenuPatch: (BossStorePatchModel) -> Unit,
     onStoreCategorySelected: (Int) -> Unit,
     onStartTimeUpdate: (String, String) -> Unit,
@@ -197,7 +198,8 @@ internal fun StoreManagementScreen(
                         bossStoreRetrieve = bossStoreRetrieve,
                         bankTypes = bankTypes,
                         onScreenTypeUpdate = onScreenTypeUpdate,
-                        onBossStorePatch = onBossStorePatch
+                        onBossStorePatch = onBossStorePatch,
+                        onAccountNumbersDelete = onAccountNumbersDelete
                     )
                 }
 

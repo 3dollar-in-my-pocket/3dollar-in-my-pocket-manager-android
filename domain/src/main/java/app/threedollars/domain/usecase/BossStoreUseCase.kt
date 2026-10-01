@@ -49,4 +49,7 @@ class BossStoreUseCase @Inject constructor(private val storeRepository: StoreRep
             accountBank = accountBank,
             contactNumber = contactNumber
         )
+
+    fun deleteAccountNumbers(bossStoreId: String): Flow<Resource<String>> =
+        storeRepository.deleteBossStoreAccountNumbers(bossStoreId)
 }
