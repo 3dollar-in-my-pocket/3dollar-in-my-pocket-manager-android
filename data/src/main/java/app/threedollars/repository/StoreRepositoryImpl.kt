@@ -5,13 +5,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import app.threedollars.common.Resource
-import app.threedollars.common.ext.toStringDefault
 import app.threedollars.data.model.AppearanceDaysRequestModel
 import app.threedollars.data.model.MenusModel
 import app.threedollars.data.model.toDto
-import app.threedollars.data.request.AccountNumberRequest
 import app.threedollars.data.request.BossStoreRequest
-import app.threedollars.data.request.ContactNumberRequest
+import app.threedollars.data.request.accountNumbersRequestOf
+import app.threedollars.data.request.contactNumbersRequestOf
+import app.threedollars.data.request.deleteAccountNumbersRequest
 import app.threedollars.data.response.toDto
 import app.threedollars.data.request.withRepresentativeImages
 import app.threedollars.domain.dto.AppearanceDaysRequestDto
@@ -90,28 +90,6 @@ internal class StoreRepositoryImpl @Inject constructor(
             MenusModel(it.imageUrl, it.name, it.price)
         }
 
-        val accountNumberRequest = if (accountNumber != null &&
-            accountHolder != null &&
-            accountBank != null
-        ) {
-            listOf(
-                AccountNumberRequest(
-                    accountNumber = accountNumber.toStringDefault(),
-                    accountHolder = accountHolder.toStringDefault(),
-                    bank = accountBank.toStringDefault()
-                )
-            )
-        } else null
-
-        val contactNumberRequest = if (contactNumber?.isNotEmpty() == true) {
-            listOf(
-                ContactNumberRequest(
-                    number = contactNumber,
-                    description = "string"
-                )
-            )
-        } else listOf()
-
         val bossStoreRequest = BossStoreRequest(
             appearanceDaysModel,
             categoriesIds,
@@ -120,11 +98,14 @@ internal class StoreRepositoryImpl @Inject constructor(
             menusModel,
             name,
             snsUrl,
-            accountNumbers = accountNumberRequest,
-            contactNumbers = contactNumberRequest
+            accountNumbers = accountNumbersRequestOf(accountNumber, accountHolder, accountBank),
+            contactNumbers = contactNumbersRequestOf(contactNumber)
         )
         return remoteDataSource.patchBossStore(bossStoreId, bossStoreRequest.withRepresentativeImages(representativeImageUrls))
     }
+
+    override fun deleteBossStoreAccountNumbers(bossStoreId: String): Flow<Resource<String>> =
+        remoteDataSource.patchBossStore(bossStoreId, deleteAccountNumbersRequest())
 
     override fun deleteBossStoreOpen(bossStoreId: String): Flow<Resource<String>> =
         remoteDataSource.deleteBossStoreOpen(bossStoreId)

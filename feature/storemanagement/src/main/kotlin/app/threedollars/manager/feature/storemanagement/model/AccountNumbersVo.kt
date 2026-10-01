@@ -6,3 +6,6 @@ internal data class AccountNumbersVo(
     val accountNumber: String = "",
     val description: String? = null,
 )
+
+internal fun List<AccountNumbersVo>.hasRegisteredAccount(): Boolean =
+    any { it.accountNumber.isNotBlank() }

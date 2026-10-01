@@ -11,9 +11,11 @@ import app.threedollars.data.request.NonceRequest
 import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.request.StoreMessageCreateRequest
 import app.threedollars.data.request.StorePostRequest
 import app.threedollars.data.request.StorePreferenceRequest
 import app.threedollars.data.response.StorePreferenceResponse
+import app.threedollars.data.response.AppStatusResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -32,6 +34,8 @@ import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StickersReplaceRequest
 import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreMessageCreateResponse
+import app.threedollars.data.response.StoreMessageListResponse
 import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StorePostCreateResponse
 import app.threedollars.data.response.StorePostListResponse
@@ -53,6 +57,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface NetworkService {
+
+    // app-controller
+    @GET("v1/app/status")
+    suspend fun getAppStatus(): Response<BaseResponse<AppStatusResponse>>
 
     // auth-controller
     @POST("v1/auth/login")
@@ -319,4 +327,19 @@ internal interface NetworkService {
         @Path("storeId") storeId: String,
         @Path("couponId") couponId: String,
     ): Response<BaseResponse<String>>
+
+    // store-message-controller
+    @GET("v1/store/{storeId}/messages")
+    suspend fun getStoreMessages(
+        @Path("storeId") storeId: String,
+        @Query("size") size: Int,
+        @Query("cursor") cursor: String? = null,
+    ): Response<BaseResponse<StoreMessageListResponse>>
+
+    @POST("v1/store/{storeId}/message")
+    suspend fun postStoreMessage(
+        @Path("storeId") storeId: String,
+        @Header("X-Nonce-Token") nonce: String,
+        @Body storeMessageCreateRequest: StoreMessageCreateRequest,
+    ): Response<BaseResponse<StoreMessageCreateResponse>>
 }
