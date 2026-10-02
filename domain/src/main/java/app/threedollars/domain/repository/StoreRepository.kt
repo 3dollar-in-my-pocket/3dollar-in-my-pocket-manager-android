@@ -32,8 +32,11 @@ interface StoreRepository {
         accountNumber: String? = null,
         accountHolder: String? = null,
         accountBank: String? = null,
-        contactNumber: String? = null
+        contactNumber: String? = null,
+        representativeImageUrls: List<String>? = null,
     ): Flow<Resource<String>>
+
+    fun deleteBossStoreAccountNumbers(bossStoreId: String): Flow<Resource<String>>
 
     // boss-store-open-controller
     fun deleteBossStoreOpen(bossStoreId: String): Flow<Resource<String>>

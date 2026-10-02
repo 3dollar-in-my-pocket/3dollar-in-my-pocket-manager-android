@@ -177,26 +177,3 @@ jobs:
           status: ${{ steps.track.outputs.status }}
           releaseName: ${{ steps.version.outputs.release_name }}
           whatsNewDirectory: distribution/whatsnew
-
-      - name: Notify Discord
-        if: always()
-        continue-on-error: true
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          STATUS: ${{ job.status }}
-          LABEL: ${{ steps.track.outputs.label }}
-          RELEASE_NAME: ${{ steps.version.outputs.release_name }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          [ -n "$DISCORD_WEBHOOK_URL" ] || { echo "DISCORD_WEBHOOK_URL 없음 — 알림 생략"; exit 0; }
-          if [ "$STATUS" = "success" ]; then
-            TITLE="🚀 [사장님앱 AOS] Play ${LABEL} 업로드 완료"; COLOR=3066993
-          else
-            TITLE="❌ [사장님앱 AOS] Play ${LABEL} 업로드 실패"; COLOR=15158332
-          fi
-          PAYLOAD=$(jq -n --arg t "$TITLE" --argjson c "$COLOR" --arg v "${RELEASE_NAME:--}" --arg b "$GITHUB_REF_NAME" --arg u "$RUN_URL" \
-            '{username: "GitHub Actions", allowed_mentions: {parse: []},
-              embeds: [{title: $t, color: $c, url: $u,
-                description: "[Play Console](https://play.google.com/console) · [스토어](https://play.google.com/store/apps/details?id=app.threedollars.manager)",
-                fields: [{name: "버전", value: $v, inline: true}, {name: "브랜치", value: $b, inline: true}]}]}')
-          curl --fail-with-body --silent --show-error --retry 2 -H 'Content-Type: application/json' --data "$PAYLOAD" "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null

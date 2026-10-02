@@ -7,6 +7,7 @@ internal data class BossStoreRetrieveVo(
     val location: LocationVo = LocationVo(),
     val address: AddressVo = AddressVo(),
     val imageUrl: String = "",
+    val representativeImageUrls: List<String> = listOf(),
     val introduction: String = "",
     val snsUrl: String = "",
     val menus: List<MenusVo> = listOf(),

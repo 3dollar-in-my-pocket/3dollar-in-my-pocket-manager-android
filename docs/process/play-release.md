@@ -20,6 +20,7 @@ gh workflow run "Play Release" --ref release/1.1.12 -f track=production # 프로
 2. `app/build.gradle.kts`의 `versionCode`(+1)·`versionName`을 올려 커밋·push → 프로덕션 초안이 자동으로 올라간다.
 3. Play Console → 프로덕션 → 초안 검토 후 출시.
 4. 기존처럼 `release/x.y.z` → `master` PR 머지, `develop`에 역머지.
+5. `master`에서 `vx.y.z` 태그로 GitHub 릴리즈를 발행(노트 자동생성) → `discord-release-notify.yml`이 `DISCORD_WEBHOOK_URL`로 출시 공지를 보낸다. Play 업로드 자체는 디스코드 알림을 보내지 않는다. 이미 발행한 릴리즈는 Actions에서 태그를 넣어 수동 실행한다.
 
 **versionCode는 트랙과 무관하게 한 번만 쓸 수 있다.** 같은 versionCode로 내부 테스트에 올렸다면 프로덕션에는 다시 올릴 수 없으니,
 Play Console에서 그 내부 테스트 버전을 프로덕션으로 **승격**하거나 versionCode를 올려 다시 push한다.
@@ -35,7 +36,7 @@ TH-1385에서 compileSdk/targetSdk 36, AGP 8.10.1, Gradle 8.11.1로 올렸다. �
 
 ## 필요한 레포 시크릿
 
-`firebase-distribution.yml`과 공유: `KEYSTORE_BASE64`, `KAKAO_KEY_DEV`, `KAKAO_KEY_RELEASE`, `BASE_URL_DEV`, `BASE_URL_RELEASE`, `NAVER_MAP_CLIENT_ID`, (선택) `DISCORD_WEBHOOK_URL` — `docs/process/dev-build-distribution.md`.
+`firebase-distribution.yml`과 공유: `KEYSTORE_BASE64`, `KAKAO_KEY_DEV`, `KAKAO_KEY_RELEASE`, `BASE_URL_DEV`, `BASE_URL_RELEASE`, `NAVER_MAP_CLIENT_ID` — `docs/process/dev-build-distribution.md`.
 
 추가로 필요한 것:
 

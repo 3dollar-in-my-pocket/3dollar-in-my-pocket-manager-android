@@ -1,6 +1,9 @@
 package app.threedollars.manager.sign.ui
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +29,7 @@ import app.threedollars.common.ui.effect.FlowWithLifecycleEffect
 import app.threedollars.manager.MainActivity
 import app.threedollars.manager.R
 import app.threedollars.manager.sign.LoginNavItem
+import app.threedollars.manager.sign.viewmodel.AppStatusResult
 import app.threedollars.manager.sign.viewmodel.SplashEffect
 import app.threedollars.manager.sign.viewmodel.SplashViewModel
 import app.threedollars.manager.util.findActivity
@@ -53,6 +57,9 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
     var navItem by remember {
         mutableStateOf<LoginNavItem?>(null)
     }
+    var forceUpdate by remember {
+        mutableStateOf<AppStatusResult.ForceUpdate?>(null)
+    }
 
     Box(
         modifier = Modifier
@@ -76,6 +83,10 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
 
             is SplashEffect.OnNavigate -> {
                 navItem = it.item
+            }
+
+            is SplashEffect.OnForceUpdate -> {
+                forceUpdate = it.forceUpdate
             }
         }
     }
@@ -107,6 +118,21 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
         }
     }
 
+    forceUpdate?.takeIf { isLottieCompleted }?.let { update ->
+        BaseDialog(
+            title = update.title ?: stringResource(R.string.force_update_title),
+            message = update.message ?: stringResource(R.string.force_update_message),
+            confirmText = stringResource(R.string.force_update_confirm),
+            style = BaseDialogStyle(
+                titleFontSize = 18.sp,
+                messageFontSize = 16.sp
+            ),
+            onConfirm = {
+                context.openUrl(update.linkUrl)
+            }
+        )
+    }
+
     if (showRetry) {
         BaseDialog(
             title = stringResource(R.string.error_unknown_title),
@@ -121,5 +147,13 @@ fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hilt
                 viewModel.retry()
             }
         )
+    }
+}
+
+private fun Context.openUrl(url: String) {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    } catch (e: ActivityNotFoundException) {
+        Unit
     }
 }

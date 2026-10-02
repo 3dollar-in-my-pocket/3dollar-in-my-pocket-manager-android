@@ -20,8 +20,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,6 +41,8 @@ import app.threedollars.common.ui.Gray0
 import app.threedollars.common.ui.Gray30
 import app.threedollars.common.ui.Gray95
 import app.threedollars.common.ui.Red
+import app.threedollars.common.ui.Tooltip
+import app.threedollars.common.ui.TooltipTailDirection
 import app.threedollars.common.ui.White
 import app.threedollars.domain.dto.ContentsDto
 import app.threedollars.manager.feature.storemanagement.components.BossCommentScreen
@@ -42,8 +52,10 @@ import app.threedollars.manager.feature.storemanagement.components.ScheduleDay
 import app.threedollars.manager.feature.storemanagement.components.SystemAlertDialog
 import app.threedollars.manager.feature.storemanagement.components.account.AccountScreen
 import app.threedollars.manager.feature.storemanagement.components.coupon.CouponTab
+import app.threedollars.manager.feature.storemanagement.components.message.MessageTab
 import app.threedollars.manager.feature.storemanagement.components.menumanagement.MenuManagementScreen
 import app.threedollars.manager.feature.storemanagement.components.profile.ProfileEditScreen
+import app.threedollars.manager.feature.storemanagement.components.profile.ProfileSaveRequest
 import app.threedollars.manager.feature.storemanagement.components.review.FeedbackScreen
 import app.threedollars.manager.feature.storemanagement.components.review.ReviewContent
 import app.threedollars.manager.feature.storemanagement.components.storepost.StorePostTab
@@ -73,11 +85,15 @@ internal fun StoreManagementScreen(
     feedbackSpecific: LazyPagingItems<ContentsDto>,
     showCouponNewBadge: Boolean,
     showCouponTooltip: Boolean,
+    showMessageTooltip: Boolean,
     onScreenTypeUpdate: (ScreenType) -> Unit,
     onCouponTabClick: () -> Unit,
+    onMessageTabClick: () -> Unit,
     onDialogTypeUpdate: (DialogType) -> Unit,
     onBossStorePatch: (BossStorePatchModel) -> Unit,
+    onAccountNumbersDelete: () -> Unit,
     onMenuPatch: (BossStorePatchModel) -> Unit,
+    onProfileSave: (ProfileSaveRequest) -> Unit,
     onStoreCategorySelected: (Int) -> Unit,
     onStartTimeUpdate: (String, String) -> Unit,
     onEndTimeUpdate: (String, String) -> Unit,
@@ -99,13 +115,15 @@ internal fun StoreManagementScreen(
         containerColor = Gray0,
         contentWindowInsets = WindowInsets.statusBars,
         topBar = {
-            if (screenType == ScreenType.STORE_INFO || screenType == ScreenType.REVIEW_INFO || screenType == ScreenType.STORE_POST || screenType == ScreenType.COUPON) {
+            if (screenType in SUB_TAB_SCREEN_TYPES) {
                 TopBar(
                     screenType = screenType,
                     showCouponNewBadge = showCouponNewBadge,
                     showCouponTooltip = showCouponTooltip,
+                    showMessageTooltip = showMessageTooltip,
                     onScreenTypeUpdate = onScreenTypeUpdate,
                     onCouponTabClick = onCouponTabClick,
+                    onMessageTabClick = onMessageTabClick,
                 )
             }
         }
@@ -134,6 +152,7 @@ internal fun StoreManagementScreen(
                         feedbackFulls = feedbackFulls,
                         feedbackTypes = feedbackTypes,
                         onScreenTypeUpdate = onScreenTypeUpdate,
+                        onSendMessageClick = onMessageTabClick,
                         onAllReviewNavigate = onAllReviewNavigate,
                         onStickerClick = onStickerClick
                     )
@@ -144,6 +163,10 @@ internal fun StoreManagementScreen(
                         storeId = bossStoreRetrieve.bossStoreId,
                         onUploadNavigate = onUploadPostNavigate
                     )
+                }
+
+                ScreenType.MESSAGE -> {
+                    MessageTab(storeId = bossStoreRetrieve.bossStoreId)
                 }
 
                 ScreenType.COUPON -> {
@@ -168,8 +191,9 @@ internal fun StoreManagementScreen(
                         bossStoreRetrieve = bossStoreRetrieve,
                         storeCategories = storeCategories,
                         selectedStoreCategories = selectedStoreCategories,
+                        isSaving = dialogType == DialogType.LOADING_DIALOG,
                         onScreenTypeUpdate = onScreenTypeUpdate,
-                        onBossStorePatch = onBossStorePatch,
+                        onProfileSave = onProfileSave,
                         onStoreCategorySelected = onStoreCategorySelected
                     )
                 }
@@ -197,7 +221,8 @@ internal fun StoreManagementScreen(
                         bossStoreRetrieve = bossStoreRetrieve,
                         bankTypes = bankTypes,
                         onScreenTypeUpdate = onScreenTypeUpdate,
-                        onBossStorePatch = onBossStorePatch
+                        onBossStorePatch = onBossStorePatch,
+                        onAccountNumbersDelete = onAccountNumbersDelete
                     )
                 }
 
@@ -219,19 +244,32 @@ internal fun StoreManagementScreen(
     }
 }
 
+private val SUB_TAB_SCREEN_TYPES = setOf(
+    ScreenType.STORE_INFO,
+    ScreenType.REVIEW_INFO,
+    ScreenType.STORE_POST,
+    ScreenType.MESSAGE,
+    ScreenType.COUPON,
+)
+
 @Composable
 private fun TopBar(
     onScreenTypeUpdate: (ScreenType) -> Unit,
     onCouponTabClick: () -> Unit,
+    onMessageTabClick: () -> Unit,
     screenType: ScreenType,
     showCouponNewBadge: Boolean,
     showCouponTooltip: Boolean,
+    showMessageTooltip: Boolean,
 ) {
     val context = LocalContext.current
+    var topBarWindowX by remember { mutableStateOf(0f) }
+    var messageTabCenterX by remember { mutableStateOf<Float?>(null) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Gray0)
+            .onGloballyPositioned { topBarWindowX = it.positionInWindow().x }
     ) {
         Row(
             modifier = Modifier
@@ -254,6 +292,16 @@ private fun TopBar(
                 logTapMyTopTab(context, StoreManagementLog.TAB_STORE_POST)
                 onScreenTypeUpdate(ScreenType.STORE_POST)
             }
+            SubTab(
+                title = stringResource(R.string.store_management_tab_message),
+                selected = screenType == ScreenType.MESSAGE,
+                modifier = Modifier.onGloballyPositioned {
+                    messageTabCenterX = it.positionInWindow().x + it.size.width / 2f - topBarWindowX
+                },
+            ) {
+                logTapMyTopTab(context, StoreManagementLog.TAB_MESSAGE)
+                onMessageTabClick()
+            }
             Row(verticalAlignment = Alignment.Top) {
                 SubTab(title = "쿠폰 관리", selected = screenType == ScreenType.COUPON) {
                     logTapMyTopTab(context, StoreManagementLog.TAB_COUPON)
@@ -273,7 +321,12 @@ private fun TopBar(
                 }
             }
         }
-        if (showCouponTooltip) {
+        val tooltipAnchorX = messageTabCenterX
+        if (showMessageTooltip) {
+            if (tooltipAnchorX != null) {
+                MessageTooltip(anchorCenterX = tooltipAnchorX, onClick = onMessageTabClick)
+            }
+        } else if (showCouponTooltip) {
             CouponTooltip(
                 modifier = Modifier.padding(start = 24.dp, bottom = 8.dp),
                 onClick = onCouponTabClick,
@@ -286,6 +339,7 @@ private fun TopBar(
 private fun SubTab(
     title: String,
     selected: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Text(
@@ -295,7 +349,7 @@ private fun SubTab(
         color = if (selected) Gray95 else Gray30,
         maxLines = 1,
         softWrap = false,
-        modifier = Modifier.noRippleClickable(onClick),
+        modifier = modifier.noRippleClickable(onClick),
     )
 }
 
@@ -330,3 +384,25 @@ private fun CouponTooltip(modifier: Modifier = Modifier, onClick: () -> Unit) {
         )
     }
 }
+
+@Composable
+private fun MessageTooltip(anchorCenterX: Float, onClick: () -> Unit) {
+    Tooltip(
+        emoji = stringResource(R.string.message_sub_tab_tooltip_emoji),
+        message = stringResource(R.string.message_sub_tab_tooltip),
+        tailDirection = TooltipTailDirection.TOP_END,
+        tailEndPadding = MESSAGE_TOOLTIP_TAIL_END_PADDING,
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints.copy(minWidth = 0))
+                val rightEdge = anchorCenterX + MESSAGE_TOOLTIP_ANCHOR_OFFSET.toPx()
+                val x = (rightEdge - placeable.width).toInt().coerceIn(0, (constraints.maxWidth - placeable.width).coerceAtLeast(0))
+                layout(constraints.maxWidth, placeable.height) { placeable.place(x, 0) }
+            }
+            .noRippleClickable(onClick),
+    )
+}
+
+private val MESSAGE_TOOLTIP_ANCHOR_OFFSET = 26.dp
+private val MESSAGE_TOOLTIP_TAIL_END_PADDING = 21.dp

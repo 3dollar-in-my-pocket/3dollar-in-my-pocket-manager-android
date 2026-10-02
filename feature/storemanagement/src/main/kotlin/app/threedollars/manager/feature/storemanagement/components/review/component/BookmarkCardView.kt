@@ -7,14 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,7 +33,8 @@ import app.threedollars.manager.feature.storemanagement.R
 
 @Composable
 internal fun BookmarkCardView(
-    subscriberCount: Int
+    subscriberCount: Int,
+    onSendMessageClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -71,6 +75,29 @@ internal fun BookmarkCardView(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = Green
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .clickable(onClick = onSendMessageClick),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.message_bookmark_send_message),
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Gray50,
+                    )
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right),
+                        contentDescription = null,
+                        tint = Gray50,
+                        modifier = Modifier
+                            .padding(start = 2.dp)
+                            .size(12.dp),
                     )
                 }
 

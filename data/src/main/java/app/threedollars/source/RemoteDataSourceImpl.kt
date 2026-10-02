@@ -12,7 +12,11 @@ import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.ReportRequest
 import app.threedollars.data.request.ReviewCommentRequest
 import app.threedollars.data.request.SignUpRequest
+import app.threedollars.data.request.StoreMessageCreateRequest
 import app.threedollars.data.request.StorePostRequest
+import app.threedollars.data.request.StorePreferenceRequest
+import app.threedollars.data.response.StorePreferenceResponse
+import app.threedollars.data.response.AppStatusResponse
 import app.threedollars.data.response.BossAccountInfoResponse
 import app.threedollars.data.response.BossEnumsResponse
 import app.threedollars.data.response.BossStoreRetrieveAroundResponse
@@ -30,6 +34,8 @@ import app.threedollars.data.response.LoginResponse
 import app.threedollars.data.response.NonceResponse
 import app.threedollars.data.response.StickersReplaceRequest
 import app.threedollars.data.response.StoreCategoriesResponse
+import app.threedollars.data.response.StoreMessageCreateResponse
+import app.threedollars.data.response.StoreMessageListResponse
 import app.threedollars.data.response.StoreRecommendationResponse
 import app.threedollars.data.response.StorePostCreateResponse
 import app.threedollars.data.response.StorePostListResponse
@@ -48,6 +54,10 @@ import javax.inject.Inject
 
 internal class RemoteDataSourceImpl @Inject constructor(private val networkService: NetworkService) :
     RemoteDataSource {
+    override suspend fun getAppStatus(): Resource<AppStatusResponse> = safeApiCall {
+        networkService.getAppStatus()
+    }
+
     override fun login(loginRequest: LoginRequest): Flow<Resource<LoginResponse>> = flow {
         emit(safeApiCall { networkService.login(loginRequest) })
     }
@@ -371,6 +381,14 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
     }
 
 
+    override suspend fun getStorePreference(storeId: String): Resource<StorePreferenceResponse> = safeApiCall {
+        networkService.getStorePreference(storeId = storeId)
+    }
+
+    override suspend fun patchStorePreference(storeId: String, request: StorePreferenceRequest): Resource<String> = safeApiCall {
+        networkService.patchStorePreference(storeId = storeId, storePreferenceRequest = request)
+    }
+
     override suspend fun getCoupons(storeId: String, statuses: List<String>, size: Int, cursor: String?): Resource<CouponListResponse> = safeApiCall {
         networkService.getCoupons(storeId = storeId, statuses = statuses, size = size, cursor = cursor)
     }
@@ -381,6 +399,18 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
 
     override suspend fun putCouponClose(storeId: String, couponId: String): Resource<String> = safeApiCall {
         networkService.putCouponClose(storeId = storeId, couponId = couponId)
+    }
+
+    override suspend fun getStoreMessages(storeId: String, size: Int, cursor: String?): Resource<StoreMessageListResponse> = safeApiCall {
+        networkService.getStoreMessages(storeId = storeId, size = size, cursor = cursor)
+    }
+
+    override suspend fun postStoreMessage(
+        storeId: String,
+        nonce: String,
+        request: StoreMessageCreateRequest,
+    ): Resource<StoreMessageCreateResponse> = safeApiCall {
+        networkService.postStoreMessage(storeId = storeId, nonce = nonce, storeMessageCreateRequest = request)
     }
 }
 

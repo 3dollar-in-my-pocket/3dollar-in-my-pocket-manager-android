@@ -4,10 +4,12 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.threedollars.common.REVIEW_LIST
+import app.threedollars.common.ext.toast
 import app.threedollars.common.ui.DoubleBackExitHandler
 
 
@@ -28,6 +30,7 @@ fun StoreManagementRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadCouponGuide()
+        viewModel.loadMessageGuide()
         screenType?.let {
             val defaultScreenType = when(screenType){
                 REVIEW_LIST -> ScreenType.REVIEW_INFO
@@ -35,6 +38,11 @@ fun StoreManagementRoute(
             }
             viewModel.updateScreenType(defaultScreenType)
         }
+    }
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.toastFlow.collect { context.toast(it) }
     }
 
     LaunchedEffect(currentScreenType) {
@@ -69,6 +77,7 @@ fun StoreManagementRoute(
             when (currentScreenType) {
                 ScreenType.REVIEW_INFO,
                 ScreenType.STORE_POST,
+                ScreenType.MESSAGE,
                 ScreenType.COUPON,
                 ScreenType.PROFILE_EDIT,
                 ScreenType.BUSINESS_SCHEDULE_EDIT,
@@ -97,11 +106,15 @@ fun StoreManagementRoute(
         feedbackSpecific = feedbackSpecific,
         showCouponNewBadge = uiState.showCouponNewBadge,
         showCouponTooltip = uiState.showCouponTooltip,
+        showMessageTooltip = uiState.showMessageTooltip,
         onScreenTypeUpdate = viewModel::updateScreenType,
         onCouponTabClick = viewModel::onCouponTabClicked,
+        onMessageTabClick = viewModel::onMessageTabClicked,
         onDialogTypeUpdate = viewModel::updateDialogType,
         onBossStorePatch = viewModel::patchBossStore,
+        onAccountNumbersDelete = viewModel::deleteAccountNumbers,
         onMenuPatch = viewModel::patchMenu,
+        onProfileSave = viewModel::saveProfile,
         onStoreCategorySelected = viewModel::categorySelection,
         onStartTimeUpdate = viewModel::updateDaysStartTime,
         onEndTimeUpdate = viewModel::updateDaysEndTime,

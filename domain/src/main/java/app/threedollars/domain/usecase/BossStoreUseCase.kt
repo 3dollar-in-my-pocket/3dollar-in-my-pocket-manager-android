@@ -34,6 +34,7 @@ class BossStoreUseCase @Inject constructor(private val storeRepository: StoreRep
         accountHolder: String? = null,
         accountBank: String? = null,
         contactNumber: String? = null,
+        representativeImageUrls: List<String>? = null,
     ): Flow<Resource<String>> =
         storeRepository.patchBossStore(
             bossStoreId = bossStoreId,
@@ -47,6 +48,10 @@ class BossStoreUseCase @Inject constructor(private val storeRepository: StoreRep
             accountNumber = accountNumber,
             accountHolder = accountHolder,
             accountBank = accountBank,
-            contactNumber = contactNumber
+            contactNumber = contactNumber,
+            representativeImageUrls = representativeImageUrls,
         )
+
+    fun deleteAccountNumbers(bossStoreId: String): Flow<Resource<String>> =
+        storeRepository.deleteBossStoreAccountNumbers(bossStoreId)
 }

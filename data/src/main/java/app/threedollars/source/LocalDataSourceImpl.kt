@@ -44,6 +44,19 @@ class LocalDataSourceImpl @Inject constructor(private val dataStoreManager: Data
 
     override suspend fun saveCouponTooltipShown() = dataStoreManager.saveBooleanData(COUPON_TOOLTIP_SHOWN, true)
 
+    override fun isMessageMainTabTooltipShown(): Flow<Boolean> = dataStoreManager.getBooleanData(MESSAGE_MAIN_TAB_TOOLTIP_SHOWN)
+
+    override suspend fun saveMessageMainTabTooltipShown() = dataStoreManager.saveBooleanData(MESSAGE_MAIN_TAB_TOOLTIP_SHOWN, true)
+
+    override fun isMessageSubTabTooltipShown(): Flow<Boolean> = dataStoreManager.getBooleanData(MESSAGE_SUB_TAB_TOOLTIP_SHOWN)
+
+    override suspend fun saveMessageSubTabTooltipShown() = dataStoreManager.saveBooleanData(MESSAGE_SUB_TAB_TOOLTIP_SHOWN, true)
+
+    override suspend fun clearMessageTooltipShown() {
+        dataStoreManager.saveBooleanData(MESSAGE_MAIN_TAB_TOOLTIP_SHOWN, false)
+        dataStoreManager.saveBooleanData(MESSAGE_SUB_TAB_TOOLTIP_SHOWN, false)
+    }
+
     companion object {
         const val SOCIAL_ACCESS_TOKEN = "social_access_token"
         const val ACCESS_TOKEN = "access_token"
@@ -52,5 +65,7 @@ class LocalDataSourceImpl @Inject constructor(private val dataStoreManager: Data
         const val DEMO_CODE = "demo_code"
         const val COUPON_NEW_BADGE_SHOWN = "coupon_new_badge_shown"
         const val COUPON_TOOLTIP_SHOWN = "coupon_tooltip_shown"
+        const val MESSAGE_MAIN_TAB_TOOLTIP_SHOWN = "message_main_tab_tooltip_shown"
+        const val MESSAGE_SUB_TAB_TOOLTIP_SHOWN = "message_sub_tab_tooltip_shown"
     }
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -55,11 +56,13 @@ import app.threedollars.common.ui.White
 import app.threedollars.manager.feature.storemanagement.R
 import app.threedollars.manager.feature.storemanagement.ScreenType
 import app.threedollars.manager.feature.storemanagement.model.AccountNumbersVo
+import app.threedollars.manager.feature.storemanagement.model.hasRegisteredAccount
 import app.threedollars.manager.feature.storemanagement.model.BossStoreRetrieveVo
 import app.threedollars.manager.feature.storemanagement.model.BusinessScheduleModel
 import app.threedollars.manager.feature.storemanagement.model.MenuModel
 import app.threedollars.manager.feature.storemanagement.model.ProfileModel
 import app.threedollars.manager.feature.storemanagement.model.TitleModel
+import app.threedollars.manager.feature.storemanagement.components.profile.RepresentativePhotoCarousel
 import app.threedollars.manager.feature.storemanagement.model.toBusinessSchedule
 import app.threedollars.manager.feature.storemanagement.toWon
 import coil.compose.AsyncImage
@@ -79,7 +82,7 @@ internal fun MyScreen(
             val introduction = bossStoreRetrieve.introduction.ifEmpty { "손님들에게 감동을 드릴 한마디를 적어주세요!ex) 오전에 오시면 서비스가 있습니다!" }
             DisplayProfileInfo(
                 profile = ProfileModel(
-                    image = bossStoreRetrieve.imageUrl,
+                    images = bossStoreRetrieve.representativeImageUrls,
                     name = bossStoreRetrieve.name,
                     category = bossStoreRetrieve.categories.map { it.name.toStringDefault() },
                     snsLink = bossStoreRetrieve.snsUrl,
@@ -145,9 +148,13 @@ internal fun MyScreen(
                         }
                     ),
                 )
-                AccountContents(
-                    accountNumber = bossStoreRetrieve.accountNumbers.firstOrNull() ?: AccountNumbersVo()
-                )
+                if (bossStoreRetrieve.accountNumbers.hasRegisteredAccount()) {
+                    AccountContents(
+                        accountNumber = bossStoreRetrieve.accountNumbers.firstOrNull() ?: AccountNumbersVo()
+                    )
+                } else {
+                    AccountEmptyContents()
+                }
                 Spacer(modifier = Modifier.height(36.dp))
                 TitleContents(
                     bottomPadding = 16.dp,
@@ -170,6 +177,19 @@ internal fun MyScreen(
                 Spacer(modifier = Modifier.height(64.dp))
             }
     }
+}
+
+@Composable
+private fun AccountEmptyContents() {
+    Text(
+        text = stringResource(R.string.account_empty_placeholder),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(White, shape = RoundedCornerShape(12.dp))
+            .padding(16.dp),
+        fontSize = 14.sp,
+        color = Gray40,
+    )
 }
 
 @Composable
@@ -203,13 +223,11 @@ private fun DisplayProfileInfo(
     editClick: () -> Unit = {},
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
-        AsyncImage(
-            model = profile.image,
-            contentDescription = "대표 사진",
+        RepresentativePhotoCarousel(
+            imageUrls = profile.images,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(240.dp),
-            contentScale = ContentScale.Crop,
         )
         ProfileContents(profile, editClick)
     }

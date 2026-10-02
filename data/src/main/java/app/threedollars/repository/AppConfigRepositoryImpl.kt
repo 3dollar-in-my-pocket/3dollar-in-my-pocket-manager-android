@@ -19,4 +19,14 @@ class AppConfigRepositoryImpl @Inject constructor(
     override fun isCouponTooltipShown(): Flow<Boolean> = localDataSource.isCouponTooltipShown()
 
     override suspend fun saveCouponTooltipShown() = localDataSource.saveCouponTooltipShown()
+
+    override fun isMessageMainTabTooltipShown(): Flow<Boolean> = localDataSource.isMessageMainTabTooltipShown()
+
+    override suspend fun saveMessageMainTabTooltipShown() = localDataSource.saveMessageMainTabTooltipShown()
+
+    override fun isMessageSubTabTooltipShown(): Flow<Boolean> = localDataSource.isMessageSubTabTooltipShown()
+
+    override suspend fun saveMessageSubTabTooltipShown() = localDataSource.saveMessageSubTabTooltipShown()
+
+    override suspend fun clearMessageTooltipShown() = localDataSource.clearMessageTooltipShown()
 }

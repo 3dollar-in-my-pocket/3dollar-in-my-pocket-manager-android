@@ -7,8 +7,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.threedollars.common.ui.DoubleBackExitHandler
+import app.threedollars.manager.feature.home.components.AutoOpenCloseAlertDialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -20,6 +23,7 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeRoute(
+    onPreferenceNavigate: (storeId: String) -> Unit,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
 
@@ -58,7 +62,25 @@ fun HomeRoute(
         viewModel.updateAddress(context.getCurrentLocationName(uiState.currentLocation))
     }
 
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refreshPreference()
+    }
+
     DoubleBackExitHandler()
+
+    val navigatePreference = {
+        onPreferenceNavigate(uiState.bossStoreRetrieveMe.bossStoreId)
+    }
+
+    if (uiState.autoOpenClose.showAlert) {
+        AutoOpenCloseAlertDialog(
+            onPreferenceClick = {
+                viewModel.dismissAutoOpenCloseAlert()
+                navigatePreference()
+            },
+            onDismiss = viewModel::dismissAutoOpenCloseAlert
+        )
+    }
 
     HomeScreen(
         location = uiState.location,
@@ -85,7 +107,7 @@ fun HomeRoute(
                 }
 
                 StoreStateType.CLOSE -> {
-                    viewModel.storeClosed()
+                    viewModel.onShutterClick()
                 }
             }
         },
@@ -100,6 +122,7 @@ fun HomeRoute(
                     viewModel.getBossStoreAround(it)
                 }
             )
-        }
+        },
+        onPreferenceClick = navigatePreference
     )
 }

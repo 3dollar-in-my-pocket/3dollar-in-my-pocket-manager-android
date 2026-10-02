@@ -1,17 +1,18 @@
 package app.threedollars.di
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import app.threedollars.data.BuildConfig
 import app.threedollars.db.DataStoreManager
 import app.threedollars.network.MaintenanceInterceptor
 import app.threedollars.network.NetworkService
 import app.threedollars.source.LocalDataSourceImpl.Companion.ACCESS_TOKEN
-import app.threedollars.source.LocalDataSourceImpl.Companion.APPLICATION_ID
-import app.threedollars.source.LocalDataSourceImpl.Companion.VERSION_NAME
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -43,12 +44,13 @@ object NetworkModule {
         httpLoggingInterceptor: HttpLoggingInterceptor,
         maintenanceInterceptor: MaintenanceInterceptor,
         dataStoreManager: DataStoreManager,
+        @ApplicationContext context: Context,
     ): OkHttpClient {
+        val applicationId = context.packageName
+        val versionName = context.appVersionName()
         return OkHttpClient.Builder()
             .addInterceptor {
                 val token = runBlocking { dataStoreManager.getStringData(ACCESS_TOKEN).firstOrNull() ?: "" }
-                val versionName = runBlocking { dataStoreManager.getStringData(VERSION_NAME).firstOrNull() ?: "" }
-                val applicationId = runBlocking { dataStoreManager.getStringData(APPLICATION_ID).firstOrNull() ?: "" }
 
                 val request = it.request().newBuilder()
                     .removeHeader("User-Agent")
@@ -61,6 +63,12 @@ object NetworkModule {
             .addInterceptor(maintenanceInterceptor)
             .addInterceptor(httpLoggingInterceptor)
             .build()
+    }
+
+    private fun Context.appVersionName(): String = try {
+        packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
+    } catch (e: PackageManager.NameNotFoundException) {
+        ""
     }
 
     @Provides
