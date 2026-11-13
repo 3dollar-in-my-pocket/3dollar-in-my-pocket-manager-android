@@ -44,6 +44,19 @@ class SettingStateTest {
         assertNull(failed.dismissPushError().pushErrorMessage)
     }
 
+    // TH-1405 TC5
+    @Test
+    fun `TH1405_TC5_네트워크_오류면_예외_원문이_아니라_기본_안내_문구를_띄운다`() {
+        // Given
+        val networkError = SettingState.pushErrorMessageOf(code = null, errorMessage = "Unable to resolve host \"dev.threedollars.co.kr\"")
+        val serverError = SettingState.pushErrorMessageOf(code = "400", errorMessage = """{"ok":false,"message":"잘못된 요청입니다"}""")
+        // When
+        val failed = SettingState().failPushUpdate(rollback = true, message = networkError)
+        // Then
+        assertEquals(SettingState.DEFAULT_PUSH_ERROR_MESSAGE, failed.pushErrorMessage)
+        assertEquals("잘못된 요청입니다", serverError)
+    }
+
     // TH-1405 TC6
     @Test
     fun `TH1405_TC6_계정_정보를_받기_전에는_토글이_잠긴다`() {

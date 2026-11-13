@@ -1,5 +1,6 @@
 package app.threedollars.manager.feature.setting
 
+import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.domain.dto.BossAccountInfoDto
 import app.threedollars.domain.dto.FaqDto
 
@@ -35,6 +36,12 @@ data class SettingState(
 
     companion object {
         const val DEFAULT_PUSH_ERROR_MESSAGE = "푸시 알림 설정을 변경하지 못했어요. 잠시 후 다시 시도해 주세요."
+        private const val CLIENT_ERROR_CODE = "700"
+
+        fun pushErrorMessageOf(code: String?, errorMessage: String?): String? {
+            if (code.isNullOrEmpty() || code == CLIENT_ERROR_CODE) return null
+            return errorMessage.toDisplayErrorMessage()
+        }
     }
 }
 

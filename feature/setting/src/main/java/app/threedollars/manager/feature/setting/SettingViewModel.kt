@@ -3,7 +3,6 @@ package app.threedollars.manager.feature.setting
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
 import app.threedollars.common.Resource
-import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
@@ -141,7 +140,7 @@ class SettingViewModel @Inject constructor(
                 if (result is Resource.Success) {
                     state.finishPushUpdate()
                 } else {
-                    state.failPushUpdate(rollback = !enable, message = result.errorMessage.toDisplayErrorMessage())
+                    state.failPushUpdate(rollback = !enable, message = SettingState.pushErrorMessageOf(result.code, result.errorMessage))
                 }
             }
         }.invokeOnCompletion { throwable ->
