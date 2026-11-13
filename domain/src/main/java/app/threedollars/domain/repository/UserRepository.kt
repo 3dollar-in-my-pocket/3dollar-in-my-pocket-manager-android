@@ -19,7 +19,7 @@ interface UserRepository {
 
     fun demoLogin(code: String): Flow<Resource<LoginDto>>
 
-    fun logout(): Flow<Resource<String>>
+    fun logout(pushToken: String?): Flow<Resource<String>>
 
     fun signUp(
         bossName: String,

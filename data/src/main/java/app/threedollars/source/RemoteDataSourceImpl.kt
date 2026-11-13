@@ -5,6 +5,7 @@ import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossDeviceRequest
+import app.threedollars.data.request.BossLogoutRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CommentPresetRequest
 import app.threedollars.data.request.CouponRegisterRequest
@@ -66,8 +67,8 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         emit(safeApiCall { networkService.demoLogin(code) })
     }
 
-    override fun logout(): Flow<Resource<String>> = flow {
-        emit(safeApiCall { networkService.logout() })
+    override fun logout(bossLogoutRequest: BossLogoutRequest): Flow<Resource<String>> = flow {
+        emit(safeApiCall { networkService.logout(bossLogoutRequest) })
     }
 
     override fun signUp(signUpRequest: SignUpRequest): Flow<Resource<LoginResponse>> = flow {
