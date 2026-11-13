@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -105,7 +106,7 @@ class SettingViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            authUseCase.logout().collect {
+            authUseCase.logout(fetchFirebaseTokenOrNull()).collect {
                 if (it.data == "OK") {
                     val accessTokenDeferred = async { authUseCase.saveAccessToken("") }
                     val socialAccessTokenDeferred = async { authUseCase.saveSocialAccessToken("") }
@@ -151,17 +152,23 @@ class SettingViewModel @Inject constructor(
     }
 
     private suspend fun registerDevice() {
-        val firebaseToken = try {
-            FirebaseMessaging.getInstance().token.await()
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            return
-        }
+        val firebaseToken = fetchFirebaseTokenOrNull() ?: return
         bossDeviceUseCase.putBossDevice("FCM", firebaseToken).collect {}
+    }
+
+    private suspend fun fetchFirebaseTokenOrNull(): String? = try {
+        withTimeoutOrNull(FIREBASE_TOKEN_TIMEOUT_MILLIS) { FirebaseMessaging.getInstance().token.await() }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        null
     }
 
     fun dismissPushError() {
         _stateFlow.update { it.dismissPushError() }
+    }
+
+    private companion object {
+        const val FIREBASE_TOKEN_TIMEOUT_MILLIS = 3_000L
     }
 }

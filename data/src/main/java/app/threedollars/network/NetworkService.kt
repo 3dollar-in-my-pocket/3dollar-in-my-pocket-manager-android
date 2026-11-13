@@ -4,6 +4,7 @@ import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
+import app.threedollars.data.request.BossLogoutRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CommentPresetRequest
 import app.threedollars.data.request.CouponRegisterRequest
@@ -71,7 +72,7 @@ internal interface NetworkService {
     suspend fun demoLogin(@Query("code") code: String): Response<BaseResponse<LoginResponse>>
 
     @POST("v1/auth/logout")
-    suspend fun logout(): Response<BaseResponse<String>>
+    suspend fun logout(@Body bossLogoutRequest: BossLogoutRequest): Response<BaseResponse<String>>
 
     @POST("v1/auth/signup")
     suspend fun signUp(@Body signUpRequest: SignUpRequest): Response<BaseResponse<LoginResponse>>
