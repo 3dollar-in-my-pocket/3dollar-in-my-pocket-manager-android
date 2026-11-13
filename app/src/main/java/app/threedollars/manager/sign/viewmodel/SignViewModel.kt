@@ -62,7 +62,7 @@ class SignViewModel @Inject constructor(
             if (certificationPhotoRequestBody != null) {
                 val accessToken = (kakaoTokenProvider.refreshAccessToken() as? KakaoTokenResult.Success)?.accessToken
                 if (accessToken == null) {
-                    setErrorMessage(KAKAO_TOKEN_ERROR_MESSAGE)
+                    setErrorMessage(KAKAO_LOGIN_EXPIRED_MESSAGE)
                     return@launch
                 }
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", certificationPhotoRequestBody).collect { it ->
@@ -103,7 +103,7 @@ class SignViewModel @Inject constructor(
     }
 
     private companion object {
-        const val KAKAO_TOKEN_ERROR_MESSAGE = "카카오 로그인 정보를 확인하지 못했어요. 다시 로그인해 주세요."
+        const val KAKAO_LOGIN_EXPIRED_MESSAGE = "카카오 로그인 정보를 확인하지 못했어요. 다시 로그인해 주세요."
     }
 
     fun categorySelection(index: Int) {
