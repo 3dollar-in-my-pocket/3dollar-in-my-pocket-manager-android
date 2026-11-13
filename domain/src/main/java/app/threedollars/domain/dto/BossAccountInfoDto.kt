@@ -11,6 +11,12 @@ data class BossAccountInfoDto(
 ) {
     data class Settings(
         val enableActivitiesPush: Boolean = false,
-        val enableSalesAIRecommendation: Boolean = false
+        val enableSalesAIRecommendation: Boolean = false,
+        val pushQuietHours: PushQuietHours? = null,
+    )
+
+    data class PushQuietHours(
+        val startTime: String,
+        val endTime: String,
     )
 }

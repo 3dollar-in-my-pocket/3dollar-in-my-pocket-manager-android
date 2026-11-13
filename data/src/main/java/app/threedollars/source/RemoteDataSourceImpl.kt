@@ -4,6 +4,7 @@ import app.threedollars.common.Resource
 import app.threedollars.common.toDisplayErrorMessage
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.BossAccountInfoRequest
+import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CommentPresetRequest
@@ -86,6 +87,10 @@ internal class RemoteDataSourceImpl @Inject constructor(private val networkServi
         flow {
             emit(safeApiCall { networkService.putBossAccount(bossAccountInfoRequest) })
         }
+
+    override suspend fun patchAccountSettings(request: BossAccountSettingsRequest): Resource<String> = safeApiCall {
+        networkService.patchAccountSettings(request)
+    }
 
     override fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>> =
         flow {

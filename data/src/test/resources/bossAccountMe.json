@@ -1,0 +1,19 @@
+{
+  "bossId": "boss-1",
+  "socialType": "KAKAO",
+  "name": "사장님",
+  "businessNumber": "123-45-67890",
+  "isSetupNotification": false,
+  "settings": {
+    "enableActivitiesPush": false,
+    "activitiesPushSettingTime": "2026-11-13T17:00:00",
+    "enableSalesAIRecommendation": true,
+    "pushQuietHours": {
+      "startTime": "22:00",
+      "endTime": "08:00"
+    },
+    "pushQuietHoursSettingTime": "2026-11-13T17:00:00"
+  },
+  "createdAt": "2024-01-01T00:00:00",
+  "updatedAt": "2026-11-13T17:00:00"
+}

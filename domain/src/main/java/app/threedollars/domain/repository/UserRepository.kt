@@ -38,6 +38,8 @@ interface UserRepository {
 
     fun putBossAccount(name: String): Flow<Resource<String>>
 
+    suspend fun patchAccountSettings(enableActivitiesPush: Boolean, pushQuietHours: BossAccountInfoDto.PushQuietHours?): Resource<String>
+
     // boss-device-controller
     fun putBossDevice(pushPlatformType: String, pushToken: String): Flow<Resource<String>>
 
