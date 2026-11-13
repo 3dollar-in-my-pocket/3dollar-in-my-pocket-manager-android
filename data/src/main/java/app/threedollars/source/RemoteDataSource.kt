@@ -2,6 +2,7 @@ package app.threedollars.source
 
 import app.threedollars.common.Resource
 import app.threedollars.data.request.BossAccountInfoRequest
+import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CouponRegisterRequest
@@ -56,6 +57,8 @@ internal interface RemoteDataSource {
     fun getBossAccount(): Flow<Resource<BossAccountInfoResponse>>
 
     fun putBossAccount(bossAccountInfoRequest: BossAccountInfoRequest): Flow<Resource<String>>
+
+    suspend fun patchAccountSettings(request: BossAccountSettingsRequest): Resource<String>
 
     // boss-device-controller
     fun putBossDevice(bossDeviceRequest: BossDeviceRequest): Flow<Resource<String>>
