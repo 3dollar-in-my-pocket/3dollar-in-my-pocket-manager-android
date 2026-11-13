@@ -10,10 +10,10 @@ import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.ImageUploadUseCase
 import app.threedollars.domain.usecase.PlatformStoreCategoryUseCase
 import app.threedollars.manager.feature.storemanagement.model.StoreCategoriesVo
+import app.threedollars.manager.sign.KakaoTokenProvider
 import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.util.dtoToVo
 import com.google.firebase.messaging.FirebaseMessaging
-import com.kakao.sdk.auth.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +29,7 @@ class SignViewModel @Inject constructor(
     private val authUseCase: AuthUseCase,
     private val imageUploadUseCase: ImageUploadUseCase,
     private val bossDeviceUseCase: BossDeviceUseCase,
+    private val kakaoTokenProvider: KakaoTokenProvider,
 ) : BaseViewModel() {
 
     val categoryItemState = mutableStateListOf<StoreCategoriesVo>()
@@ -65,9 +66,13 @@ class SignViewModel @Inject constructor(
         var isSubmitted = false
         viewModelScope.launch(exceptionHandler) {
             if (certificationPhotoRequestBody != null) {
+                val accessToken = (kakaoTokenProvider.refreshAccessToken() as? KakaoTokenResult.Success)?.accessToken
+                if (accessToken == null) {
+                    setErrorMessage(KAKAO_LOGIN_EXPIRED_MESSAGE)
+                    return@launch
+                }
                 imageUploadUseCase.postImageUpload("BOSS_STORE_CERTIFICATION_IMAGE", certificationPhotoRequestBody).collect { it ->
                     if (it.code == "200") {
-                        val accessToken = TokenManager.instance.getToken()?.accessToken ?: ""
                         var businessNumberHyphen = ""
                         businessNumber.forEachIndexed { index, c ->
                             businessNumberHyphen += c
@@ -113,6 +118,10 @@ class SignViewModel @Inject constructor(
         throw e
     } catch (e: Exception) {
         null
+    }
+
+    private companion object {
+        const val KAKAO_LOGIN_EXPIRED_MESSAGE = "카카오 로그인 정보를 확인하지 못했어요. 다시 로그인해 주세요."
     }
 
     fun categorySelection(index: Int) {
