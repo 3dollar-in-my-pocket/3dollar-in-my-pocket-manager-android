@@ -1,32 +1,23 @@
-# Google Play 업로드
+# Google Play 릴리즈
 
-release AAB(`app.threedollars.manager`)를 Google Play에 올린다. 워크플로는 `.github/workflows/play-release.yml`("Play Release").
-유저앱 AOS와 달리 **버전은 사람이 올리고, 워크플로는 업로드만** 한다(버전 자동 증가·태그·GitHub Release 없음).
-
-| 언제 | 트랙 | 상태 |
-|---|---|---|
-| `release/**` 브랜치에 `app/build.gradle.kts`(버전)가 바뀐 커밋 push | 프로덕션 | **초안(draft)** — Play Console에서 사람이 검토 후 출시 |
-| 수동 실행 `track=internal` (기본) | 내부 테스트 | 즉시 배포(completed) |
-| 수동 실행 `track=production` | 프로덕션 | 초안(draft) |
+release AAB(`app.threedollars.manager`)를 Google Play에 올린다. 워크플로는 `.github/workflows/play-release.yml`("Play Release"). **release/** 브랜치에서 수동 실행만** 한다(push 자동 업로드 없음).
 
 ```bash
-gh workflow run "Play Release" --ref release/1.1.12                     # 내부 테스트
-gh workflow run "Play Release" --ref release/1.1.12 -f track=production # 프로덕션 초안
+gh workflow run "Play Release" --ref release/1.4.0 -f whats_new="$(cat whats_new.txt)"   # -f dry_run=true 로 검증만
 ```
 
-## 릴리즈 순서
+한 번 실행하면 같은 versionCode 를 **내부 테스트·프로덕션**에 올리고, 새로운 기능 문구(ko-KR, 500자 이하)를 넣어 **프로덕션 심사 제출**까지 커밋한다(`.github/scripts/play_release.py`).
+Play Console 의 관리형 게시가 꺼져 있으면 심사 통과 즉시 출시된다. 결과는 `DISCORD_WEBHOOK_URL` 로 알린다.
+심사 거절 등으로 자동 제출이 막힌 상태면 저장만 되고 알림에 "검토를 위해 보내기 필요"로 표시된다. 그때는 Play Console → 게시 개요에서 보낸다.
 
-1. `develop`에서 `release/x.y.z` 브랜치를 만든다.
-2. `app/build.gradle.kts`의 `versionCode`(+1)·`versionName`을 올려 커밋·push → 프로덕션 초안이 자동으로 올라간다.
-3. Play Console → 프로덕션 → 초안 검토 후 출시.
-4. 기존처럼 `release/x.y.z` → `master` PR 머지, `develop`에 역머지.
-5. `master`에서 `vx.y.z` 태그로 GitHub 릴리즈를 발행(노트 자동생성) → `discord-release-notify.yml`이 `DISCORD_WEBHOOK_URL`로 출시 공지를 보낸다. Play 업로드 자체는 디스코드 알림을 보내지 않는다. 이미 발행한 릴리즈는 Actions에서 태그를 넣어 수동 실행한다.
+## 릴리즈 순서 (develop 만 쓴다, master 는 쓰지 않는다)
 
-**versionCode는 트랙과 무관하게 한 번만 쓸 수 있다.** 같은 versionCode로 내부 테스트에 올렸다면 프로덕션에는 다시 올릴 수 없으니,
-Play Console에서 그 내부 테스트 버전을 프로덕션으로 **승격**하거나 versionCode를 올려 다시 push한다.
-release 브랜치에 버전 변경 없이 추가 커밋만 push하면 자동 업로드는 돌지 않는다(`paths` 필터).
+1. `develop`에서 `release/x.y.z` 브랜치를 만들고 `app/build.gradle.kts`의 `versionCode`(+1)·`versionName`을 올린다. 기능 PR 은 이 브랜치로 머지한다.
+2. 위 명령으로 심사 제출. 보통 `/3dollars:release-playstore`(디스코드 `/upload-playstore`)가 1~2를 한다.
+3. 스토어에 출시되면(디스코드 `/finish-playstore`) `release/x.y.z` → `develop` PR 머지 → 머지 커밋에 `vx.y.z` 태그·GitHub 릴리즈 발행(노트 자동생성) → `discord-release-notify.yml`이 출시 공지 → 다음 `release/x.y+1.0` 을 만든다.
 
-"새로운 기능" 문구는 `origin/master..HEAD`(지난 릴리즈 이후) 커밋 제목으로 만들고 Play 제한(500자)에 맞춰 자른다. 스토어에 공개되는 문구이므로 출시 전에 Play Console에서 다듬는다.
+Play 는 심사·출시 상태를 API 나 웹훅으로 알려주지 않는다. 출시 여부는 스토어 페이지 버전으로 확인한다.
+**versionCode는 트랙과 무관하게 한 번만 쓸 수 있다.** 다시 올려야 하면 versionCode 를 올린다.
 
 ## targetSdk 요구사항
 

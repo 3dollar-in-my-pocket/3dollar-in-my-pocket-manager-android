@@ -1,29 +1,23 @@
 name: Play Release
 
-# release AAB(app.threedollars.manager)를 Google Play 에 올린다.
-#   - release/** 브랜치에서 app/build.gradle.kts(버전)가 바뀐 커밋이 push 되면 → 프로덕션 트랙 초안(draft)
-#   - 수동 실행 → 내부 테스트(completed) 또는 프로덕션 초안(draft)
-# 버전(versionCode/versionName)은 사람이 app/build.gradle.kts 에서 올린다. 이 워크플로는 버전을 바꾸거나 커밋하지 않는다.
-# 필요한 시크릿과 Play Console 설정: docs/process/play-release.md
+# release/** 브랜치에서 수동 실행한다. release AAB(app.threedollars.manager)를 내부 테스트·프로덕션에 올리고 프로덕션 심사 제출까지 한다.
+# 관리형 게시가 꺼져 있으면 심사 통과 즉시 출시된다. 버전은 사람이(또는 /3dollars:release-playstore 가) app/build.gradle.kts 에서 올린다.
+# 필요한 시크릿과 순서: docs/process/play-release.md
+#   gh workflow run "Play Release" --ref release/1.4.0 -f whats_new="$(cat whats_new.txt)"
 on:
-  push:
-    branches:
-      - 'release/**'
-    paths:
-      - 'app/build.gradle.kts'
   workflow_dispatch:
     inputs:
-      track:
-        description: 'internal = 내부 테스트 즉시 배포, production = 프로덕션 초안(Play Console 에서 검토 후 출시)'
+      whats_new:
+        description: '이번 버전의 새로운 기능 (스토어 노출, 500자 이하)'
         required: true
-        default: 'internal'
-        type: choice
-        options:
-          - internal
-          - production
+      dry_run:
+        description: '업로드·검증만 하고 커밋하지 않기'
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
-  group: play-release-${{ github.ref }}
+  group: play-release
   cancel-in-progress: false
 
 permissions:
@@ -35,15 +29,11 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - name: 트랙 결정
-        id: track
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          INPUT_TRACK: ${{ github.event.inputs.track }}
+      - name: 브랜치 확인
+        if: ${{ !startsWith(github.ref_name, 'release/') }}
         run: |
-          if [ "$EVENT_NAME" = "push" ]; then TRACK=production; else TRACK="$INPUT_TRACK"; fi
-          if [ "$TRACK" = "internal" ]; then STATUS=completed; LABEL="내부 테스트"; else STATUS=draft; LABEL="프로덕션 초안"; fi
-          { echo "track=$TRACK"; echo "status=$STATUS"; echo "label=$LABEL"; } >> "$GITHUB_OUTPUT"
+          echo "::error::release/** 브랜치에서만 실행한다 (현재 ${{ github.ref_name }})"
+          exit 1
 
       - name: 필수 시크릿 확인
         env:
@@ -68,8 +58,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Read version
         id: version
@@ -80,7 +68,7 @@ jobs:
             echo "::error::app/build.gradle.kts 에서 versionName/versionCode 를 읽지 못했습니다"
             exit 1
           fi
-          { echo "version_name=$VERSION_NAME"; echo "version_code=$VERSION_CODE"; echo "release_name=v${VERSION_NAME} (${VERSION_CODE})"; } >> "$GITHUB_OUTPUT"
+          { echo "version_name=$VERSION_NAME"; echo "version_code=$VERSION_CODE"; echo "release_name=v${VERSION_NAME}"; } >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -140,40 +128,68 @@ jobs:
           test -f "$AAB"
           echo "path=$AAB" >> "$GITHUB_OUTPUT"
 
-      # 지난 릴리즈(origin/master) 이후 커밋으로 "새로운 기능" 문구를 만든다.
-      # Play 는 언어당 500자(유니코드 문자, 끝 개행 포함) 제한이라 넘으면 업로드가 실패한다.
-      - name: Prepare release notes
+      - name: 새로운 기능 문구
+        env:
+          WHATS_NEW: ${{ inputs.whats_new }}
         run: |
-          git fetch -q origin master || true
-          COMMITS=$(git log --no-merges --pretty=format:"- %s" origin/master..HEAD 2>/dev/null || true)
-          [ -n "$COMMITS" ] || COMMITS="- ${{ steps.version.outputs.release_name }} 릴리즈"
-          mkdir -p distribution/whatsnew
-          python3 - "$COMMITS" > distribution/whatsnew/whatsnew-ko-KR << 'PY'
-          import sys
-          LIMIT, ELLIPSIS = 500, "..."
-          MAX_TEXT = LIMIT - 1
-          text = sys.argv[1].strip()
-          if len(text) > MAX_TEXT:
-              budget = MAX_TEXT - len(ELLIPSIS) - 1
-              kept, total = [], 0
-              for line in text.split("\n"):
-                  if total + len(line) > budget:
-                      break
-                  kept.append(line)
-                  total += len(line) + 1
-              text = "\n".join(kept + [ELLIPSIS]) if kept else text[:MAX_TEXT - len(ELLIPSIS)] + ELLIPSIS
-          assert len(text) + 1 <= LIMIT
-          sys.stdout.write(text + "\n")
-          PY
-          cat distribution/whatsnew/whatsnew-ko-KR
+          mkdir -p distribution
+          printf '%s' "$WHATS_NEW" > distribution/whats_new.txt
+          python3 -c "import sys; t=open(sys.argv[1],encoding='utf-8').read().strip(); n=len(t); print(f'{n}자'); sys.exit(0 if 0<n<=500 else '새로운 기능 문구는 1~500자여야 한다')" distribution/whats_new.txt
 
-      - name: Upload to Google Play
-        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: app.threedollars.manager
-          releaseFiles: ${{ steps.aab.outputs.path }}
-          tracks: ${{ steps.track.outputs.track }}
-          status: ${{ steps.track.outputs.status }}
-          releaseName: ${{ steps.version.outputs.release_name }}
-          whatsNewDirectory: distribution/whatsnew
+          python-version: '3.12'
+
+      # 내부 테스트·프로덕션에 같은 versionCode 를 올리고 프로덕션 심사 제출까지 커밋한다.
+      - name: Upload and submit for review
+        id: play
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          PACKAGE_NAME: app.threedollars.manager
+          AAB_PATH: ${{ steps.aab.outputs.path }}
+          RELEASE_NAME: ${{ steps.version.outputs.release_name }}
+          WHATS_NEW_PATH: distribution/whats_new.txt
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          pip install -q google-api-python-client==2.151.0 google-auth==2.36.0
+          python .github/scripts/play_release.py
+
+      - name: Notify Discord
+        if: ${{ always() && !inputs.dry_run }}
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          OUTCOME: ${{ job.status }}
+          SUBMITTED: ${{ steps.play.outputs.submitted }}
+          RELEASE_NAME: ${{ steps.version.outputs.release_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$OUTCOME" != "success" ]; then
+            TITLE="[사장님앱] Play Store 업로드 실패"; COLOR=15158332
+          elif [ "$SUBMITTED" = "true" ]; then
+            TITLE="[사장님앱] Play Store 심사 제출 완료"; COLOR=3066993
+          else
+            TITLE="[사장님앱] Play Store 업로드 완료 — 콘솔에서 검토를 위해 보내기 필요"; COLOR=15105570
+          fi
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" --argjson color "$COLOR" \
+            --arg release_name "${RELEASE_NAME:-?}" --arg version_code "${VERSION_CODE:-?}" --arg url "$WORKFLOW_URL" \
+            '{
+              username: "가슴속삼천원 배포 알림",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: $title,
+                color: $color,
+                description: ("[워크플로 실행 결과](" + $url + ")"),
+                fields: [
+                  {name: "Version", value: $release_name, inline: true},
+                  {name: "Version Code", value: $version_code, inline: true}
+                ]
+              }]
+            }')
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null

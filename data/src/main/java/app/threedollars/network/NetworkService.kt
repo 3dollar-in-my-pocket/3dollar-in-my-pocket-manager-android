@@ -2,6 +2,7 @@ package app.threedollars.network
 
 import app.threedollars.data.BaseResponse
 import app.threedollars.data.request.BossAccountInfoRequest
+import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.BossLogoutRequest
 import app.threedollars.data.request.BossStoreRequest
@@ -85,6 +86,9 @@ internal interface NetworkService {
 
     @PUT("v1/boss/account/me")
     suspend fun putBossAccount(@Body bossAccountInfoRequest: BossAccountInfoRequest): Response<BaseResponse<String>>
+
+    @PATCH("v1/my/account-settings")
+    suspend fun patchAccountSettings(@Body bossAccountSettingsRequest: BossAccountSettingsRequest): Response<BaseResponse<String>>
 
     // boss-device-controller
     @PUT("v1/device")

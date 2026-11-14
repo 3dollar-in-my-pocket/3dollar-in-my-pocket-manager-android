@@ -2,6 +2,7 @@ package app.threedollars.manager.feature.setting
 
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
+import app.threedollars.common.Resource
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
@@ -125,6 +126,36 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun updateActivitiesPush(enable: Boolean) {
+        val before = _stateFlow.value
+        if (!before.isPushToggleEnabled || before.isActivitiesPushEnabled == enable) return
+        _stateFlow.update { it.startPushUpdate(enable) }
+
+        viewModelScope.launch(exceptionHandler) {
+            val result = bossAccountUseCase.updateActivitiesPush(
+                enable = enable,
+                pushQuietHours = before.bossAccountInfo.settings.pushQuietHours
+            )
+            if (result is Resource.Success && enable) registerDevice()
+            _stateFlow.update { state ->
+                if (result is Resource.Success) {
+                    state.finishPushUpdate()
+                } else {
+                    state.failPushUpdate(rollback = !enable, message = SettingState.pushErrorMessageOf(result.code, result.errorMessage))
+                }
+            }
+        }.invokeOnCompletion { throwable ->
+            if (throwable != null) {
+                _stateFlow.update { it.failPushUpdate(rollback = !enable, message = null) }
+            }
+        }
+    }
+
+    private suspend fun registerDevice() {
+        val firebaseToken = fetchFirebaseTokenOrNull() ?: return
+        bossDeviceUseCase.putBossDevice("FCM", firebaseToken).collect {}
+    }
+
     private suspend fun fetchFirebaseTokenOrNull(): String? = try {
         withTimeoutOrNull(FIREBASE_TOKEN_TIMEOUT_MILLIS) { FirebaseMessaging.getInstance().token.await() }
     } catch (e: CancellationException) {
@@ -133,23 +164,11 @@ class SettingViewModel @Inject constructor(
         null
     }
 
+    fun dismissPushError() {
+        _stateFlow.update { it.dismissPushError() }
+    }
+
     private companion object {
         const val FIREBASE_TOKEN_TIMEOUT_MILLIS = 3_000L
-    }
-
-    fun putBossDevice(token: String) {
-        viewModelScope.launch {
-            bossDeviceUseCase.putBossDevice("FCM", token).collect {
-                // TODO: 푸시 알림 설정 완료 / 실패 핸들링
-            }
-        }
-    }
-
-    fun deleteBossDevice() {
-        viewModelScope.launch {
-            bossDeviceUseCase.deleteBossDevice().collect {
-                // TODO: 푸시 알림 해제 완료 / 실패 핸들링
-            }
-        }
     }
 }

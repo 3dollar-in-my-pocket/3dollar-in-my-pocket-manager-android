@@ -29,8 +29,23 @@ data class BossAccountInfoResponse(
         @SerialName("enableActivitiesPush")
         val enableActivitiesPush: Boolean? = false,
         @SerialName("enableSalesAIRecommendation")
-        val enableSalesAIRecommendation: Boolean? = false
+        val enableSalesAIRecommendation: Boolean? = false,
+        @SerialName("pushQuietHours")
+        val pushQuietHours: PushQuietHours? = null,
     )
+
+    @Serializable
+    data class PushQuietHours(
+        @SerialName("startTime")
+        val startTime: String? = null,
+        @SerialName("endTime")
+        val endTime: String? = null,
+    ) {
+        fun toDtoOrNull(): BossAccountInfoDto.PushQuietHours? {
+            if (startTime.isNullOrEmpty() || endTime.isNullOrEmpty()) return null
+            return BossAccountInfoDto.PushQuietHours(startTime = startTime, endTime = endTime)
+        }
+    }
 
     fun toDto() = BossAccountInfoDto(
         bossId = bossId.toStringDefault(),
@@ -40,7 +55,8 @@ data class BossAccountInfoResponse(
         socialType = socialType.toStringDefault(),
         settings = BossAccountInfoDto.Settings(
             enableActivitiesPush = settings?.enableActivitiesPush ?: false,
-            enableSalesAIRecommendation = settings?.enableSalesAIRecommendation ?: false
+            enableSalesAIRecommendation = settings?.enableSalesAIRecommendation ?: false,
+            pushQuietHours = settings?.pushQuietHours?.toDtoOrNull(),
         ),
         updatedAt = updatedAt.toStringDefault()
     )

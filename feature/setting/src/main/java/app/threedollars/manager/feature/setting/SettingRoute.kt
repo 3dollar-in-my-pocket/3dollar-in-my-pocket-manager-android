@@ -30,13 +30,11 @@ fun SettingRoute(
                 bossAccountInfo = uiState.bossAccountInfo,
                 onClickSignOut = { viewModel.signOut() },
                 onClickLogOut = { viewModel.logout() },
-                onSwitchBossDevice = { isSwitch, result ->
-                    if (isSwitch) {
-                        viewModel.putBossDevice(result)
-                    } else {
-                        viewModel.deleteBossDevice()
-                    }
-                },
+                isActivitiesPushEnabled = uiState.isActivitiesPushEnabled,
+                isPushToggleEnabled = uiState.isPushToggleEnabled,
+                pushErrorMessage = uiState.pushErrorMessage,
+                onToggleActivitiesPush = { enable -> viewModel.updateActivitiesPush(enable) },
+                onDismissPushError = { viewModel.dismissPushError() },
                 onClickFaq = { pageType ->
                     viewModel.updateScreenType(screenType = pageType)
                 }
