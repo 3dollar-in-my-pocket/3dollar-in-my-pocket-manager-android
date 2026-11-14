@@ -2,6 +2,7 @@ package app.threedollars.repository
 
 import app.threedollars.common.Resource
 import app.threedollars.data.request.BossAccountInfoRequest
+import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
@@ -105,6 +106,16 @@ internal class UserRepositoryImpl @Inject constructor(
         val bossAccountInfoRequest = BossAccountInfoRequest(name)
         return remoteDataSource.putBossAccount(bossAccountInfoRequest)
     }
+
+    override suspend fun patchAccountSettings(
+        enableActivitiesPush: Boolean,
+        pushQuietHours: BossAccountInfoDto.PushQuietHours?
+    ): Resource<String> = runCatching {
+        remoteDataSource.patchAccountSettings(BossAccountSettingsRequest.of(enableActivitiesPush, pushQuietHours))
+    }.fold(
+        onSuccess = { it },
+        onFailure = { Resource.Error(errorMessage = it.message, code = "700") }
+    )
 
     override fun putBossDevice(
         pushPlatformType: String,
