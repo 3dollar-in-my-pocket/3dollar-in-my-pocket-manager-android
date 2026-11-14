@@ -15,7 +15,8 @@ import app.threedollars.manager.sign.LoginNavItem
 import app.threedollars.manager.util.dtoToVo
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okhttp3.RequestBody
@@ -38,6 +39,9 @@ class SignViewModel @Inject constructor(
     private val _loginNavItem = MutableEventFlow<LoginNavItem>()
     val loginNavItem: EventFlow<LoginNavItem> get() = _loginNavItem
 
+    private val signUpGate = SingleFlightGate()
+    val isSigningUp: StateFlow<Boolean> = signUpGate.isRunning
+
     init {
         getCategory()
     }
@@ -58,6 +62,8 @@ class SignViewModel @Inject constructor(
     }
 
     fun signUp(bossName: String, storeName: String, businessNumber: String, certificationPhotoRequestBody: RequestBody?) {
+        if (!signUpGate.tryEnter()) return
+        var isSubmitted = false
         viewModelScope.launch(exceptionHandler) {
             if (certificationPhotoRequestBody != null) {
                 val accessToken = (kakaoTokenProvider.refreshAccessToken() as? KakaoTokenResult.Success)?.accessToken
@@ -86,9 +92,11 @@ class SignViewModel @Inject constructor(
                         ).collect { result ->
                             val token = result.data?.token
                             if (!token.isNullOrEmpty()) {
-                                val firebaseToken = async { FirebaseMessaging.getInstance().token.await() }
+                                isSubmitted = true
                                 authUseCase.saveAccessToken(token).collect {
-                                    bossDeviceUseCase.putBossDevice("FCM", firebaseToken.await()).collect {}
+                                    fetchFirebaseTokenOrNull()?.let { firebaseToken ->
+                                        bossDeviceUseCase.putBossDevice("FCM", firebaseToken).collect {}
+                                    }
                                     _loginNavItem.emit(LoginNavItem.Waiting)
                                 }
                             }
@@ -99,7 +107,17 @@ class SignViewModel @Inject constructor(
                     }
                 }
             }
+        }.invokeOnCompletion {
+            if (!isSubmitted) signUpGate.exit()
         }
+    }
+
+    private suspend fun fetchFirebaseTokenOrNull(): String? = try {
+        FirebaseMessaging.getInstance().token.await()
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        null
     }
 
     private companion object {

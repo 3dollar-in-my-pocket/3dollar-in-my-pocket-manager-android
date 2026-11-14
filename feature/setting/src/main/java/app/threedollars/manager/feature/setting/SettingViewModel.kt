@@ -2,12 +2,15 @@ package app.threedollars.manager.feature.setting
 
 import androidx.lifecycle.viewModelScope
 import app.threedollars.common.BaseViewModel
+import app.threedollars.common.Resource
 import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.FaqUseCase
 import app.threedollars.domain.usecase.MessageGuideUseCase
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -121,19 +125,43 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun putBossDevice(token: String) {
-        viewModelScope.launch {
-            bossDeviceUseCase.putBossDevice("FCM", token).collect {
-                // TODO: 푸시 알림 설정 완료 / 실패 핸들링
+    fun updateActivitiesPush(enable: Boolean) {
+        val before = _stateFlow.value
+        if (!before.isPushToggleEnabled || before.isActivitiesPushEnabled == enable) return
+        _stateFlow.update { it.startPushUpdate(enable) }
+
+        viewModelScope.launch(exceptionHandler) {
+            val result = bossAccountUseCase.updateActivitiesPush(
+                enable = enable,
+                pushQuietHours = before.bossAccountInfo.settings.pushQuietHours
+            )
+            if (result is Resource.Success && enable) registerDevice()
+            _stateFlow.update { state ->
+                if (result is Resource.Success) {
+                    state.finishPushUpdate()
+                } else {
+                    state.failPushUpdate(rollback = !enable, message = SettingState.pushErrorMessageOf(result.code, result.errorMessage))
+                }
+            }
+        }.invokeOnCompletion { throwable ->
+            if (throwable != null) {
+                _stateFlow.update { it.failPushUpdate(rollback = !enable, message = null) }
             }
         }
     }
 
-    fun deleteBossDevice() {
-        viewModelScope.launch {
-            bossDeviceUseCase.deleteBossDevice().collect {
-                // TODO: 푸시 알림 해제 완료 / 실패 핸들링
-            }
+    private suspend fun registerDevice() {
+        val firebaseToken = try {
+            FirebaseMessaging.getInstance().token.await()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            return
         }
+        bossDeviceUseCase.putBossDevice("FCM", firebaseToken).collect {}
+    }
+
+    fun dismissPushError() {
+        _stateFlow.update { it.dismissPushError() }
     }
 }

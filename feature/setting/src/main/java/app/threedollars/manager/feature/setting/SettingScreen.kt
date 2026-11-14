@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.sp
 import app.threedollars.common.BaseDialog
 import app.threedollars.domain.dto.BossAccountInfoDto
 import app.threedollars.manager.feature.setting.components.SettingCategoryContent
-import com.google.firebase.messaging.FirebaseMessaging
 
 @Composable
 fun SettingScreen(
@@ -46,7 +45,11 @@ fun SettingScreen(
     onClickSignOut: () -> Unit,
     onClickLogOut: () -> Unit,
     onClickFaq: (ScreenType) -> Unit,
-    onSwitchBossDevice: (Boolean, String) -> Unit,
+    isActivitiesPushEnabled: Boolean,
+    isPushToggleEnabled: Boolean,
+    pushErrorMessage: String?,
+    onToggleActivitiesPush: (Boolean) -> Unit,
+    onDismissPushError: () -> Unit,
 ) {
     val openWebPage = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result -> }
     val scrollState = rememberScrollState()
@@ -58,8 +61,15 @@ fun SettingScreen(
             .verticalScroll(scrollState)
     ) {
         var isSignOutDialog by remember { mutableStateOf(false) }
-        var switchOn by remember(bossAccountInfo.settings.enableActivitiesPush) { mutableStateOf(bossAccountInfo.settings.enableActivitiesPush) }
 
+        if (pushErrorMessage != null) {
+            BaseDialog(
+                title = "푸시알림",
+                message = pushErrorMessage,
+                confirmText = "확인",
+                onConfirm = onDismissPushError
+            )
+        }
         if (isSignOutDialog) {
             BaseDialog(
                 title = "회원탈퇴",
@@ -122,23 +132,9 @@ fun SettingScreen(
 
             Switch(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                checked = switchOn,
-                onCheckedChange = { isSwitch ->
-                    switchOn = isSwitch
-                    if (isSwitch) {
-                        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                            onSwitchBossDevice(
-                                true,
-                                it.result
-                            )
-                        }
-                    } else {
-                        onSwitchBossDevice(
-                            false,
-                            ""
-                        )
-                    }
-                }
+                checked = isActivitiesPushEnabled,
+                enabled = isPushToggleEnabled,
+                onCheckedChange = onToggleActivitiesPush
             )
         }
         SettingCategoryContent(

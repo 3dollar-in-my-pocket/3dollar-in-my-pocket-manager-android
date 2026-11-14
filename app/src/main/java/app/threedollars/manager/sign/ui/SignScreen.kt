@@ -130,7 +130,8 @@ private fun SignBottom(viewModel: SignViewModel) {
         )
         InitCategoryGrid(viewModel)
         InitCertificationPhoto(onChangeUri = { certificationPhotoUri = it })
-        InitSignUpButton {
+        val isSigningUp by viewModel.isSigningUp.collectAsStateWithLifecycle()
+        InitSignUpButton(enabled = !isSigningUp) {
             viewModel.signUp(bossName, storeName, businessNumber, certificationPhotoUri)
         }
     }
@@ -205,14 +206,17 @@ fun InitCertificationPhoto(onChangeUri: (RequestBody) -> Unit) {
 }
 
 @Composable
-fun InitSignUpButton(onClick: () -> Unit) {
+fun InitSignUpButton(enabled: Boolean, onClick: () -> Unit) {
     Button(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(vertical = 16.dp),
+        enabled = enabled,
         onClick = { onClick() },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = Green
+            containerColor = Green,
+            disabledContentColor = Color.White,
+            disabledContainerColor = Green.copy(alpha = 0.5f)
         )
     ) {
         Text(

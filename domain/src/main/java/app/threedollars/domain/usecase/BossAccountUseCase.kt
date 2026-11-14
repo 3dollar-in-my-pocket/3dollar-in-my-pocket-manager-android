@@ -10,4 +10,7 @@ class BossAccountUseCase @Inject constructor(private val userRepository: UserRep
     fun getBossAccount(): Flow<Resource<BossAccountInfoDto>> = userRepository.getBossAccount()
 
     fun putBossAccount(name: String): Flow<Resource<String>> = userRepository.putBossAccount(name)
+
+    suspend fun updateActivitiesPush(enable: Boolean, pushQuietHours: BossAccountInfoDto.PushQuietHours?): Resource<String> =
+        userRepository.patchAccountSettings(enableActivitiesPush = enable, pushQuietHours = pushQuietHours)
 }
