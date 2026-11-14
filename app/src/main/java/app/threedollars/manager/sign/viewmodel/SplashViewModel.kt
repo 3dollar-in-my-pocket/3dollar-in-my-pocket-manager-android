@@ -7,6 +7,7 @@ import app.threedollars.domain.usecase.AuthUseCase
 import app.threedollars.domain.usecase.BossAccountUseCase
 import app.threedollars.domain.usecase.BossDeviceUseCase
 import app.threedollars.domain.usecase.GetAppStatusUseCase
+import app.threedollars.manager.sign.KakaoTokenProvider
 import app.threedollars.manager.sign.LoginNavItem
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,7 @@ class SplashViewModel @Inject constructor(
     private val bossAccountUseCase: BossAccountUseCase,
     private val bossDeviceUseCase: BossDeviceUseCase,
     private val getAppStatusUseCase: GetAppStatusUseCase,
+    private val kakaoTokenProvider: KakaoTokenProvider,
 ) : BaseViewModel() {
 
     private val _effect = Channel<SplashEffect>(
@@ -39,6 +41,8 @@ class SplashViewModel @Inject constructor(
         super.onCoroutineException(context, throwable)
         _effect.trySend(SplashEffect.OnUnexpectedError)
     }
+
+    private var hasRetriedAutoLogin = false
 
     init {
         checkAppStatus()
@@ -85,7 +89,7 @@ class SplashViewModel @Inject constructor(
                             // 503 에러는 MaintenanceInterceptor에서 처리됨
                             // 화면 전환 없이 점검 화면만 표시
                         }
-                        "404", "400" -> {
+                        "404", "400", "401" -> {
                             _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
                         }
                         else -> {
@@ -117,7 +121,12 @@ class SplashViewModel @Inject constructor(
                             // 화면 전환 없이 점검 화면만 표시
                         }
                         "401" -> {
-                            autoLogin()
+                            if (hasRetriedAutoLogin) {
+                                _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
+                            } else {
+                                hasRetriedAutoLogin = true
+                                autoLogin()
+                            }
                         }
                         "403" -> {
                             _effect.send(SplashEffect.OnNavigate(LoginNavItem.Waiting))
@@ -146,12 +155,19 @@ class SplashViewModel @Inject constructor(
                 if (!demoCode.isNullOrBlank()) {
                     demoLogin(demoCode)
                 } else {
-                    val token = authUseCase.getSocialAccessToken().firstOrNull()?.data
+                    val storedToken = authUseCase.getSocialAccessToken().firstOrNull()?.data
 
-                    if (token.isNullOrBlank()) {
+                    if (!AutoLoginPolicy.isLoggedIn(storedToken)) {
                         _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
-                    } else {
-                        login(token)
+                        return@catchOrCancel
+                    }
+                    when (val decision = AutoLoginPolicy.decide(kakaoTokenProvider.refreshAccessToken())) {
+                        is AutoLoginDecision.Login -> {
+                            authUseCase.saveSocialAccessToken(decision.accessToken).collect()
+                            login(decision.accessToken)
+                        }
+                        AutoLoginDecision.GoToLogin -> _effect.send(SplashEffect.OnNavigate(LoginNavItem.Login))
+                        AutoLoginDecision.Error -> _effect.send(SplashEffect.OnUnexpectedError)
                     }
                 }
             }
