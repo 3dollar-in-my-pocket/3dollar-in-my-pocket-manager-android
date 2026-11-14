@@ -4,6 +4,7 @@ import app.threedollars.common.Resource
 import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
+import app.threedollars.data.request.BossLogoutRequest
 import app.threedollars.data.request.BossStoreRequest
 import app.threedollars.data.request.CouponRegisterRequest
 import app.threedollars.data.request.LoginRequest
@@ -47,7 +48,7 @@ internal interface RemoteDataSource {
 
     fun demoLogin(code: String): Flow<Resource<LoginResponse>>
 
-    fun logout(): Flow<Resource<String>>
+    fun logout(bossLogoutRequest: BossLogoutRequest): Flow<Resource<String>>
 
     fun signUp(signUpRequest: SignUpRequest): Flow<Resource<LoginResponse>>
 

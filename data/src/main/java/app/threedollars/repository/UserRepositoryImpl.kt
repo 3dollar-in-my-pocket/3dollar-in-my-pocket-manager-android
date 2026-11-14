@@ -4,6 +4,7 @@ import app.threedollars.common.Resource
 import app.threedollars.data.request.BossAccountInfoRequest
 import app.threedollars.data.request.BossAccountSettingsRequest
 import app.threedollars.data.request.BossDeviceRequest
+import app.threedollars.data.request.BossLogoutRequest
 import app.threedollars.data.request.LoginRequest
 import app.threedollars.data.request.SignUpRequest
 import app.threedollars.domain.dto.BossAccountInfoDto
@@ -62,7 +63,7 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun logout(): Flow<Resource<String>> = remoteDataSource.logout()
+    override fun logout(pushToken: String?): Flow<Resource<String>> = remoteDataSource.logout(BossLogoutRequest.of(pushToken))
 
     override fun signUp(
         bossName: String,
